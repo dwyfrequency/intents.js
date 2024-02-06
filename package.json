@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ethers": "5.7.0"
+    "ethers": "5.7.0",
+    "userop": "^0.3.8"
   },
   "devDependencies": {
     "@types/node": "^20.11.16"

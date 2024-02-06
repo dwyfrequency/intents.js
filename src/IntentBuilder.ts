@@ -1,83 +1,111 @@
-import { ethers } from 'ethers';
-import { From, To } from './FromAndTo';
-import { UserOp } from './UserOp';
+import { ethers, BytesLike, BigNumber } from 'ethers';
+import { Intent } from './InterfaceIntent';
+import { rpcBundlerUrl, chainID, entryPointAddr, factoryAddr } from './Constants';
+import { Presets, Client, UserOperationBuilder, IUserOperation } from "userop";
 
-const bundlerAddress = ""
 
 export class IntentBuilder {
-    private fromIntent: From;
-    private toIntent: To;
 
-    constructor() { }
 
-    public addFrom(from: From): void {
-        this.fromIntent = [...this.fromIntent, ...from];
-    }
 
-    public addTo(to: To): void {
-        this.toIntent = [...this.toIntent, ...to];
-    }
+  async execute(signingKey: string, intents: Intent[], salt: BytesLike = "0"): Promise<void> {
 
-    async execute(signer: ethers.Signer): Promise<void> {
-        const userOp: UserOp = {
-          sender: ethers.constants.AddressZero, // Use ethers to provide a zero address
-          nonce: BigInt(0),
-          initCode: new Uint8Array(),
-          callData: new Uint8Array(),
-          callGasLimit: BigInt(0),
-          verificationGasLimit: BigInt(0),
-          preVerificationGas: BigInt(0),
-          maxFeePerGas: BigInt(0),
-          maxPriorityFeePerGas: BigInt(0),
-          paymasterAndData: new Uint8Array(),
-          signature: new Uint8Array(),
-        };
-      
-        // Encode the UserOp object for the Ethereum transaction
-        const callData = ethers.utils.defaultAbiCoder.encode(
-          [
-            "address",
-            "uint256",
-            "bytes",
-            "bytes",
-            "uint256",
-            "uint256",
-            "uint256",
-            "uint256",
-            "uint256",
-            "bytes",
-            "bytes"
-          ],
-          [
-            userOp.sender,
-            userOp.nonce,
-            userOp.initCode,
-            userOp.callData,
-            userOp.callGasLimit,
-            userOp.verificationGasLimit,
-            userOp.preVerificationGas,
-            userOp.maxFeePerGas,
-            userOp.maxPriorityFeePerGas,
-            userOp.paymasterAndData,
-            userOp.signature,
-          ]
-        );
-      
-        // Create the transaction object
-        const tx = {
-        //   to: contractAddress,
-          data: callData,
-          // Value, gas limit, and other fields as required
-        };
-      
-        // Sign and send the transaction
-        const transactionResponse = await signer.sendTransaction(tx);
-        console.log(`Transaction hash: ${transactionResponse.hash}`);
-      }
-      
+    const signer = new ethers.Wallet(signingKey);
+    let simpleAccount = await Presets.Builder.SimpleAccount.init(
+      signer, rpcBundlerUrl, { factory: factoryAddr }
+    );
+    const sender = simpleAccount.getSender();
 
-    private clearIntents(): void {
-        this.fromIntent = [];
-        this.toIntent = [];
-    }
+    const client = await Client.init(rpcBundlerUrl);
+    const intent = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ Intents: intents })));
+
+    const builder = new UserOperationBuilder().useDefaults({ sender })
+      .setCallData(intent)
+      .setPreVerificationGas("0x493e0")
+      .setMaxFeePerGas("0x493e0")
+
+
+    const signature = await this.getSignature(chainID, signingKey, entryPointAddr, builder.getOp())
+
+    builder.setSignature(signature);
+
+    await client.sendUserOperation(builder);
+
+
+  }
+
+  packForSignature(userOp: any): string {
+    // Define the types for the ABI encoding
+    const types = [
+      'address',
+      'uint256',
+      'bytes32',
+      'bytes32',
+      'uint256',
+      'uint256',
+      'uint256',
+      'uint256',
+      'uint256',
+      'bytes32',
+    ];
+
+    // Prepare the values, converting BigNumber properties
+    const values = [
+      userOp.sender,
+      BigNumber.from(userOp.nonce.hex || "0"),
+      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.initCode)),
+      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.callData)),
+      BigNumber.from(userOp.callGasLimit.hex || "0"),
+      BigNumber.from(userOp.verificationGasLimit.hex || "0"),
+      BigNumber.from(userOp.preVerificationGas.hex || "0"),
+      BigNumber.from(userOp.maxFeePerGas.hex || "0"),
+      BigNumber.from(userOp.maxPriorityFeePerGas.hex || "0"),
+      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.paymasterAndData)),
+    ];
+
+    // Use ethers.js to encode the data
+    return ethers.utils.defaultAbiCoder.encode(types, values);
+  }
+
+
+  getUserOpHash(entryPointAddr: string, chainID: BigNumber, userOp: IUserOperation): string {
+    const packedForSignature = this.packForSignature(userOp);
+    const packedData = ethers.utils.solidityPack(
+      ['bytes', 'bytes32', 'bytes32'],
+      [packedForSignature, ethers.utils.zeroPad(entryPointAddr, 32), ethers.utils.zeroPad(chainID.toHexString(), 32)]
+    );
+
+    return ethers.utils.keccak256(packedData);
+  }
+
+  async getSignature(
+    chainID: BigNumber,
+    privateKey: string,
+    entryPointAddr: string,
+    userOp: IUserOperation
+  ): Promise<string> {
+    const provider = new ethers.providers.JsonRpcProvider(); // Use appropriate provider
+    const wallet = new ethers.Wallet(privateKey, provider);
+
+
+    const userOpHashObj = this.getUserOpHash(entryPointAddr, chainID, userOp);
+    console.log("userOpHash:", JSON.stringify(userOpHashObj));
+    // Convert BigNumber to bytes array
+    const userOpHash = ethers.utils.arrayify(userOpHashObj);
+
+    // Prefix the hash as per Ethereum signed message format
+    const prefixedHash = ethers.utils.keccak256(
+      ethers.utils.solidityPack(
+        ["string", "bytes"],
+        [`\x19Ethereum Signed Message:\n${userOpHash.length}`, userOpHash]
+      )
+    );
+
+    // Sign the prefixed hash
+    const signature = await wallet.signMessage(ethers.utils.arrayify(prefixedHash));
+
+    // In ethers.js, the v value is already adjusted in the signature, and the s value is normalized as per Ethereum's requirements
+    return signature;
+  }
+
 }
