@@ -1,9 +1,8 @@
 import { IntentBuilder, Intent, Projects } from './src/index';
 import { BigNumber } from 'ethers';
 
-const signingKey = "";
-
-
+const signingKey = ""
+const nodeUrl = ""
 const intentBuilder = new IntentBuilder();
 
 let intents: Intent[] =
@@ -47,7 +46,7 @@ let intents: Intent[] =
     ]
 
 
-intentBuilder.execute(signingKey, intents)
+intentBuilder.execute(signingKey, intents, nodeUrl)
     .then(() => console.log('Intent executed successfully.'))
     .catch((error) => console.error('Error executing intent:', error));
 

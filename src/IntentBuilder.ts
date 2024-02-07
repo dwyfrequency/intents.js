@@ -6,13 +6,11 @@ import { Presets, Client, UserOperationBuilder, IUserOperation } from "userop";
 
 export class IntentBuilder {
 
-
-
-  async execute(signingKey: string, intents: Intent[], salt: BytesLike = "0"): Promise<void> {
+  async execute(signingKey: string, intents: Intent[], nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
 
     const signer = new ethers.Wallet(signingKey);
     let simpleAccount = await Presets.Builder.SimpleAccount.init(
-      signer, rpcBundlerUrl, { factory: factoryAddr }
+      signer, rpcBundlerUrl, { factory: factoryAddr, salt: salt }
     );
     const sender = simpleAccount.getSender();
 
@@ -24,15 +22,38 @@ export class IntentBuilder {
       .setPreVerificationGas("0x493e0")
       .setMaxFeePerGas("0x493e0")
 
+    const nonce = await this.getNonce(sender, nodeUrl)
 
+    builder.setNonce(nonce);
     const signature = await this.getSignature(chainID, signingKey, entryPointAddr, builder.getOp())
 
     builder.setSignature(signature);
 
-    await client.sendUserOperation(builder);
+    const res = await client.sendUserOperation(builder);
+
+    console.log(`UserOpHash: ${res.userOpHash}`);
+    console.log('Waiting for transaction...');
+    let ev = await res.wait();
+    console.log(`Transaction hash: ${JSON.stringify(ev)}`);
+    console.log(`View here: https://jiffyscan.xyz/userOpHash/${res.userOpHash}?network=mumbai`);
 
 
   }
+
+  async getNonce(address: string, nodeUrl: string): Promise<BigNumber> {
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+
+    try {
+      // Get the transaction count (nonce) for the given address
+      const nonce = await provider.getTransactionCount(address);
+      console.log(`Nonce for address ${address} is: ${nonce}`);
+      return BigNumber.from(nonce);
+    } catch (error) {
+      console.error(`Error getting nonce: ${error}`);
+      return BigNumber.from(0);
+
+    }
+  };
 
   packForSignature(userOp: any): string {
     // Define the types for the ABI encoding
@@ -49,17 +70,18 @@ export class IntentBuilder {
       'bytes32',
     ];
 
+
     // Prepare the values, converting BigNumber properties
     const values = [
       userOp.sender,
-      BigNumber.from(userOp.nonce.hex || "0"),
+      BigNumber.from(userOp.nonce),
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.initCode)),
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.callData)),
-      BigNumber.from(userOp.callGasLimit.hex || "0"),
-      BigNumber.from(userOp.verificationGasLimit.hex || "0"),
-      BigNumber.from(userOp.preVerificationGas.hex || "0"),
-      BigNumber.from(userOp.maxFeePerGas.hex || "0"),
-      BigNumber.from(userOp.maxPriorityFeePerGas.hex || "0"),
+      BigNumber.from(userOp.callGasLimit._hex),
+      BigNumber.from(userOp.verificationGasLimit._hex),
+      BigNumber.from(userOp.preVerificationGas._hex),
+      BigNumber.from(userOp.maxFeePerGas._hex),
+      BigNumber.from(userOp.maxPriorityFeePerGas._hex),
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.paymasterAndData)),
     ];
 
