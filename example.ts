@@ -46,7 +46,7 @@ let intents: Intent[] =
     ]
 
 
-intentBuilder.execute(signingKey, intents, nodeUrl)
+intentBuilder.execute(intents, signingKey, nodeUrl)
     .then(() => console.log('Intent executed successfully.'))
     .catch((error) => console.error('Error executing intent:', error));
 

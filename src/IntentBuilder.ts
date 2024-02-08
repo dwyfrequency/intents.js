@@ -6,7 +6,7 @@ import { Presets, Client, UserOperationBuilder, IUserOperation } from "userop";
 
 export class IntentBuilder {
 
-  async execute(signingKey: string, intents: Intent[], nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
+  async execute(intents: Intent[], signingKey: string, nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
 
     const signer = new ethers.Wallet(signingKey);
     let simpleAccount = await Presets.Builder.SimpleAccount.init(
