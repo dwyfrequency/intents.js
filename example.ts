@@ -1,7 +1,11 @@
 import { IntentBuilder, Intent, Projects } from './src/index';
-import { BigNumber } from 'ethers';
+import { ethers,BigNumber } from 'ethers';
 
-const signingKey = ""
+
+
+const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+const signer = provider.getSigner();
+
 const nodeUrl = ""
 const intentBuilder = new IntentBuilder();
 
@@ -46,7 +50,7 @@ let intents: Intent[] =
     ]
 
 
-intentBuilder.execute(intents, signingKey, nodeUrl)
+intentBuilder.execute(intents, signer, nodeUrl)
     .then(() => console.log('Intent executed successfully.'))
     .catch((error) => console.error('Error executing intent:', error));
 

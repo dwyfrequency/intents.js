@@ -6,9 +6,8 @@ import { Presets, Client, UserOperationBuilder, IUserOperation } from "userop";
 
 export class IntentBuilder {
 
-  async execute(intents: Intent[], signingKey: string, nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
+  async execute(intents: Intent[], signer: ethers.Signer, nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
 
-    const signer = new ethers.Wallet(signingKey);
     let simpleAccount = await Presets.Builder.SimpleAccount.init(
       signer, rpcBundlerUrl, { factory: factoryAddr, salt: salt }
     );
@@ -25,7 +24,7 @@ export class IntentBuilder {
     const nonce = await this.getNonce(sender, nodeUrl)
 
     builder.setNonce(nonce);
-    const signature = await this.getSignature(chainID, signingKey, entryPointAddr, builder.getOp())
+    const signature = await this.getSignature(chainID, signer, entryPointAddr, builder.getOp())
 
     builder.setSignature(signature);
 
@@ -102,13 +101,10 @@ export class IntentBuilder {
 
   async getSignature(
     chainID: BigNumber,
-    privateKey: string,
+    signer: ethers.Signer,
     entryPointAddr: string,
     userOp: IUserOperation
   ): Promise<string> {
-    const provider = new ethers.providers.JsonRpcProvider(); // Use appropriate provider
-    const wallet = new ethers.Wallet(privateKey, provider);
-
 
     const userOpHashObj = this.getUserOpHash(entryPointAddr, chainID, userOp);
     console.log("userOpHash:", JSON.stringify(userOpHashObj));
@@ -124,7 +120,7 @@ export class IntentBuilder {
     );
 
     // Sign the prefixed hash
-    const signature = await wallet.signMessage(ethers.utils.arrayify(prefixedHash));
+    const signature = await signer.signMessage(ethers.utils.arrayify(prefixedHash));
 
     // In ethers.js, the v value is already adjusted in the signature, and the s value is normalized as per Ethereum's requirements
     return signature;

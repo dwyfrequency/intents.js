@@ -33,7 +33,6 @@ const intentBuilder = new IntentBuilder();
 After initializing the SDK, you need to configure it with your signing key and node URL. Replace the placeholders with your actual signing key and node URL:
 
 ```tsx
-const signingKey = "<Your_Signing_Key_Here>";
 const nodeUrl = "<Your_Node_URL_Here>";
 ```
 
