@@ -6,6 +6,16 @@ import { Presets, Client, UserOperationBuilder, IUserOperation } from "userop";
 
 export class IntentBuilder {
 
+  async getSender(signer: ethers.Signer, salt: BytesLike = "0"): Promise<string> {
+
+      const simpleAccount = await Presets.Builder.SimpleAccount.init(
+        signer, rpcBundlerUrl, { factory: factoryAddr, salt: salt }
+      );
+      const sender = simpleAccount.getSender();
+
+      return sender;
+  }
+
   async execute(intents: Intent[], signer: ethers.Signer, nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
 
     let simpleAccount = await Presets.Builder.SimpleAccount.init(
