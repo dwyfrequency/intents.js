@@ -1,12 +1,14 @@
+import { SigningKey } from 'ethers/lib/utils';
 import { IntentBuilder, Intent, Projects } from './src/index';
-import { ethers,BigNumber } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 
 
 
-const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-const signer = provider.getSigner();
+// const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+// const signer = provider.getSigner();
 
-const nodeUrl = ""
+const nodeUrl = "https://virtual.polygon.rpc.tenderly.co/6f40bb2c-e690-4c11-8f33-6f658695c12b"
+const signingKey = "031ce39458d86fe55c19828d9ac9212277e1ddc0a0e5b168e494f42a299d5849"
 const intentBuilder = new IntentBuilder();
 
 let intents: Intent[] =
@@ -50,10 +52,9 @@ let intents: Intent[] =
     ]
 
 
-intentBuilder.execute(intents, signer, nodeUrl)
+intentBuilder.execute(intents, signingKey, nodeUrl)
     .then(() => console.log('Intent executed successfully.'))
     .catch((error) => console.error('Error executing intent:', error));
-
 
 
 
