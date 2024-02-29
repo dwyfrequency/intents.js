@@ -88,7 +88,7 @@ After setting up your intents array, the next step is to execute these intents u
 
 ```tsx
 
-intentBuilder.execute(intents, signingKey, nodeUrl)
+intentBuilder.execute(intents, signer, nodeUrl)
     .then(() => console.log('Intent executed successfully.'))
     .catch((error) => console.error('Error executing intent:', error));
 
