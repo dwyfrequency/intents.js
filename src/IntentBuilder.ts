@@ -1,133 +1,134 @@
-import { ethers, BytesLike, BigNumber } from 'ethers';
-import { Intent } from './InterfaceIntent';
-import { rpcBundlerUrl, chainID, entryPointAddr, factoryAddr } from './Constants';
-import { Presets, Client, UserOperationBuilder, IUserOperation } from "userop";
-
+import { ethers, BytesLike } from 'ethers'
+import { Intent } from './InterfaceIntent'
+import { rpcBundlerUrl, factoryAddr, entryPointAddr, chainID } from './Constants'
+import { Presets, Client, UserOperationBuilder } from 'userop'
 
 export class IntentBuilder {
+  public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
+    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, rpcBundlerUrl, {
+      factory: factoryAddr,
+      salt: salt,
+    })
+    const sender = simpleAccount.getSender()
 
-  async execute(intents: Intent[], signingKey: string, nodeUrl: string, salt: BytesLike = "0"): Promise<void> {
+    return sender
+  }
 
-    const signer = new ethers.Wallet(signingKey);
-    let simpleAccount = await Presets.Builder.SimpleAccount.init(
-      signer, rpcBundlerUrl, { factory: factoryAddr, salt: salt }
-    );
-    const sender = simpleAccount.getSender();
+  async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string, salt: BytesLike = '0'): Promise<void> {
+    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, rpcBundlerUrl, {
+      factory: factoryAddr,
+      salt: salt,
+    })
+    let ownerAddress = await signer.getAddress()
+    ownerAddress = ownerAddress.substring(2, ownerAddress.length) //remove 0x value
+    const sender = simpleAccount.getSender()
 
-    const client = await Client.init(rpcBundlerUrl);
-    const intent = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ Intents: intents })));
-
-    const builder = new UserOperationBuilder().useDefaults({ sender })
-      .setCallData(intent)
-      .setPreVerificationGas("0x493e0")
-      .setMaxFeePerGas("0x493e0")
-
+    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents))
     const nonce = await this.getNonce(sender, nodeUrl)
+    const initCode = await this.getInitCode(ownerAddress, sender, nodeUrl)
 
-    builder.setNonce(nonce);
-    const signature = await this.getSignature(chainID, signingKey, entryPointAddr, builder.getOp())
+    const builder = new UserOperationBuilder()
+      .useDefaults({ sender })
+      .setCallData(intent)
+      .setPreVerificationGas('0x493E0')
+      .setMaxFeePerGas('0')
+      .setMaxPriorityFeePerGas('0')
+      .setVerificationGasLimit('0x493E0')
+      .setCallGasLimit('0x493E0')
+      .setNonce(nonce)
+      .setInitCode(initCode)
 
-    builder.setSignature(signature);
+    const signature = await this.getSignature(signer, builder)
+    builder.setSignature(signature)
 
-    const res = await client.sendUserOperation(builder);
+    const client = await Client.init(rpcBundlerUrl)
 
-    console.log(`UserOpHash: ${res.userOpHash}`);
-    console.log('Waiting for transaction...');
-    let ev = await res.wait();
-    console.log(`Transaction hash: ${JSON.stringify(ev)}`);
-    console.log(`View here: https://jiffyscan.xyz/userOpHash/${res.userOpHash}?network=mumbai`);
+    const res = await client.sendUserOperation(builder, {
+      onBuild: op => console.log('Signed UserOperation:', op),
+    })
 
+    console.log(`UserOpHash: ${res.userOpHash}`)
+    console.log('Waiting for transaction...')
 
   }
 
-  async getNonce(address: string, nodeUrl: string): Promise<BigNumber> {
-    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+
+  private async getInitCode(ownerAddress: string, sender: string, nodeUrl: string) {
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl)
+    const code = await provider.getCode(sender)
+    return code !== '0x'
+      ? '0x'
+      : `0x42E60c23aCe33c23e0945a07f6e2c1E53843a1d55fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async getSignature(signer: ethers.Signer, builder: any) {
+    const packedData = ethers.utils.defaultAbiCoder.encode(
+      ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
+      [
+        builder.getSender(),
+        builder.getNonce(),
+        ethers.utils.keccak256(builder.getInitCode()),
+        ethers.utils.keccak256(builder.getCallData()),
+        builder.getCallGasLimit(),
+        builder.getVerificationGasLimit(),
+        builder.getPreVerificationGas(),
+        builder.getMaxFeePerGas(),
+        builder.getMaxPriorityFeePerGas(),
+        ethers.utils.keccak256(builder.getPaymasterAndData()),
+      ]
+    )
+
+    const enc = ethers.utils.defaultAbiCoder.encode(
+      ['bytes32', 'address', 'uint256'],
+      [ethers.utils.keccak256(packedData), entryPointAddr, chainID]
+    )
+
+    const userOpHash = ethers.utils.keccak256(enc)
+
+    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash))
+
+    return signature
+  }
+
+  private async getNonce(sender: string, nodeUrl: string) {
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl)
+    const abi = [
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'sender',
+            type: 'address',
+          },
+          {
+            internalType: 'uint192',
+            name: 'key',
+            type: 'uint192',
+          },
+        ],
+        name: 'getNonce',
+        outputs: [
+          {
+            internalType: 'uint256',
+            name: 'nonce',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ]
+
+    // Create a contract instance
+    const contract = new ethers.Contract(entryPointAddr, abi, provider)
 
     try {
-      // Get the transaction count (nonce) for the given address
-      const nonce = await provider.getTransactionCount(address);
-      console.log(`Nonce for address ${address} is: ${nonce}`);
-      return BigNumber.from(nonce);
+      const nonce = await contract.getNonce(sender, '0')
+      console.log('Nonce:', nonce.toString())
+      return nonce.toString()
     } catch (error) {
-      console.error(`Error getting nonce: ${error}`);
-      return BigNumber.from(0);
-
+      console.error('Error getting nonce:', error)
     }
-  };
-
-  packForSignature(userOp: any): string {
-    // Define the types for the ABI encoding
-    const types = [
-      'address',
-      'uint256',
-      'bytes32',
-      'bytes32',
-      'uint256',
-      'uint256',
-      'uint256',
-      'uint256',
-      'uint256',
-      'bytes32',
-    ];
-
-
-    // Prepare the values, converting BigNumber properties
-    const values = [
-      userOp.sender,
-      BigNumber.from(userOp.nonce),
-      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.initCode)),
-      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.callData)),
-      BigNumber.from(userOp.callGasLimit._hex),
-      BigNumber.from(userOp.verificationGasLimit._hex),
-      BigNumber.from(userOp.preVerificationGas._hex),
-      BigNumber.from(userOp.maxFeePerGas._hex),
-      BigNumber.from(userOp.maxPriorityFeePerGas._hex),
-      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userOp.paymasterAndData)),
-    ];
-
-    // Use ethers.js to encode the data
-    return ethers.utils.defaultAbiCoder.encode(types, values);
   }
-
-
-  getUserOpHash(entryPointAddr: string, chainID: BigNumber, userOp: IUserOperation): string {
-    const packedForSignature = this.packForSignature(userOp);
-    const packedData = ethers.utils.solidityPack(
-      ['bytes', 'bytes32', 'bytes32'],
-      [packedForSignature, ethers.utils.zeroPad(entryPointAddr, 32), ethers.utils.zeroPad(chainID.toHexString(), 32)]
-    );
-
-    return ethers.utils.keccak256(packedData);
-  }
-
-  async getSignature(
-    chainID: BigNumber,
-    privateKey: string,
-    entryPointAddr: string,
-    userOp: IUserOperation
-  ): Promise<string> {
-    const provider = new ethers.providers.JsonRpcProvider(); // Use appropriate provider
-    const wallet = new ethers.Wallet(privateKey, provider);
-
-
-    const userOpHashObj = this.getUserOpHash(entryPointAddr, chainID, userOp);
-    console.log("userOpHash:", JSON.stringify(userOpHashObj));
-    // Convert BigNumber to bytes array
-    const userOpHash = ethers.utils.arrayify(userOpHashObj);
-
-    // Prefix the hash as per Ethereum signed message format
-    const prefixedHash = ethers.utils.keccak256(
-      ethers.utils.solidityPack(
-        ["string", "bytes"],
-        [`\x19Ethereum Signed Message:\n${userOpHash.length}`, userOpHash]
-      )
-    );
-
-    // Sign the prefixed hash
-    const signature = await wallet.signMessage(ethers.utils.arrayify(prefixedHash));
-
-    // In ethers.js, the v value is already adjusted in the signature, and the s value is normalized as per Ethereum's requirements
-    return signature;
-  }
-
 }
