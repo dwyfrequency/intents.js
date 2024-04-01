@@ -34,7 +34,7 @@ export class IntentBuilder {
       .setMaxFeePerGas('0')
       .setMaxPriorityFeePerGas('0')
       .setVerificationGasLimit('0x493E0')
-      .setCallGasLimit('0x493E0')
+      .setCallGasLimit('0xC3500')
       .setNonce(nonce)
       .setInitCode(initCode)
 
@@ -58,7 +58,7 @@ export class IntentBuilder {
     const code = await provider.getCode(sender)
     return code !== '0x'
       ? '0x'
-      : `0x42E60c23aCe33c23e0945a07f6e2c1E53843a1d55fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`
+      : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
