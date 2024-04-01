@@ -1,4 +1,4 @@
-# Intent.js SDK
+# Intents.js SDK
 
 ## Getting Started
 
