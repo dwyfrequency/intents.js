@@ -4,18 +4,18 @@
 
 ### 1. Installation
 
-To include `intent.js` in your project, ensure you have Node.js and npm installed in your environment and run the following command:
+To include `intents.js` in your project, ensure you have Node.js and npm installed in your environment and run the following command:
 
 ```bash
-npm install intent.js
+npm install intents.js
 ```
 
 ### 2. Setup
 
-Import `intent.js` into your project to begin defining intents:
+Import `intents.js` into your project to begin defining intents:
 
 ```tsx
-import { IntentBuilder, Intent, Projects } from 'intent.js';
+import { IntentBuilder, InterfaceIntent, Projects } from 'intents.js';
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ const nodeUrl = "<Your_Node_URL_Here>";
 To build an array of intents for our bundler to solve, you can directly utilize the predefined interfaces. Here's an example demonstrating how to construct the `intents` array with specific transaction intentions:
 
 ```tsx
-const intents: Intent[] = [
+const intents: InterfaceIntent = 
     {
         from: {
             type: "TOKEN",
@@ -61,24 +61,8 @@ const intents: Intent[] = [
             partiallyFillable: false,
             kind: "sell"
         }
-    },
-    {
-        from: {
-            type: "TOKEN",
-            address: "NATIVE", // ETH as native currency
-            amount: 2300,
-            chainId: BigNumber.from("1"),
-        },
-        to: {
-            type: "STAKE",
-            address: Projects.Staking.Lido // Staking in Lido project
-        },
-        extraData: {
-            expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // 24 hours from now
-            kind: "stake"
-        }
     }
-];
+
 ```
 
 
@@ -95,7 +79,7 @@ intentBuilder.execute(intents, signer, nodeUrl)
 ```
 ### 4. Utilizing the Projects Class for Staking Providers
 
-The `intent.js` SDK simplifies interactions with staking operations through the `Projects` class. This utility class provides quick access to the addresses of well-known staking providers, making it easier to reference them when building staking-related intents. 
+The `intents.js` SDK simplifies interactions with staking operations through the `Projects` class. This utility class provides quick access to the addresses of well-known staking providers, making it easier to reference them when building staking-related intents. 
 
 #### Available Staking Providers:
 
@@ -112,6 +96,10 @@ The `intent.js` SDK simplifies interactions with staking operations through the 
 - `Origin`
 - `Frax`
 - `Coinbase`
+- `Aave`
+- `Compound`
+- `Spark`
+- `SushiSwap`
 
 #### Example of Usage:
 
