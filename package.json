@@ -1,7 +1,8 @@
 {
-  "name": "intent",
-  "version": "1.0.0",
+  "name": "intents.js",
+  "version": "0.6.1",
   "description": "",
+  "private": true,
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -10,8 +11,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blndgs/intents.js.git"
+  },
+  "homepage": "https://app.balloondogs.network/",
   "dependencies": {
     "ethers": "5.7.0",
+    "intents.js": "^1.0.0",
     "userop": "^0.3.8"
   },
   "devDependencies": {
