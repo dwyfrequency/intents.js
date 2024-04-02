@@ -1,32 +1,32 @@
 interface CurrencyFrom {
 	type: 'TOKEN'
 	address: string
-	amount: string
+	amount: bigint
 	chainId: number | string // Allow both number and string
 }
 
 interface CurrencyTo {
 	type: 'TOKEN'
 	address: string
-	amount: string
+	amount: bigint
 	chainId: number | string // Allow both number and string
 }
 
 interface LiquidityProvidingTo {
 	type: 'LiquidityProviding',
 	asset_0: string, //ERC20 address
-	amount_0: number,
+	amount_0: bigint,
 	asset_1: string, //ERC20 address
-	amount_1: number,
+	amount_1: bigint,
 	address?: string //Explicit mention of a DeFi project. If empty - Solver will provide the best yield for this asset 
 }
 
 interface LiquidityWithdrawFrom {
 	type: 'LiquidityWithdraw',
 	tokenId: number | string // Allow both number and string,
-	liquidity: number,
-	amount0Min: number,
-	amount1Min: number,
+	liquidity: bigint,
+	amount0Min: bigint,
+	amount1Min: bigint,
 	deadline: Date
 	address: string 
 }
@@ -34,20 +34,21 @@ interface LiquidityWithdrawFrom {
 interface LoanTo {
 	type: 'Loan',
 	asset: string, //ERC20 address
-	amount: number,
+	amount: bigint,
 	address?: string //Explicit mention of a DeFi project. If empty - Solver will provide the best yield for this asset 
 }
 
 interface LoanFrom {
 	type: 'Loan',
 	asset: string, //ERC20 address
-	amount: number,
+	amount: bigint,
 	address: string 
 }
 
 interface StakeTo {
 	type: 'STAKE'
-	address?: string
+	address?: string,
+	amount: bigint,
 	chainId?: number | string // Allow both number and string
 }
 
