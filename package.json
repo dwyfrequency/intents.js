@@ -1,12 +1,17 @@
 {
   "name": "intents.js",
-  "version": "0.6.3",
+  "version": "0.6.6",
   "description": "Abstract State Change Expression Library",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "test": "mocha"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,6 +23,7 @@
   "dependencies": {
     "ethers": "5.7.0",
     "intents.js": "^1.0.0",
+    "typescript": "^5.4.3",
     "userop": "^0.3.8"
   },
   "devDependencies": {

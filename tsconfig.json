@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "outDir": "./dist",  // Output directory for compiled files
+      "module": "CommonJS", // Module system
+      "target": "ES6",      // Compilation target
+      "declaration": true,  // Generate type declaration (.d.ts) files
+      "esModuleInterop": true,
+      "strict": true
+    },
+    "include": ["./src/**/*"], // Adjust if your files are in a different directory
+    "exclude": ["node_modules", "dist"]
+  }
+  
