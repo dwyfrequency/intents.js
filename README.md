@@ -2,6 +2,8 @@
 
 ## Getting Started
 
+See intents.js documentation at [docs.balloondogs.network](https://docs.balloondogs.network/solution/sdk)
+
 ### 1. Installation
 
 To include `intents.js` in your project, ensure you have Node.js and npm installed in your environment and run the following command:

@@ -1,8 +1,7 @@
 {
   "name": "intents.js",
-  "version": "0.6.1",
-  "description": "",
-  "private": true,
+  "version": "0.6.3",
+  "description": "Abstract State Change Expression Library",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -15,7 +14,7 @@
     "type": "git",
     "url": "https://github.com/blndgs/intents.js.git"
   },
-  "homepage": "https://app.balloondogs.network/",
+  "homepage": "https://balloondogs.network/",
   "dependencies": {
     "ethers": "5.7.0",
     "intents.js": "^1.0.0",
