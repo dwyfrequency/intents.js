@@ -1,10 +1,9 @@
 {
   "name": "intents.js",
-  "version": "0.6.10",
+  "version": "0.6.11",
   "description": "Abstract State Change Expression Library",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "mocha"

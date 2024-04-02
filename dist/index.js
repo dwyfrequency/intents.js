@@ -15,5 +15,4 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Projects"), exports);
-__exportStar(require("./InterfaceIntent"), exports);
 __exportStar(require("./IntentBuilder"), exports);
