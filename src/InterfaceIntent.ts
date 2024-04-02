@@ -30,3 +30,4 @@ interface CurrencyFrom {
 	to: CurrencyTo | StakeTo
 	extraData?: ExtraData
   }
+  
