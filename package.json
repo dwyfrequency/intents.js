@@ -1,6 +1,6 @@
 {
   "name": "intents.js",
-  "version": "0.6.15",
+  "version": "0.6.16",
   "description": "Abstract State Change Expression Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,6 +22,7 @@
   "dependencies": {
     "ethers": "5.7.0",
     "intents.js": "^1.0.0",
+    "logrocket": "^8.1.0",
     "typescript": "^5.4.3",
     "userop": "^0.3.8"
   },

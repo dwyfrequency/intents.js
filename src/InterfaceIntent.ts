@@ -4,6 +4,12 @@ interface CurrencyFrom {
 	amount: string
 	chainId: number | string // Allow both number and string
   }
+  interface Loan {
+	type: 'Loan',
+	asset: string, //ERC20 address
+	amount: number, 
+	address: string 
+  }
   
   interface CurrencyTo {
 	type: 'TOKEN'
@@ -26,8 +32,8 @@ interface CurrencyFrom {
   
   export interface Intent {
 	sender: string
-	from: CurrencyFrom
-	to: CurrencyTo | StakeTo
+	from: CurrencyFrom | Loan
+	to: CurrencyTo | StakeTo | Loan
 	extraData?: ExtraData
   }
   
