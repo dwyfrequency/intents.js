@@ -6,9 +6,10 @@ interface CurrencyFrom {
 }
 interface Loan {
     type: 'LOAN';
-    asset: string;
-    amount: number;
+    asset?: string;
+    amount?: number;
     address: string;
+    chainId: number | string;
 }
 interface CurrencyTo {
     type: 'TOKEN';

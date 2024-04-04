@@ -6,9 +6,10 @@ interface CurrencyFrom {
   }
   interface Loan {
 	type: 'LOAN',
-	asset: string, //ERC20 address
-	amount: number, 
-	address: string 
+	asset?: string, //ERC20 address
+	amount?: number, 
+	address: string,
+	chainId: number | string // Allow both number and string
   }
   
   interface CurrencyTo {
