@@ -14,8 +14,8 @@ const ethers_1 = require("ethers");
 const Constants_1 = require("./Constants");
 const userop_1 = require("userop");
 class IntentBuilder {
-    getSender(signer_1) {
-        return __awaiter(this, arguments, void 0, function* (signer, salt = '0') {
+    getSender(signer, salt = '0') {
+        return __awaiter(this, void 0, void 0, function* () {
             const simpleAccount = yield userop_1.Presets.Builder.SimpleAccount.init(signer, Constants_1.rpcBundlerUrl, {
                 factory: Constants_1.factoryAddr,
                 salt: salt,
@@ -24,8 +24,8 @@ class IntentBuilder {
             return sender;
         });
     }
-    execute(intents_1, signer_1, nodeUrl_1) {
-        return __awaiter(this, arguments, void 0, function* (intents, signer, nodeUrl, salt = '0') {
+    execute(intents, signer, nodeUrl, salt = '0') {
+        return __awaiter(this, void 0, void 0, function* () {
             const simpleAccount = yield userop_1.Presets.Builder.SimpleAccount.init(signer, Constants_1.rpcBundlerUrl, {
                 factory: Constants_1.factoryAddr,
                 salt: salt,

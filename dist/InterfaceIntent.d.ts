@@ -4,6 +4,12 @@ interface CurrencyFrom {
     amount: string;
     chainId: number | string;
 }
+interface Loan {
+    type: 'Loan';
+    asset: string;
+    amount: number;
+    address: string;
+}
 interface CurrencyTo {
     type: 'TOKEN';
     address: string;
@@ -22,8 +28,8 @@ interface ExtraData {
 }
 export interface Intent {
     sender: string;
-    from: CurrencyFrom;
-    to: CurrencyTo | StakeTo;
+    from: CurrencyFrom | Loan;
+    to: CurrencyTo | StakeTo | Loan;
     extraData?: ExtraData;
 }
 export {};
