@@ -5,7 +5,7 @@ interface CurrencyFrom {
     chainId: number | string;
 }
 interface Loan {
-    type: 'Loan';
+    type: 'LOAN';
     asset: string;
     amount: number;
     address: string;
