@@ -1,7 +1,7 @@
 interface CurrencyFrom {
     type: 'TOKEN';
     address: string;
-    amount: string;
+    amount: number;
     chainId: number | string;
 }
 interface Loan {
