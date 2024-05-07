@@ -1,6 +1,6 @@
 {
   "name": "intents.js",
-  "version": "0.6.20",
+  "version": "0.7.0",
   "description": "Abstract State Change Expression Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
