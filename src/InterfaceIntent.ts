@@ -1,8 +1,8 @@
 interface Currency {
   type: 'TOKEN';
   address: string;
-  amount: number;
-  chainId: number;
+  amount: string;
+  chainId: string;
 }
 
 interface Loan {
@@ -10,13 +10,13 @@ interface Loan {
   asset?: string; //ERC20 address
   amount?: number;
   address: string;
-  chainId: number;
+  chainId: string;
 }
 
 interface Stake {
   type: 'STAKE';
   address?: string;
-  chainId?: number;
+  chainId?: string;
 }
 
 interface ExtraData {

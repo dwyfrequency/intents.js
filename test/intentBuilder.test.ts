@@ -28,7 +28,7 @@ describe('execute function use cases tests', () => {
     intentBuilder = new IntentBuilder();
     randomAccount = generateRandomAccount();
     signer = randomAccount;
-    sender = await intentBuilder.getSender(signer, randomToBytesLike());
+    sender = await intentBuilder.getSender(signer);
   });
 
   it('should have an initial ETH balance of 0', async () => {
@@ -37,8 +37,6 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('should faucet the account with 1 ETH and check the balance', async () => {
-    const oneEthInWei = ethers.utils.parseEther('1').toHexString();
-
     // Faucet the account with 1 ETH
     await intentBuilder.faucet(sender);
 
@@ -53,13 +51,13 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'TOKEN',
         address: TOKENS.Dai,
-        chainId: CHAINS.ethereum.id,
+        chainId: '1',
       },
     } as Intent;
 
