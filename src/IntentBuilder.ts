@@ -181,8 +181,8 @@ export class IntentBuilder {
       console.error('Error:', error);
     }
   }
-  
-  public async checkBalance(address: string, nodeUrl: string, tokenAddress?: string): Promise<void> {
+
+  public async checkBalance(address: string, nodeUrl: string, tokenAddress?: string): Promise<string> {
     const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
 
     try {
@@ -200,15 +200,19 @@ export class IntentBuilder {
 
         const contract = new ethers.Contract(tokenAddress, abi, provider);
         const balance = await contract.balanceOf(address);
-        console.log(`ERC20 Balance: ${ethers.utils.formatUnits(balance, 18)}`);
+        const formattedBalance = ethers.utils.formatUnits(balance, 18);
+        console.log(`ERC20 Balance: ${formattedBalance}`);
+        return formattedBalance;
       } else {
         // ETH balance check
         const balance = await provider.getBalance(address);
-        console.log(`ETH Balance: ${ethers.utils.formatEther(balance)}`);
+        const formattedBalance = ethers.utils.formatEther(balance);
+        console.log(`ETH Balance: ${formattedBalance}`);
+        return formattedBalance;
       }
     } catch (error) {
       console.error('Error checking balance:', error);
+      return '0';
     }
   }
-
 }

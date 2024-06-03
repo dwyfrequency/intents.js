@@ -26,10 +26,42 @@ function randomToBytesLike(): ethers.BytesLike {
   return ethers.utils.hexZeroPad(hexString, 32);
 }
 
+function generateRandomAccount(): ethers.Wallet {
+  const randomBytes = ethers.utils.randomBytes(32);
+  const privateKey = ethers.utils.hexlify(randomBytes);
+  return new ethers.Wallet(privateKey);
+}
+
+
 describe('execute function use cases tests', async () => {
-  const intentBuilder = new IntentBuilder();
-  const sender = await intentBuilder.getSender(signer, randomToBytesLike());
+  let intentBuilder: IntentBuilder;
+  let randomAccount: ethers.Wallet;
+  let sender: string;
+  let signer: ethers.Wallet;
   
+  beforeAll(async () => {
+    intentBuilder = new IntentBuilder();
+    randomAccount = generateRandomAccount();
+    signer = randomAccount;
+    sender = await intentBuilder.getSender(signer, randomToBytesLike());
+  });
+
+  it('should have an initial ETH balance of 0', async () => {
+    const balance = await intentBuilder.checkBalance(sender, nodeUrl);
+    expect(parseFloat(balance)).toBe(0);
+  });
+
+  it('should faucet the account with 1 ETH and check the balance', async () => {
+    const oneEthInWei = ethers.utils.parseEther('1').toHexString();
+
+    // Faucet the account with 1 ETH
+    await intentBuilder.faucet(sender, oneEthInWei, nodeUrl);
+
+    // Check the balance after faucet
+    const balanceAfter = await intentBuilder.checkBalance(sender, nodeUrl);
+    expect(parseFloat(balanceAfter)).toBe(1);
+  });
+
   it('ETH -> ERC20 Swap', async () => {
     const intents = {
       sender: sender,
