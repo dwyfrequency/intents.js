@@ -160,4 +160,55 @@ export class IntentBuilder {
       console.error('Error getting nonce:', error)
     }
   }
+
+  public async faucet(address: string, amount: string, nodeUrl: string): Promise<void> {
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+
+    // Define the JSON-RPC request for the tenderly_addBalance method
+    const method = 'tenderly_addBalance';
+    const params = [[address], amount];
+    const jsonRpcRequest = {
+      jsonrpc: '2.0',
+      method: method,
+      params: params,
+      id: 1, // The ID can be any number or string
+    };
+
+    try {
+      const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
+      console.log('Response:', response);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
+  public async checkBalance(address: string, nodeUrl: string, tokenAddress?: string): Promise<void> {
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+
+    try {
+      if (tokenAddress) {
+        // ERC20 balance check
+        const abi = [
+          {
+            constant: true,
+            inputs: [{ name: '_owner', type: 'address' }],
+            name: 'balanceOf',
+            outputs: [{ name: 'balance', type: 'uint256' }],
+            type: 'function',
+          },
+        ];
+
+        const contract = new ethers.Contract(tokenAddress, abi, provider);
+        const balance = await contract.balanceOf(address);
+        console.log(`ERC20 Balance: ${ethers.utils.formatUnits(balance, 18)}`);
+      } else {
+        // ETH balance check
+        const balance = await provider.getBalance(address);
+        console.log(`ETH Balance: ${ethers.utils.formatEther(balance)}`);
+      }
+    } catch (error) {
+      console.error('Error checking balance:', error);
+    }
+  }
+
 }
