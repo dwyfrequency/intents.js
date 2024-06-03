@@ -183,7 +183,6 @@ describe('execute function use cases tests', async () => {
         address: Projects.Aave,
         asset: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
-        amount: 0,
       },
     } as Intent;
 
@@ -205,7 +204,6 @@ describe('execute function use cases tests', async () => {
         address: Projects.Aave,
         asset: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
-        amount: 0,
       },
     } as Intent;
 
@@ -227,7 +225,6 @@ describe('execute function use cases tests', async () => {
         address: Projects.Aave,
         asset: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
-        amount: 0,
       },
     } as Intent;
 
@@ -249,7 +246,6 @@ describe('execute function use cases tests', async () => {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
-        amount: 0,
       },
     } as Intent;
 
@@ -271,7 +267,6 @@ describe('execute function use cases tests', async () => {
         type: 'TOKEN',
         address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
-        amount: 0,
       },
     } as Intent;
 
