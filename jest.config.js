@@ -1,5 +1,8 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
-};
+    preset: 'ts-jest',
+    testEnvironment: 'node',
+    moduleNameMapper: {
+      'node-fetch': 'node-fetch/lib/index.js' // Ensures compatibility
+    },
+  };
+  

@@ -18,7 +18,8 @@ export class IntentBuilder {
   async fetchWithNodeFetch(url: string, options: any) {
     const isNode = typeof window === 'undefined';
     if (isNode) {
-      const fetch = (await import('node-fetch')).default;
+      const fetchModule = await import('node-fetch');
+      const fetch = fetchModule.default;
       return fetch(url, options);
     } else {
       return window.fetch(url, options);
