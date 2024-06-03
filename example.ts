@@ -1,4 +1,4 @@
-import { IntentBuilder, Intent } from './src/index';
+import { IntentBuilder, Intent } from './src';
 import { ethers } from 'ethers';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -8,12 +8,12 @@ const nodeUrl = '';
 
 const intentBuilder = new IntentBuilder();
 
-let intents: Intent = {
+const intents: Intent = {
   sender: '',
   from: {
     type: 'TOKEN',
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    amount: '2300',
+    amount: 2300,
     chainId: '1',
   },
   to: {

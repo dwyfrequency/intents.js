@@ -1,7 +1,7 @@
-import { ethers, BytesLike } from 'ethers';
+import { BytesLike, ethers } from 'ethers';
 import { Intent } from './InterfaceIntent';
-import { rpcBundlerUrl, factoryAddr, entryPointAddr, chainID } from './Constants';
-import { Presets, Client, UserOperationBuilder } from 'userop';
+import { chainID, entryPointAddr, factoryAddr, rpcBundlerUrl } from './Constants';
+import { Client, Presets, UserOperationBuilder } from 'userop';
 
 export class IntentBuilder {
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
@@ -9,9 +9,7 @@ export class IntentBuilder {
       factory: factoryAddr,
       salt: salt,
     });
-    const sender = simpleAccount.getSender();
-
-    return sender;
+    return simpleAccount.getSender();
   }
 
   async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string, salt: BytesLike = '0'): Promise<void> {
@@ -84,9 +82,7 @@ export class IntentBuilder {
 
     const userOpHash = ethers.utils.keccak256(enc);
 
-    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash));
-
-    return signature;
+    return await signer.signMessage(ethers.utils.arrayify(userOpHash));
   }
 
   private async getNonce(sender: string, nodeUrl: string) {
