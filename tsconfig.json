@@ -4,7 +4,7 @@
     "target": "es6",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": ".",  // Set to the parent directory of both src and test
+    "rootDir": ".", // Set to the parent directory of both src and test
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

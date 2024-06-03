@@ -28,7 +28,7 @@ export class IntentBuilder {
 
   async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string): Promise<void> {
     let ownerAddress = await signer.getAddress();
-    console.log("ownerAddress " + ownerAddress)
+    console.log('ownerAddress ' + ownerAddress);
     ownerAddress = ownerAddress.substring(2, ownerAddress.length); //remove 0x value
     const sender = intents.sender;
 
