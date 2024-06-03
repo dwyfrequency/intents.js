@@ -1,6 +1,6 @@
 import { ethers, BytesLike } from 'ethers'
 import { Intent } from './InterfaceIntent'
-import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID } from './Constants'
+import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID, NODE_URL } from './Constants'
 import { Presets, Client, UserOperationBuilder } from 'userop'
 
 
@@ -161,14 +161,17 @@ export class IntentBuilder {
     }
   }
 
-  public async faucet(address: string, amount: string, nodeUrl: string): Promise<void> {
-    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+  public async faucet(addrss: string) {
+    // Import ethers
+
+    // Connect to your Ethereum node or gateway
+    const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 
     // Define the JSON-RPC request for the tenderly_addBalance method
-    const method = 'tenderly_addBalance';
-    const params = [[address], amount];
+    const method = "tenderly_addBalance";
+    const params = [[addrss], "0x6f05b59d3b20000"];
     const jsonRpcRequest = {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       method: method,
       params: params,
       id: 1, // The ID can be any number or string
@@ -177,6 +180,7 @@ export class IntentBuilder {
     try {
       const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
       console.log('Response:', response);
+      window.location.reload()
     } catch (error) {
       console.error('Error:', error);
     }
@@ -215,4 +219,5 @@ export class IntentBuilder {
       return '0';
     }
   }
+
 }
