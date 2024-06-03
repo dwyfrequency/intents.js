@@ -12,10 +12,27 @@ const privateKey = '';
 const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
 const signer = new ethers.Wallet(privateKey, provider);
 
-describe('execute function use cases tests', () => {
+
+function randomToBytesLike(): ethers.BytesLike {
+  // Generate a random number using Math.random() and convert it to a hex string
+  const randomNum = Math.random();
+  
+  // Convert the random number to a string representing its hexadecimal value
+  // Scale the random number to a larger integer range to get more bytes
+  const hexString = ethers.utils.hexlify(Math.floor(randomNum * Number.MAX_SAFE_INTEGER));
+  
+  // Pad the hex string to ensure it represents a full byte sequence if necessary
+  // ethers.utils.hexZeroPad ensures that the hex string has at least 32 bytes (64 hex characters)
+  return ethers.utils.hexZeroPad(hexString, 32);
+}
+
+describe('execute function use cases tests', async () => {
+  const intentBuilder = new IntentBuilder();
+  const sender = await intentBuilder.getSender(signer, randomToBytesLike());
+  
   it('ETH -> ERC20 Swap', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Ethereum,
@@ -39,7 +56,7 @@ describe('execute function use cases tests', () => {
 
   it('ERC20 -> ETH Swap', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Dai,
@@ -63,7 +80,7 @@ describe('execute function use cases tests', () => {
 
   it('ERC20 -> ERC20 Swap', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Dai,
@@ -87,7 +104,7 @@ describe('execute function use cases tests', () => {
 
   it('ERC20 -> ETH Stake', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Dai,
@@ -111,7 +128,7 @@ describe('execute function use cases tests', () => {
 
   it('ETH -> ETH Stake', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Ethereum,
@@ -135,7 +152,7 @@ describe('execute function use cases tests', () => {
 
   it('ETH -> ERC20 Stake', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Ethereum,
@@ -159,7 +176,7 @@ describe('execute function use cases tests', () => {
 
   it('ETH -> ETH Loan', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Ethereum,
@@ -184,7 +201,7 @@ describe('execute function use cases tests', () => {
 
   it('ERC20 -> ERC20 Loan', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Dai,
@@ -209,7 +226,7 @@ describe('execute function use cases tests', () => {
 
   it('ERC20 -> ETH Loan', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Dai,
@@ -234,7 +251,7 @@ describe('execute function use cases tests', () => {
 
   it('ETH -> ERC20 Loan', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "TOKEN",
         address: TOKENS.Ethereum,
@@ -259,7 +276,7 @@ describe('execute function use cases tests', () => {
 
   it('Loaned ERC20 -> ETH', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "LOAN",
         address: Projects.Aave,
@@ -284,7 +301,7 @@ describe('execute function use cases tests', () => {
 
   it('Loaned ERC20 -> ERC20', async () => {
     const intents = {
-      sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
+      sender: sender,
       from: {
         type: "LOAN",
         address: Projects.Aave,
