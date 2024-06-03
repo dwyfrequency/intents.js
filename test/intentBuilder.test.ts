@@ -1,9 +1,9 @@
-import { IntentBuilder } from '../src/IntentBuilder';
-import { Projects } from '../src/Projects';
+import { IntentBuilder } from '../src';
+import { Projects } from '../src';
 import { NODE_URL } from '../src/Constants';
-import { TOKENS,CHAINS } from './constants';
+import { TOKENS, CHAINS } from './constants';
 
-import { Intent } from '../src/index';
+import { Intent } from '../src';
 import { ethers } from 'ethers';
 
 function randomToBytesLike(): ethers.BytesLike {
@@ -70,7 +70,6 @@ describe('execute function use cases tests', () => {
       const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
       const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
 
-
       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
       expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
     } catch (error) {
@@ -84,13 +83,13 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -116,13 +115,13 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'TOKEN',
         address: TOKENS.Usdc,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -148,13 +147,13 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'STAKE',
         address: Projects.Lido,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -180,13 +179,13 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'STAKE',
         address: Projects.Lido,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -212,13 +211,13 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'STAKE',
         address: TOKENS.Usdc,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -244,14 +243,14 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Ethereum,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -274,14 +273,14 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -304,14 +303,14 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Ethereum,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -334,14 +333,14 @@ describe('execute function use cases tests', () => {
       from: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -368,13 +367,13 @@ describe('execute function use cases tests', () => {
         type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'TOKEN',
         address: TOKENS.Ethereum,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 
@@ -401,13 +400,13 @@ describe('execute function use cases tests', () => {
         type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
-        amount: "0.1",
-        chainId: "1"
+        amount: '0.1',
+        chainId: '1',
       },
       to: {
         type: 'TOKEN',
         address: TOKENS.Usdc,
-        chainId: "1"
+        chainId: '1',
       },
     } as Intent;
 

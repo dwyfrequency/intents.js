@@ -14,13 +14,13 @@ const intents: Intent = {
   from: {
     type: 'TOKEN',
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    amount: "2300",
+    amount: '2300',
     chainId: CHAINS.Ethereum,
   },
   to: {
     type: 'TOKEN',
     address: 'NATIVE', //ETH
-    amount: "1",
+    amount: '1',
     chainId: CHAINS.Ethereum,
   },
   extraData: {
