@@ -1,38 +1,47 @@
 {
-  "name": "intents.js",
-  "version": "0.7.0",
+  "author": "",
+  "dependencies": {
+    "ethers": "5.7.0",
+    "logrocket": "^8.1.0",
+    "typescript": "^5.4.3",
+    "userop": "^0.3.8",
+    "viem": "^2.13.2"
+  },
   "description": "Abstract State Change Expression Library",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "test": "mocha"
+  "devDependencies": {
+    "@eslint/js": "^9.4.0",
+    "@sinonjs/referee-sinon": "^12.0.0",
+    "@types/node": "^20.11.16",
+    "chai": "^5.1.0",
+    "eslint": "^9.4.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "globals": "^15.3.0",
+    "jsverify": "^0.8.4",
+    "knuth-shuffle": "^1.0.8",
+    "mocha": "^10.4.0",
+    "prettier": "^3.3.0",
+    "sinon": "^17.0.1",
+    "typescript-eslint": "^7.11.0"
   },
   "files": [
     "dist"
   ],
+  "homepage": "https://balloondogs.network/",
   "keywords": [],
-  "author": "",
   "license": "ISC",
+  "main": "./dist/index.js",
+  "name": "intents.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/blndgs/intents.js.git"
   },
-  "homepage": "https://balloondogs.network/",
-  "dependencies": {
-    "ethers": "5.7.0",
-    "intents.js": "^1.0.0",
-    "logrocket": "^8.1.0",
-    "typescript": "^5.4.3",
-    "userop": "^0.3.8"
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
-  "devDependencies": {
-    "@sinonjs/referee-sinon": "^12.0.0",
-    "@types/node": "^20.11.16",
-    "chai": "^5.1.0",
-    "jsverify": "^0.8.4",
-    "knuth-shuffle": "^1.0.8",
-    "mocha": "^10.4.0",
-    "sinon": "^17.0.1"
-  }
+  "types": "./dist/index.d.ts",
+  "version": "0.7.0"
 }

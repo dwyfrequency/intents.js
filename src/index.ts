@@ -1,3 +1,3 @@
-export * from './Projects'
+export * from './Projects';
 export { Intent } from './InterfaceIntent';
-export * from './IntentBuilder'
+export * from './IntentBuilder';
