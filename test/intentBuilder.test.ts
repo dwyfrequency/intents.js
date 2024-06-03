@@ -1,5 +1,8 @@
 import { IntentBuilder } from '../src/IntentBuilder';
+import { Projects } from '../src/Projects';
 import { CHAINS } from '../src/Constants';
+import { TOKENS } from './constants';
+
 
 import { Intent } from '../src/index';
 import { ethers } from 'ethers';
@@ -15,14 +18,13 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "TOKEN",
-        address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-        // asset: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -40,13 +42,13 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -64,13 +66,13 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "TOKEN",
-        address: "0xA0b86991c6218b36c1d19D4a2e9EB0cE3606eB48",
+        address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -88,13 +90,13 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "STAKE",
-        address: "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84", // Lido
+        address: Projects.Lido,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -112,13 +114,13 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "STAKE",
-        address: "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84", // Lido
+        address: Projects.Lido,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -136,13 +138,13 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "STAKE",
-        address: "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // Lido for USDC
+        address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -160,14 +162,14 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "LOAN",
-        address: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2", // Aave
-        asset: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: Projects.Aave,
+        asset: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -185,14 +187,14 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "LOAN",
-        address: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2", // Aave
-        asset: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -210,14 +212,14 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "LOAN",
-        address: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2", // Aave
-        asset: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: Projects.Aave,
+        asset: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -235,14 +237,14 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "LOAN",
-        address: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2", // Aave
-        asset: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -260,14 +262,14 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "LOAN",
-        address: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2", // Aave
-        asset: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "TOKEN",
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
@@ -285,14 +287,14 @@ describe('execute function use cases tests', () => {
       sender: "0x790625d89fC0b624DFaEFc9d175F2b79fF4444c9",
       from: {
         type: "LOAN",
-        address: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2", // Aave
-        asset: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
         type: "TOKEN",
-        address: "0xA0b86991c6218b36c1d19d4a2e9EB0cE3606eB48",
+        address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
       },
     } as Intent;
