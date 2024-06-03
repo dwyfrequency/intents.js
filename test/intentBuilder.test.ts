@@ -6,17 +6,9 @@ import { TOKENS } from './constants';
 import { Intent } from '../src/index';
 import { ethers } from 'ethers';
 
-
 function randomToBytesLike(): ethers.BytesLike {
-  // Generate a random number using Math.random() and convert it to a hex string
   const randomNum = Math.random();
-
-  // Convert the random number to a string representing its hexadecimal value
-  // Scale the random number to a larger integer range to get more bytes
   const hexString = ethers.utils.hexlify(Math.floor(randomNum * Number.MAX_SAFE_INTEGER));
-
-  // Pad the hex string to ensure it represents a full byte sequence if necessary
-  // ethers.utils.hexZeroPad ensures that the hex string has at least 32 bytes (64 hex characters)
   return ethers.utils.hexZeroPad(hexString, 32);
 }
 
@@ -25,7 +17,6 @@ function generateRandomAccount(): ethers.Wallet {
   const privateKey = ethers.utils.hexlify(randomBytes);
   return new ethers.Wallet(privateKey);
 }
-
 
 describe('execute function use cases tests', () => {
   let intentBuilder: IntentBuilder;
@@ -41,22 +32,19 @@ describe('execute function use cases tests', () => {
   });
 
   it('should have an initial ETH balance of 0', async () => {
-    console.log("sender: " + sender)
     const balance = await intentBuilder.checkBalance(sender, NODE_URL);
     expect(parseFloat(balance)).toBe(0);
   }, 100000);
 
   it('should faucet the account with 1 ETH and check the balance', async () => {
     const oneEthInWei = ethers.utils.parseEther('1').toHexString();
-    console.log('Sending 1 ETH in Wei:', oneEthInWei);
 
     // Faucet the account with 1 ETH
     await intentBuilder.faucet(sender);
 
     // Check the balance after faucet
     const balanceAfter = await intentBuilder.checkBalance(sender, NODE_URL);
-    console.log('Balance after faucet:', balanceAfter);
-    expect(parseFloat(balanceAfter)).toBe(0.5);
+    expect(parseFloat(balanceAfter)).toBe(1);
   }, 100000);
 
   it('ETH -> ERC20 Swap', async () => {
@@ -77,20 +65,13 @@ describe('execute function use cases tests', () => {
 
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
-    console.log(`Initial ETH Balance: ${initialEthBalance}`);
-    console.log(`Initial Dai Balance: ${initialDaiBalance}`);
 
     try {
-
       await intentBuilder.execute(intents, signer, NODE_URL);
 
-      // Check balances after the swap
       const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
       const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
-      console.log(`Final ETH Balance: ${finalEthBalance}`);
-      console.log(`Final Dai Balance: ${finalDaiBalance}`);
 
-      // Validate the balance changes
       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
       expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
     } catch (error) {
@@ -98,273 +79,352 @@ describe('execute function use cases tests', () => {
     }
   }, 100000);
 
-  // it('ERC20 -> ETH Swap', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+  it('ERC20 -> ETH Swap', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-  // it('ERC20 -> ERC20 Swap', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Usdc,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-  // it('ERC20 -> ETH Stake', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "STAKE",
-  //       address: Projects.Lido,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+      expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+  it('ERC20 -> ERC20 Swap', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "TOKEN",
+        address: TOKENS.Usdc,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
 
-  // it('ETH -> ETH Stake', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "STAKE",
-  //       address: Projects.Lido,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
 
-  // it('ETH -> ERC20 Stake', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "STAKE",
-  //       address: TOKENS.Usdc,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+      const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+      expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
 
-  // it('ETH -> ETH Loan', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "LOAN",
-  //       address: Projects.Aave,
-  //       asset: TOKENS.Ethereum,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+  it('ERC20 -> ETH Stake', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "STAKE",
+        address: Projects.Lido,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const initialStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, Projects.Lido);
 
-  // it('ERC20 -> ERC20 Loan', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "LOAN",
-  //       address: Projects.Aave,
-  //       asset: TOKENS.Dai,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+      const finalStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, Projects.Lido);
 
-  // it('ERC20 -> ETH Loan', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "LOAN",
-  //       address: Projects.Aave,
-  //       asset: TOKENS.Ethereum,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+      expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+  it('ETH -> ETH Stake', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "STAKE",
+        address: Projects.Lido,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
 
-  // it('ETH -> ERC20 Loan', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "LOAN",
-  //       address: Projects.Aave,
-  //       asset: TOKENS.Dai,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const initialStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, Projects.Lido);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
 
-  // it('Loaned ERC20 -> ETH', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "LOAN",
-  //       address: Projects.Aave,
-  //       asset: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+      const finalStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, Projects.Lido);
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+      expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
 
-  // it('Loaned ERC20 -> ERC20', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "LOAN",
-  //       address: Projects.Aave,
-  //       asset: TOKENS.Dai,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Usdc,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+  it('ETH -> ERC20 Stake', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "STAKE",
+        address: TOKENS.Usdc,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+      const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
+
+      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+      expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
+
+  it('ETH -> ETH Loan', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "LOAN",
+        address: Projects.Aave,
+        asset: TOKENS.Ethereum,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
+
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+
+      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
+
+  it('ERC20 -> ERC20 Loan', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "LOAN",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
+
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
+
+  it('ERC20 -> ETH Loan', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "LOAN",
+        address: Projects.Aave,
+        asset: TOKENS.Ethereum,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
+
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
+
+  it('ETH -> ERC20 Loan', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "LOAN",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
+
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+
+      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+      expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
+
+  it('Loaned ERC20 -> ETH', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "LOAN",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
+
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+      expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
+
+  it('Loaned ERC20 -> ERC20', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "LOAN",
+        address: Projects.Aave,
+        asset: TOKENS.Dai,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "TOKEN",
+        address: TOKENS.Usdc,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
+
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
+
+    try {
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+      const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
+
+      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+      expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
 });
