@@ -44,12 +44,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ERC20 -> ETH Swap', async () => {
@@ -68,12 +64,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ERC20 -> ERC20 Swap', async () => {
@@ -92,12 +84,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ERC20 -> ETH Stake', async () => {
@@ -116,12 +104,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ETH -> ETH Stake', async () => {
@@ -140,12 +124,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ETH -> ERC20 Stake', async () => {
@@ -164,12 +144,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ETH -> ETH Loan', async () => {
@@ -189,12 +165,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ERC20 -> ERC20 Loan', async () => {
@@ -214,12 +186,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ERC20 -> ETH Loan', async () => {
@@ -239,12 +207,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('ETH -> ERC20 Loan', async () => {
@@ -264,12 +228,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('Loaned ERC20 -> ETH', async () => {
@@ -289,12 +249,8 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 
   it('Loaned ERC20 -> ERC20', async () => {
@@ -314,11 +270,7 @@ describe('execute function use cases tests', async () => {
       },
     } as Intent;
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
-    } catch (error) {
-      throw error;
-    }
+    const intentBuilder = new IntentBuilder();
+    await intentBuilder.execute(intents, signer, nodeUrl);
   }, 100000);
 });
