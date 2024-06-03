@@ -8,7 +8,7 @@ interface Currency {
 interface Loan {
   type: 'LOAN';
   asset?: string; //ERC20 address
-  amount?: number;
+  amount?: string;
   address: string;
   chainId: string;
 }
