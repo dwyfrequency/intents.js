@@ -4,12 +4,11 @@
     "target": "es6",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": ".", // Set to the parent directory of both src and test
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationDir": "./dist",
     "strict": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+    "esModuleInterop": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*"]
 }
