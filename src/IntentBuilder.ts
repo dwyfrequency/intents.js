@@ -1,7 +1,7 @@
-import { BytesLike, ethers } from 'ethers';
+import { ethers, BytesLike } from 'ethers';
 import { Intent } from './InterfaceIntent';
-import { BUNDLER_URL, chainID, entryPointAddr, factoryAddr } from './Constants';
-import { Client, Presets, UserOperationBuilder } from 'userop';
+import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID, NODE_URL } from './Constants';
+import { Presets, Client, UserOperationBuilder } from 'userop';
 
 export class IntentBuilder {
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
@@ -9,14 +9,17 @@ export class IntentBuilder {
       factory: factoryAddr,
       salt: salt,
     });
-    return simpleAccount.getSender();
+    const sender = simpleAccount.getSender();
+
+    return sender;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetchWithNodeFetch(url: string, options: any) {
     const isNode = typeof window === 'undefined';
     if (isNode) {
-      const fetch = (await import('node-fetch')).default;
+      const fetchModule = await import('node-fetch');
+      const fetch = fetchModule.default;
       return fetch(url, options);
     } else {
       return window.fetch(url, options);
@@ -25,6 +28,7 @@ export class IntentBuilder {
 
   async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string): Promise<void> {
     let ownerAddress = await signer.getAddress();
+    console.log("ownerAddress " + ownerAddress)
     ownerAddress = ownerAddress.substring(2, ownerAddress.length); //remove 0x value
     const sender = intents.sender;
 
@@ -78,7 +82,8 @@ export class IntentBuilder {
   }
 
   private async getInitCode(nonce: string, ownerAddress: string) {
-    return nonce !== '0x0'
+    console.log('nonce ' + nonce);
+    return nonce !== '0'
       ? '0x'
       : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
   }
@@ -107,7 +112,8 @@ export class IntentBuilder {
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
-    return await signer.signMessage(ethers.utils.arrayify(userOpHash));
+    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash));
+    return signature;
   }
 
   private async getNonce(sender: string, nodeUrl: string) {
@@ -151,12 +157,15 @@ export class IntentBuilder {
     }
   }
 
-  public async faucet(address: string, amount: string, nodeUrl: string): Promise<void> {
-    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+  public async faucet(addrss: string) {
+    // Import ethers
+
+    // Connect to your Ethereum node or gateway
+    const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 
     // Define the JSON-RPC request for the tenderly_addBalance method
     const method = 'tenderly_addBalance';
-    const params = [[address], amount];
+    const params = [[addrss], '0x6f05b59d3b20000'];
     const jsonRpcRequest = {
       jsonrpc: '2.0',
       method: method,
@@ -167,12 +176,13 @@ export class IntentBuilder {
     try {
       const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
       console.log('Response:', response);
+      window.location.reload();
     } catch (error) {
       console.error('Error:', error);
     }
   }
 
-  public async checkBalance(address: string, nodeUrl: string, tokenAddress?: string): Promise<void> {
+  public async checkBalance(address: string, nodeUrl: string, tokenAddress?: string): Promise<string> {
     const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
 
     try {
@@ -190,14 +200,19 @@ export class IntentBuilder {
 
         const contract = new ethers.Contract(tokenAddress, abi, provider);
         const balance = await contract.balanceOf(address);
-        console.log(`ERC20 Balance: ${ethers.utils.formatUnits(balance, 18)}`);
+        const formattedBalance = ethers.utils.formatUnits(balance, 18);
+        console.log(`ERC20 Balance: ${formattedBalance}`);
+        return formattedBalance;
       } else {
         // ETH balance check
         const balance = await provider.getBalance(address);
-        console.log(`ETH Balance: ${ethers.utils.formatEther(balance)}`);
+        const formattedBalance = ethers.utils.formatEther(balance);
+        console.log(`ETH Balance: ${formattedBalance}`);
+        return formattedBalance;
       }
     } catch (error) {
       console.error('Error checking balance:', error);
+      return '0';
     }
   }
 }
