@@ -1,26 +1,21 @@
 import { IntentBuilder } from '../src/IntentBuilder';
 import { Projects } from '../src/Projects';
-import { CHAINS } from '../src/Constants';
+import { CHAINS, NODE_URL } from '../src/Constants';
 import { TOKENS } from './constants';
 
 
 import { Intent } from '../src/index';
 import { ethers } from 'ethers';
 
-const nodeUrl = 'https://virtual.mainnet.rpc.tenderly.co/c4100609-e3ff-441b-a803-5a4e95de809f';
-const privateKey = '';
-const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
-const signer = new ethers.Wallet(privateKey, provider);
-
 
 function randomToBytesLike(): ethers.BytesLike {
   // Generate a random number using Math.random() and convert it to a hex string
   const randomNum = Math.random();
-  
+
   // Convert the random number to a string representing its hexadecimal value
   // Scale the random number to a larger integer range to get more bytes
   const hexString = ethers.utils.hexlify(Math.floor(randomNum * Number.MAX_SAFE_INTEGER));
-  
+
   // Pad the hex string to ensure it represents a full byte sequence if necessary
   // ethers.utils.hexZeroPad ensures that the hex string has at least 32 bytes (64 hex characters)
   return ethers.utils.hexZeroPad(hexString, 32);
@@ -38,7 +33,7 @@ describe('execute function use cases tests', async () => {
   let randomAccount: ethers.Wallet;
   let sender: string;
   let signer: ethers.Wallet;
-  
+
   beforeAll(async () => {
     intentBuilder = new IntentBuilder();
     randomAccount = generateRandomAccount();
@@ -47,7 +42,7 @@ describe('execute function use cases tests', async () => {
   });
 
   it('should have an initial ETH balance of 0', async () => {
-    const balance = await intentBuilder.checkBalance(sender, nodeUrl);
+    const balance = await intentBuilder.checkBalance(sender, NODE_URL);
     expect(parseFloat(balance)).toBe(0);
   });
 
@@ -55,10 +50,10 @@ describe('execute function use cases tests', async () => {
     const oneEthInWei = ethers.utils.parseEther('1').toHexString();
 
     // Faucet the account with 1 ETH
-    await intentBuilder.faucet(sender, oneEthInWei, nodeUrl);
+    await intentBuilder.faucet(sender, oneEthInWei, NODE_URL);
 
     // Check the balance after faucet
-    const balanceAfter = await intentBuilder.checkBalance(sender, nodeUrl);
+    const balanceAfter = await intentBuilder.checkBalance(sender, NODE_URL);
     expect(parseFloat(balanceAfter)).toBe(1);
   });
 
@@ -80,7 +75,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -104,7 +99,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -128,7 +123,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -152,7 +147,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -176,7 +171,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -200,7 +195,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -225,7 +220,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -250,7 +245,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -275,7 +270,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -300,7 +295,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -325,7 +320,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
@@ -350,7 +345,7 @@ describe('execute function use cases tests', async () => {
 
     try {
       const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, nodeUrl);
+      await intentBuilder.execute(intents, signer, NODE_URL);
     } catch (error) {
       throw error;
     }
