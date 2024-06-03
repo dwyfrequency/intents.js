@@ -13,7 +13,6 @@ interface Loan {
   chainId: number;
 }
 
-
 interface Stake {
   type: 'STAKE';
   address?: string;
