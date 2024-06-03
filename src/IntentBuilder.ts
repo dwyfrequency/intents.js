@@ -87,7 +87,8 @@ export class IntentBuilder {
 
 
   private async getInitCode(nonce: string, ownerAddress: string) {
-    return nonce !== '0x0'
+    console.log('nonce ' + nonce)
+    return nonce !== '0'
       ? '0x'
       : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`
   }

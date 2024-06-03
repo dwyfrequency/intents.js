@@ -59,29 +59,44 @@ describe('execute function use cases tests', () => {
     expect(parseFloat(balanceAfter)).toBe(0.5);
   }, 100000);
 
-  // it('ETH -> ERC20 Swap', async () => {
-  //   const intents = {
-  //     sender: sender,
-  //     from: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Ethereum,
-  //       amount: 0.1,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //     to: {
-  //       type: "TOKEN",
-  //       address: TOKENS.Dai,
-  //       chainId: CHAINS.ethereum.id,
-  //     },
-  //   } as Intent;
+  it('ETH -> ERC20 Swap', async () => {
+    const intents = {
+      sender: sender,
+      from: {
+        type: "TOKEN",
+        address: TOKENS.Ethereum,
+        amount: 0.1,
+        chainId: CHAINS.ethereum.id,
+      },
+      to: {
+        type: "TOKEN",
+        address: TOKENS.Dai,
+        chainId: CHAINS.ethereum.id,
+      },
+    } as Intent;
 
-  //   try {
-  //     const intentBuilder = new IntentBuilder();
-  //     await intentBuilder.execute(intents, signer, NODE_URL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }, 100000);
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    console.log(`Initial ETH Balance: ${initialEthBalance}`);
+    console.log(`Initial Dai Balance: ${initialDaiBalance}`);
+
+    try {
+
+      await intentBuilder.execute(intents, signer, NODE_URL);
+
+      // Check balances after the swap
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+      console.log(`Final ETH Balance: ${finalEthBalance}`);
+      console.log(`Final Dai Balance: ${finalDaiBalance}`);
+
+      // Validate the balance changes
+      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+      expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
+    } catch (error) {
+      throw error;
+    }
+  }, 100000);
 
   // it('ERC20 -> ETH Swap', async () => {
   //   const intents = {
