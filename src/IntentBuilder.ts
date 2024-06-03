@@ -1,11 +1,11 @@
 import { BytesLike, ethers } from 'ethers';
 import { Intent } from './InterfaceIntent';
-import { chainID, entryPointAddr, factoryAddr, rpcBundlerUrl } from './Constants';
+import { BUNDLER_URL, CHAINS, entryPointAddr, factoryAddr } from './constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
 
 export class IntentBuilder {
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
-    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, rpcBundlerUrl, {
+    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: factoryAddr,
       salt: salt,
     });
@@ -13,7 +13,7 @@ export class IntentBuilder {
   }
 
   async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string, salt: BytesLike = '0'): Promise<void> {
-    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, rpcBundlerUrl, {
+    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: factoryAddr,
       salt: salt,
     });
@@ -39,7 +39,7 @@ export class IntentBuilder {
     const signature = await this.getSignature(signer, builder);
     builder.setSignature(signature);
 
-    const client = await Client.init(rpcBundlerUrl);
+    const client = await Client.init(BUNDLER_URL);
 
     const res = await client.sendUserOperation(builder, {
       onBuild: op => console.log('Signed UserOperation:', op),
@@ -77,7 +77,7 @@ export class IntentBuilder {
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), entryPointAddr, chainID],
+      [ethers.utils.keccak256(packedData), entryPointAddr, CHAINS.ethereum.id],
     );
 
     const userOpHash = ethers.utils.keccak256(enc);

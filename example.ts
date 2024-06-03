@@ -1,5 +1,6 @@
 import { IntentBuilder, Intent } from './src';
 import { ethers } from 'ethers';
+import { CHAINS } from './src/constants';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
@@ -14,7 +15,7 @@ const intents: Intent = {
     type: 'TOKEN',
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     amount: 2300,
-    chainId: '1',
+    chainId: CHAINS.ethereum.id,
   },
   to: {
     type: 'TOKEN',
