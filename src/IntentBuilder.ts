@@ -1,7 +1,7 @@
-import { ethers, BytesLike } from 'ethers';
+import { BytesLike, ethers } from 'ethers';
 import { Intent } from './InterfaceIntent';
-import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID, NODE_URL } from './Constants';
-import { Presets, Client, UserOperationBuilder } from 'userop';
+import { BUNDLER_URL, chainID, entryPointAddr, factoryAddr, NODE_URL } from './Constants';
+import { Client, Presets, UserOperationBuilder } from 'userop';
 
 export class IntentBuilder {
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
@@ -112,8 +112,7 @@ export class IntentBuilder {
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
-    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash));
-    return signature;
+    return await signer.signMessage(ethers.utils.arrayify(userOpHash));
   }
 
   private async getNonce(sender: string, nodeUrl: string) {
