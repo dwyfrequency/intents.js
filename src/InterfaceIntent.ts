@@ -1,25 +1,19 @@
-interface Currency {
-  type: 'TOKEN';
+export type stateType = 'TOKEN' | 'LOAN' | 'STAKE';
+
+export interface state {
+  type: stateType;
   address: string;
   amount: number;
   chainId: number;
 }
 
-interface Loan {
-  type: 'LOAN';
-  asset?: string; //ERC20 address
-  amount?: number;
-  address: string;
-  chainId: number;
+export interface toState extends state {
+  type: 'TOKEN' | 'LOAN';
 }
 
-interface Stake {
-  type: 'STAKE';
-  address?: string;
-  chainId?: number;
-}
+export interface fromState extends state {}
 
-interface ExtraData {
+export interface ExtraData {
   expirationDate?: Date;
   partiallyFillable?: boolean;
   kind: 'buy' | 'sell' | 'stake';
@@ -27,7 +21,7 @@ interface ExtraData {
 
 export interface Intent {
   sender: string;
-  from: Currency | Loan;
-  to: Currency | Stake | Loan;
+  from: fromState;
+  to: toState;
   extraData?: ExtraData;
 }
