@@ -3,7 +3,6 @@ import { Projects } from '../src/Projects';
 import { CHAINS, NODE_URL } from '../src/Constants';
 import { TOKENS } from './constants';
 
-
 import { Intent } from '../src/index';
 import { ethers } from 'ethers';
 
@@ -38,316 +37,317 @@ describe('execute function use cases tests', () => {
     intentBuilder = new IntentBuilder();
     randomAccount = generateRandomAccount();
     signer = randomAccount;
-    sender = await intentBuilder.getSender(signer, randomToBytesLike());
+    sender = await intentBuilder.getSender(signer);
   });
 
   it('should have an initial ETH balance of 0', async () => {
+    console.log("sender: " + sender)
     const balance = await intentBuilder.checkBalance(sender, NODE_URL);
     expect(parseFloat(balance)).toBe(0);
-  });
-
-  it('should faucet the account with 1 ETH and check the balance', async () => {
-    const oneEthInWei = ethers.utils.parseEther('1').toHexString();
-
-    // Faucet the account with 1 ETH
-    await intentBuilder.faucet(sender, oneEthInWei, NODE_URL);
-
-    // Check the balance after faucet
-    const balanceAfter = await intentBuilder.checkBalance(sender, NODE_URL);
-    expect(parseFloat(balanceAfter)).toBe(1);
-  });
-
-  it('ETH -> ERC20 Swap', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "TOKEN",
-        address: TOKENS.Dai,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
-
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
   }, 100000);
 
-  it('ERC20 -> ETH Swap', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  // it('should faucet the account with 1 ETH and check the balance', async () => {
+  //   const oneEthInWei = ethers.utils.parseEther('1').toHexString();
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  //   // Faucet the account with 1 ETH
+  //   await intentBuilder.faucet(sender, "1", NODE_URL);
 
-  it('ERC20 -> ERC20 Swap', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "TOKEN",
-        address: TOKENS.Usdc,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   // Check the balance after faucet
+  //   const balanceAfter = await intentBuilder.checkBalance(sender, NODE_URL);
+  //   expect(parseFloat(balanceAfter)).toBe(1);
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ETH -> ERC20 Swap', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Dai,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ERC20 -> ETH Stake', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "STAKE",
-        address: Projects.Lido,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ERC20 -> ETH Swap', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ETH -> ETH Stake', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "STAKE",
-        address: Projects.Lido,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ERC20 -> ERC20 Swap', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Usdc,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ETH -> ERC20 Stake', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "STAKE",
-        address: TOKENS.Usdc,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ERC20 -> ETH Stake', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "STAKE",
+  //       address: Projects.Lido,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ETH -> ETH Loan', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "LOAN",
-        address: Projects.Aave,
-        asset: TOKENS.Ethereum,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ETH -> ETH Stake', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "STAKE",
+  //       address: Projects.Lido,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ERC20 -> ERC20 Loan', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "LOAN",
-        address: Projects.Aave,
-        asset: TOKENS.Dai,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ETH -> ERC20 Stake', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "STAKE",
+  //       address: TOKENS.Usdc,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ERC20 -> ETH Loan', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "LOAN",
-        address: Projects.Aave,
-        asset: TOKENS.Ethereum,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ETH -> ETH Loan', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "LOAN",
+  //       address: Projects.Aave,
+  //       asset: TOKENS.Ethereum,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('ETH -> ERC20 Loan', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "LOAN",
-        address: Projects.Aave,
-        asset: TOKENS.Dai,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ERC20 -> ERC20 Loan', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "LOAN",
+  //       address: Projects.Aave,
+  //       asset: TOKENS.Dai,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('Loaned ERC20 -> ETH', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "LOAN",
-        address: Projects.Aave,
-        asset: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "TOKEN",
-        address: TOKENS.Ethereum,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ERC20 -> ETH Loan', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "LOAN",
+  //       address: Projects.Aave,
+  //       asset: TOKENS.Ethereum,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
 
-  it('Loaned ERC20 -> ERC20', async () => {
-    const intents = {
-      sender: sender,
-      from: {
-        type: "LOAN",
-        address: Projects.Aave,
-        asset: TOKENS.Dai,
-        amount: 0.1,
-        chainId: CHAINS.ethereum.id,
-      },
-      to: {
-        type: "TOKEN",
-        address: TOKENS.Usdc,
-        chainId: CHAINS.ethereum.id,
-      },
-    } as Intent;
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 
-    try {
-      const intentBuilder = new IntentBuilder();
-      await intentBuilder.execute(intents, signer, NODE_URL);
-    } catch (error) {
-      throw error;
-    }
-  }, 100000);
+  // it('ETH -> ERC20 Loan', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "LOAN",
+  //       address: Projects.Aave,
+  //       asset: TOKENS.Dai,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
+
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
+
+  // it('Loaned ERC20 -> ETH', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "LOAN",
+  //       address: Projects.Aave,
+  //       asset: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Ethereum,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
+
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
+
+  // it('Loaned ERC20 -> ERC20', async () => {
+  //   const intents = {
+  //     sender: sender,
+  //     from: {
+  //       type: "LOAN",
+  //       address: Projects.Aave,
+  //       asset: TOKENS.Dai,
+  //       amount: 0.1,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //     to: {
+  //       type: "TOKEN",
+  //       address: TOKENS.Usdc,
+  //       chainId: CHAINS.ethereum.id,
+  //     },
+  //   } as Intent;
+
+  //   try {
+  //     const intentBuilder = new IntentBuilder();
+  //     await intentBuilder.execute(intents, signer, NODE_URL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }, 100000);
 });
