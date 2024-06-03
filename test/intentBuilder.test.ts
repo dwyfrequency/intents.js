@@ -28,7 +28,7 @@ function generateRandomAccount(): ethers.Wallet {
 }
 
 
-describe('execute function use cases tests', async () => {
+describe('execute function use cases tests', () => {
   let intentBuilder: IntentBuilder;
   let randomAccount: ethers.Wallet;
   let sender: string;
