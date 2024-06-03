@@ -388,13 +388,13 @@ describe('execute function use cases tests', () => {
       },
     } as Intent;
   
-    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ETH);
+    const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Ethereum);
     const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
   
     try {
       await intentBuilder.execute(intents, signer, NODE_URL);
   
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ETH);
+      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Ethereum);
       const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
   
       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
@@ -421,13 +421,13 @@ describe('execute function use cases tests', () => {
       },
     } as Intent;
   
-    const initialNonAaveTokenBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.NonAaveToken);
+    const initialNonAaveTokenBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
     const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
   
     try {
       await intentBuilder.execute(intents, signer, NODE_URL);
   
-      const finalNonAaveTokenBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.NonAaveToken);
+      const finalNonAaveTokenBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
       const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
   
       expect(parseFloat(finalNonAaveTokenBalance)).toBeLessThan(parseFloat(initialNonAaveTokenBalance));
