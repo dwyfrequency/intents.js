@@ -20,4 +20,4 @@ export const Projects: ProjectsType = {
   Compound: '0xc3d688B66703497DAA19211EEdff47f25384cdc3',
   Spark: '0xC13e21B648A5Ee794902342038FF3aDAB66BE987',
   SushiSwap: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-}
+};

@@ -51,13 +51,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
       },
@@ -83,13 +83,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
       },
@@ -115,13 +115,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
       },
@@ -147,13 +147,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "STAKE",
+        type: 'STAKE',
         address: Projects.Lido,
         chainId: CHAINS.ethereum.id,
       },
@@ -179,13 +179,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "STAKE",
+        type: 'STAKE',
         address: Projects.Lido,
         chainId: CHAINS.ethereum.id,
       },
@@ -211,13 +211,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "STAKE",
+        type: 'STAKE',
         address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
       },
@@ -243,13 +243,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "LOAN",
+        type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
@@ -273,13 +273,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "LOAN",
+        type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
@@ -303,13 +303,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "LOAN",
+        type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
@@ -333,13 +333,13 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "LOAN",
+        type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
         chainId: CHAINS.ethereum.id,
@@ -366,14 +366,14 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "LOAN",
+        type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Ethereum,
         chainId: CHAINS.ethereum.id,
       },
@@ -399,14 +399,14 @@ describe('execute function use cases tests', () => {
     const intents = {
       sender: sender,
       from: {
-        type: "LOAN",
+        type: 'LOAN',
         address: Projects.Aave,
         asset: TOKENS.Dai,
         amount: 0.1,
         chainId: CHAINS.ethereum.id,
       },
       to: {
-        type: "TOKEN",
+        type: 'TOKEN',
         address: TOKENS.Usdc,
         chainId: CHAINS.ethereum.id,
       },

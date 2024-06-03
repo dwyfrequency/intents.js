@@ -1,22 +1,18 @@
-import { ethers, BytesLike } from 'ethers'
-import { Intent } from './InterfaceIntent'
-import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID, NODE_URL } from './Constants'
-import { Presets, Client, UserOperationBuilder } from 'userop'
-
-
+import { ethers, BytesLike } from 'ethers';
+import { Intent } from './InterfaceIntent';
+import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID, NODE_URL } from './Constants';
+import { Presets, Client, UserOperationBuilder } from 'userop';
 
 export class IntentBuilder {
-
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: factoryAddr,
       salt: salt,
-    })
-    const sender = simpleAccount.getSender()
+    });
+    const sender = simpleAccount.getSender();
 
-    return sender
+    return sender;
   }
-
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetchWithNodeFetch(url: string, options: any) {
@@ -30,13 +26,13 @@ export class IntentBuilder {
   }
 
   async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string): Promise<void> {
-    let ownerAddress = await signer.getAddress()
-    ownerAddress = ownerAddress.substring(2, ownerAddress.length) //remove 0x value
+    let ownerAddress = await signer.getAddress();
+    ownerAddress = ownerAddress.substring(2, ownerAddress.length); //remove 0x value
     const sender = intents.sender;
 
-    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents))
-    const nonce = await this.getNonce(sender, nodeUrl)
-    const initCode = await this.getInitCode(nonce, ownerAddress)
+    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
+    const nonce = await this.getNonce(sender, nodeUrl);
+    const initCode = await this.getInitCode(nonce, ownerAddress);
 
     const builder = new UserOperationBuilder()
       .useDefaults({ sender })
@@ -47,50 +43,47 @@ export class IntentBuilder {
       .setVerificationGasLimit('0x493E0')
       .setCallGasLimit('0xC3500')
       .setNonce(nonce)
-      .setInitCode(initCode)
+      .setInitCode(initCode);
 
-    const signature = await this.getSignature(signer, builder)
-    builder.setSignature(signature)
+    const signature = await this.getSignature(signer, builder);
+    builder.setSignature(signature);
 
-    const client = await Client.init(BUNDLER_URL)
+    const client = await Client.init(BUNDLER_URL);
 
     const res = await client.sendUserOperation(builder, {
       onBuild: op => console.log('Signed UserOperation:', op),
-    })
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const solvedHash = (res as any).userOpHash.solved_hash
+    const solvedHash = (res as any).userOpHash.solved_hash;
 
     const headers = {
-      'accept': 'application/json',
-      'content-type': 'application/json'
+      accept: 'application/json',
+      'content-type': 'application/json',
     };
 
     const body = JSON.stringify({
       jsonrpc: '2.0',
       id: 1,
       method: 'eth_getUserOperationReceipt',
-      params: [
-        solvedHash
-      ]
+      params: [solvedHash],
     });
 
     const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
       method: 'POST',
       headers: headers,
-      body: body
-    })
+      body: body,
+    });
 
-    const reciept = await resReceipt.json()
-    console.log(reciept)
+    const reciept = await resReceipt.json();
+    console.log(reciept);
   }
 
-
   private async getInitCode(nonce: string, ownerAddress: string) {
-    console.log('nonce ' + nonce)
+    console.log('nonce ' + nonce);
     return nonce !== '0'
       ? '0x'
-      : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`
+      : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -108,21 +101,21 @@ export class IntentBuilder {
         builder.getMaxFeePerGas(),
         builder.getMaxPriorityFeePerGas(),
         ethers.utils.keccak256(builder.getPaymasterAndData()),
-      ]
-    )
+      ],
+    );
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), entryPointAddr, chainID]
-    )
+      [ethers.utils.keccak256(packedData), entryPointAddr, chainID],
+    );
 
-    const userOpHash = ethers.utils.keccak256(enc)
-    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash))
-    return signature
+    const userOpHash = ethers.utils.keccak256(enc);
+    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash));
+    return signature;
   }
 
   private async getNonce(sender: string, nodeUrl: string) {
-    const provider = new ethers.providers.JsonRpcProvider(nodeUrl)
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
     const abi = [
       {
         inputs: [
@@ -148,17 +141,17 @@ export class IntentBuilder {
         stateMutability: 'view',
         type: 'function',
       },
-    ]
+    ];
 
     // Create a contract instance
-    const contract = new ethers.Contract(entryPointAddr, abi, provider)
+    const contract = new ethers.Contract(entryPointAddr, abi, provider);
 
     try {
-      const nonce = await contract.getNonce(sender, '0')
-      console.log('Nonce:', nonce.toString())
-      return nonce.toString()
+      const nonce = await contract.getNonce(sender, '0');
+      console.log('Nonce:', nonce.toString());
+      return nonce.toString();
     } catch (error) {
-      console.error('Error getting nonce:', error)
+      console.error('Error getting nonce:', error);
     }
   }
 
@@ -169,10 +162,10 @@ export class IntentBuilder {
     const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 
     // Define the JSON-RPC request for the tenderly_addBalance method
-    const method = "tenderly_addBalance";
-    const params = [[addrss], "0x6f05b59d3b20000"];
+    const method = 'tenderly_addBalance';
+    const params = [[addrss], '0x6f05b59d3b20000'];
     const jsonRpcRequest = {
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       method: method,
       params: params,
       id: 1, // The ID can be any number or string
@@ -181,7 +174,7 @@ export class IntentBuilder {
     try {
       const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
       console.log('Response:', response);
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error('Error:', error);
     }
@@ -220,5 +213,4 @@ export class IntentBuilder {
       return '0';
     }
   }
-
 }
