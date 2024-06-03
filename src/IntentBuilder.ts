@@ -1,60 +1,95 @@
-import { BytesLike, ethers } from 'ethers';
-import { Intent } from './InterfaceIntent';
-import { BUNDLER_URL, CHAINS, entryPointAddr, factoryAddr } from './constants';
-import { Client, Presets, UserOperationBuilder } from 'userop';
+import { ethers, BytesLike } from 'ethers'
+import { Intent } from './InterfaceIntent'
+import { BUNDLER_URL, factoryAddr, entryPointAddr, chainID } from './Constants'
+import { Presets, Client, UserOperationBuilder } from 'userop'
+
+
 
 export class IntentBuilder {
+
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: factoryAddr,
       salt: salt,
-    });
-    return simpleAccount.getSender();
+    })
+    const sender = simpleAccount.getSender()
+
+    return sender
   }
 
-  async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string, salt: BytesLike = '0'): Promise<void> {
-    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
-      factory: factoryAddr,
-      salt: salt,
-    });
-    let ownerAddress = await signer.getAddress();
-    ownerAddress = ownerAddress.substring(2, ownerAddress.length); //remove 0x value
-    const sender = simpleAccount.getSender();
 
-    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-    const nonce = await this.getNonce(sender, nodeUrl);
-    const initCode = await this.getInitCode(ownerAddress, sender, nodeUrl);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async fetchWithNodeFetch(url: string, options: any) {
+    const isNode = typeof window === 'undefined';
+    if (isNode) {
+      const fetch = (await import('node-fetch')).default;
+      return fetch(url, options);
+    } else {
+      return window.fetch(url, options);
+    }
+  }
+
+  async execute(intents: Intent, signer: ethers.Signer, nodeUrl: string): Promise<void> {
+    let ownerAddress = await signer.getAddress()
+    ownerAddress = ownerAddress.substring(2, ownerAddress.length) //remove 0x value
+    const sender = intents.sender;
+
+    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents))
+    const nonce = await this.getNonce(sender, nodeUrl)
+    const initCode = await this.getInitCode(nonce, ownerAddress)
 
     const builder = new UserOperationBuilder()
       .useDefaults({ sender })
       .setCallData(intent)
       .setPreVerificationGas('0x493E0')
-      .setMaxFeePerGas('0')
+      .setMaxFeePerGas('0x493E0')
       .setMaxPriorityFeePerGas('0')
       .setVerificationGasLimit('0x493E0')
       .setCallGasLimit('0xC3500')
       .setNonce(nonce)
-      .setInitCode(initCode);
+      .setInitCode(initCode)
 
-    const signature = await this.getSignature(signer, builder);
-    builder.setSignature(signature);
+    const signature = await this.getSignature(signer, builder)
+    builder.setSignature(signature)
 
-    const client = await Client.init(BUNDLER_URL);
+    const client = await Client.init(BUNDLER_URL)
 
     const res = await client.sendUserOperation(builder, {
       onBuild: op => console.log('Signed UserOperation:', op),
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const solvedHash = (res as any).userOpHash.solved_hash
+
+    const headers = {
+      'accept': 'application/json',
+      'content-type': 'application/json'
+    };
+
+    const body = JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'eth_getUserOperationReceipt',
+      params: [
+        solvedHash
+      ]
     });
 
-    console.log(`UserOpHash: ${res.userOpHash}`);
-    console.log('Waiting for transaction...');
+    const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    })
+
+    const reciept = await resReceipt.json()
+    console.log(reciept)
   }
 
-  private async getInitCode(ownerAddress: string, sender: string, nodeUrl: string) {
-    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
-    const code = await provider.getCode(sender);
-    return code !== '0x'
+
+  private async getInitCode(nonce: string, ownerAddress: string) {
+    return nonce !== '0x0'
       ? '0x'
-      : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
+      : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,21 +107,21 @@ export class IntentBuilder {
         builder.getMaxFeePerGas(),
         builder.getMaxPriorityFeePerGas(),
         ethers.utils.keccak256(builder.getPaymasterAndData()),
-      ],
-    );
+      ]
+    )
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), entryPointAddr, CHAINS.ethereum.id],
-    );
+      [ethers.utils.keccak256(packedData), entryPointAddr, chainID]
+    )
 
-    const userOpHash = ethers.utils.keccak256(enc);
-
-    return await signer.signMessage(ethers.utils.arrayify(userOpHash));
+    const userOpHash = ethers.utils.keccak256(enc)
+    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash))
+    return signature
   }
 
   private async getNonce(sender: string, nodeUrl: string) {
-    const provider = new ethers.providers.JsonRpcProvider(nodeUrl);
+    const provider = new ethers.providers.JsonRpcProvider(nodeUrl)
     const abi = [
       {
         inputs: [
@@ -112,17 +147,17 @@ export class IntentBuilder {
         stateMutability: 'view',
         type: 'function',
       },
-    ];
+    ]
 
     // Create a contract instance
-    const contract = new ethers.Contract(entryPointAddr, abi, provider);
+    const contract = new ethers.Contract(entryPointAddr, abi, provider)
 
     try {
-      const nonce = await contract.getNonce(sender, '0');
-      console.log('Nonce:', nonce.toString());
-      return nonce.toString();
+      const nonce = await contract.getNonce(sender, '0')
+      console.log('Nonce:', nonce.toString())
+      return nonce.toString()
     } catch (error) {
-      console.error('Error getting nonce:', error);
+      console.error('Error getting nonce:', error)
     }
   }
 }

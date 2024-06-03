@@ -1,8 +1,8 @@
-interface CurrencyFrom {
+interface Currency {
   type: 'TOKEN';
   address: string;
   amount: number;
-  chainId: number | string; // Allow both number and string
+  chainId: number;
 }
 
 interface Loan {
@@ -10,20 +10,14 @@ interface Loan {
   asset?: string; //ERC20 address
   amount?: number;
   address: string;
-  chainId: number | string; // Allow both number and string
+  chainId: number;
 }
 
-interface CurrencyTo {
-  type: 'TOKEN';
-  address: string;
-  amount: string;
-  chainId: number | string; // Allow both number and string
-}
 
-interface StakeTo {
+interface Stake {
   type: 'STAKE';
   address?: string;
-  chainId?: number | string; // Allow both number and string
+  chainId?: number;
 }
 
 interface ExtraData {
@@ -34,7 +28,7 @@ interface ExtraData {
 
 export interface Intent {
   sender: string;
-  from: CurrencyFrom | Loan;
-  to: CurrencyTo | StakeTo | Loan;
+  from: Currency | Loan;
+  to: Currency | Stake | Loan;
   extraData?: ExtraData;
 }

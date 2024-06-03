@@ -1,6 +1,6 @@
 import { IntentBuilder, Intent } from './src';
 import { ethers } from 'ethers';
-import { CHAINS } from './src/constants';
+import { CHAINS } from './src/Constants';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
@@ -20,8 +20,8 @@ const intents: Intent = {
   to: {
     type: 'TOKEN',
     address: 'NATIVE', //ETH
-    amount: '1',
-    chainId: '1',
+    amount: 1,
+    chainId: CHAINS.ethereum.id,
   },
   extraData: {
     expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), //24h
