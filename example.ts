@@ -1,6 +1,6 @@
 import { IntentBuilder, Intent } from './src';
 import { ethers } from 'ethers';
-import { CHAINS } from './test/constants';
+import { CHAINS } from './src/Constants';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();

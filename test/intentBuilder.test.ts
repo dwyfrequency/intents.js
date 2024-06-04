@@ -1,7 +1,7 @@
 import { IntentBuilder } from '../src/IntentBuilder';
 import { Projects } from '../src/Projects';
-import { NODE_URL } from '../src/Constants';
-import { TOKENS, CHAINS } from './constants';
+import { CHAINS, NODE_URL } from '../src/Constants';
+import { TOKENS } from './constants';
 
 import { Intent } from '../src/index';
 import { ethers } from 'ethers';
