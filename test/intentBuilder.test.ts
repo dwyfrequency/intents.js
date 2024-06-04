@@ -1,10 +1,10 @@
-import { IntentBuilder } from '../src/IntentBuilder';
-import { Projects } from '../src/Projects';
+import { IntentBuilder } from '../src';
+import { Projects } from '../src';
 import { CHAINS, NODE_URL } from '../src/Constants';
-import { TOKENS } from './constants';
 
-import { Intent } from '../src/index';
+import { Intent } from '../src';
 import { ethers } from 'ethers';
+import { TOKENS } from './constants';
 
 function randomToBytesLike(): ethers.BytesLike {
   const randomNum = Math.random();
