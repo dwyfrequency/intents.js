@@ -64,17 +64,13 @@ describe('execute function use cases tests', () => {
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
 
-      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-      expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
   }, 100000);
 
   it('ERC20 -> ETH Swap', async () => {
@@ -96,17 +92,13 @@ describe('execute function use cases tests', () => {
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
 
   it('ERC20 -> ERC20 Swap', async () => {
@@ -128,17 +120,13 @@ describe('execute function use cases tests', () => {
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
     const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
-      const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      // expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    // expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
   }, 100000);
 
   it('ERC20 -> ETH Stake', async () => {
@@ -160,17 +148,13 @@ describe('execute function use cases tests', () => {
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
     const initialStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Steth);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
-      const finalStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Steth);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const finalStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Steth);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
   }, 100000);
 
   it('ETH -> ETH Stake', async () => {
@@ -192,17 +176,13 @@ describe('execute function use cases tests', () => {
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
     const initialStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Steth);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
-      const finalStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Steth);
+    const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const finalStEthBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Steth);
 
-      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-      expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
   }, 100000);
 
   it('ETH -> ETH Loan', async () => {
@@ -224,15 +204,11 @@ describe('execute function use cases tests', () => {
 
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   }, 100000);
 
   it('ERC20 -> ERC20 Loan', async () => {
@@ -255,17 +231,13 @@ describe('execute function use cases tests', () => {
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
     const initialADaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
-      const finalADaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const finalADaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
   }, 100000);
 
   it('ETH -> ERC20 Loan', async () => {
@@ -288,17 +260,13 @@ describe('execute function use cases tests', () => {
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
+    const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Dai);
 
-      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-      expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
   }, 100000);
 
   it('Loaned ERC20 -> ETH', async () => {
@@ -321,17 +289,13 @@ describe('execute function use cases tests', () => {
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
     const initialEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
-      const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
+    const finalEthBalance = await intentBuilder.checkBalance(sender, NODE_URL);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
 
   it('Loaned ERC20 -> ERC20', async () => {
@@ -354,17 +318,13 @@ describe('execute function use cases tests', () => {
     const initialDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
     const initialUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
 
-    try {
-      await intentBuilder.execute(intents, signer, NODE_URL);
+    await intentBuilder.execute(intents, signer, NODE_URL);
 
-      const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
-      const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
+    const finalDaiBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.ADai);
+    const finalUsdcBalance = await intentBuilder.checkBalance(sender, NODE_URL, TOKENS.Usdc);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
-    } catch (error) {
-      throw error;
-    }
+    expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+    expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
   }, 100000);
 
   it('Failed Loaned ETH -> ERC20', async () => {
