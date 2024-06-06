@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "mocha",
+    "test": "jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
