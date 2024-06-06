@@ -1,9 +1,21 @@
 import { BytesLike, ethers } from 'ethers';
-import { Intent } from './InterfaceIntent';
 import { BUNDLER_URL, chainID, entryPointAddr, factoryAddr, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
+import { Intent} from 'blndgs-model/dist/proto/v1/asset';
+
 
 export class IntentBuilder {
+
+  public createBigInt(value: string) {
+    let buffer = new Uint8Array(value.length);
+    for (let i = 0; i < value.length; i++) {
+        buffer[i] = parseInt(value.charAt(i), 10); 
+    }
+    return {
+        value: buffer,
+    };
+}
+
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: factoryAddr,

@@ -1,4 +1,11 @@
-import { IntentBuilder, Intent } from './src';
+import { IntentBuilder } from './src';
+import {
+  Intent,
+  AssetType,
+  AssetKind,
+  ProcessingStatus,
+  BigInt
+} from 'blndgs-model/dist/proto/v1/asset';
 import { ethers } from 'ethers';
 import { CHAINS } from './src/Constants';
 
@@ -9,25 +16,21 @@ const nodeUrl = '';
 
 const intentBuilder = new IntentBuilder();
 
-const intents: Intent = {
+const intents = {
   sender: '',
-  from: {
-    type: 'TOKEN',
+  fromAsset: {
+    type: AssetType.ASSET_KIND_TOKEN,
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    amount: '2300',
-    chainId: CHAINS.Ethereum,
+    amount: intentBuilder.createBigInt('2300'),
+    chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
   },
-  to: {
-    type: 'TOKEN',
+  toStake: {
+    type: AssetType.ASSET_KIND_STAKE,
     address: 'NATIVE', //ETH
-    amount: '1',
-    chainId: CHAINS.Ethereum,
+    amount: intentBuilder.createBigInt('1'),
+    chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
   },
-  extraData: {
     expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), //24h
-    partiallyFillable: false,
-    kind: 'sell',
-  },
 };
 
 intentBuilder
