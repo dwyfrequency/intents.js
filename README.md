@@ -48,13 +48,13 @@ const intents: InterfaceIntent = {
     type: 'TOKEN',
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     amount: 2300,
-    chainId: BigNumber.from('1'),
+    chainId: BigNumber.from(CHAINS.Ethereum),
   },
   to: {
     type: 'TOKEN',
     address: 'NATIVE', // ETH as native currency
     amount: 1,
-    chainId: BigNumber.from('1'),
+    chainId: BigNumber.from(CHAINS.Ethereum),
   },
   extraData: {
     expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // 24 hours from now
