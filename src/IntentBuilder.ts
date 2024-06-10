@@ -1,30 +1,70 @@
 import { BytesLike, ethers } from 'ethers';
-import { BUNDLER_URL, chainID, entryPointAddr, factoryAddr, NODE_URL } from './Constants';
+import { BUNDLER_URL, CHAIN_ID, ENTERY_POINT, FACTORY, NODE_URL, CHAINS } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
-import { Intent} from 'blndgs-model/dist/asset_pb';
+import {
+  Intent,
+  ProcessingStatus,
+  Asset,
+  Stake,
+} from 'blndgs-model/dist/asset_pb';
 
+import { Projects } from './Projects';
 
 export class IntentBuilder {
+
+  public createIntent(sender: string, fromMode: string, fromSelectedToken: string, inputValue: string, toMode: string, toSelectedToken: string, toAmount: string, fromSelectedProject: string, toSelectedProject: string): Intent {
+    let fromCaseValue;
+    let toCaseValue;
+
+    // Determine the "from" asset or loan
+    if (fromMode === 'currency') {
+      fromCaseValue = { case: "fromAsset", value: new Asset(fromSelectedToken, this.createBigInt(inputValue), this.createBigInt(CHAINS.Ethereum)) };
+    } else if (fromMode === 'loan') {
+      const projectAddress = fromSelectedProject ? Projects[this.capitalize(fromSelectedProject)] : null;
+      fromCaseValue = { case: "fromLoan", value: new Asset(projectAddress, this.createBigInt(inputValue), this.createBigInt(CHAINS.Ethereum)) };
+    }
+
+    // Determine the "to" asset, loan or stake
+    if (toMode === 'currency') {
+      toCaseValue = { case: "toAsset", value: new Asset(toSelectedToken, this.createBigInt(toAmount), this.createBigInt(CHAINS.Ethereum)) };
+    } else if (toMode === 'loan') {
+      const projectAddress = toSelectedProject ? Projects[this.capitalize(toSelectedProject)] : null;
+      toCaseValue = { case: "toLoan", value: new Asset(projectAddress, this.createBigInt(toAmount), this.createBigInt(CHAINS.Ethereum)) };
+    } else if (toMode === 'staking') {
+      toCaseValue = { case: "toStake", value: new Stake('NATIVE', this.createBigInt(CHAINS.Ethereum)) };
+    }
+
+    return new Intent({
+      sender: sender,
+      from: fromCaseValue,
+      to: toCaseValue,
+    });
+  }
+
+
 
   public createBigInt(value: string) {
     let buffer = new Uint8Array(value.length);
     for (let i = 0; i < value.length; i++) {
-        buffer[i] = parseInt(value.charAt(i), 10); 
+      buffer[i] = parseInt(value.charAt(i), 10);
     }
     return {
-        value: buffer,
+      value: buffer,
     };
-}
+  }
 
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
-      factory: factoryAddr,
+      factory: FACTORY,
       salt: salt,
     });
     const sender = simpleAccount.getSender();
 
     return sender;
   }
+
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetchWithNodeFetch(url: string, options: any) {
@@ -97,7 +137,7 @@ export class IntentBuilder {
     console.log('nonce ' + nonce);
     return nonce !== '0'
       ? '0x'
-      : `${factoryAddr}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
+      : `${FACTORY}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -120,7 +160,7 @@ export class IntentBuilder {
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), entryPointAddr, chainID],
+      [ethers.utils.keccak256(packedData), ENTERY_POINT, CHAIN_ID],
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
@@ -157,7 +197,7 @@ export class IntentBuilder {
     ];
 
     // Create a contract instance
-    const contract = new ethers.Contract(entryPointAddr, abi, provider);
+    const contract = new ethers.Contract(ENTERY_POINT, abi, provider);
 
     try {
       const nonce = await contract.getNonce(sender, '0');
