@@ -11,14 +11,13 @@ import {
 import { Projects } from './Projects';
 
 
-
-
 export class IntentBuilder {
 
+  capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  
   public createIntent(sender: string, fromMode: string, fromSelectedToken: string, inputValue: string, toMode: string, toSelectedToken: string, toAmount: string, fromSelectedProject: string, toSelectedProject: string): Intent {
-    let fromCaseValue
-    let toCaseValue
-    
+    let fromCaseValue: { case: 'fromAsset' | 'fromLoan', value: Asset | Loan } | undefined;
+    let toCaseValue: { case: 'toAsset' | 'toLoan' | 'toStake', value: Asset | Loan | Stake } | undefined;
 
     // Determine the "from" asset or loan
     if (fromMode === 'currency') {
@@ -101,8 +100,6 @@ export class IntentBuilder {
 
     return sender;
   }
-
-  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

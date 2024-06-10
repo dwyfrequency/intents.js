@@ -17,7 +17,7 @@ npm install intents.js
 Import `intents.js` into your project to begin defining intents:
 
 ```tsx
-import { IntentBuilder, InterfaceIntent, Projects } from 'intents.js';
+import { IntentBuilder, Projects } from 'intents.js';
 ```
 
 ## Usage
@@ -38,27 +38,26 @@ After initializing the SDK, you need to configure it with your signing key and n
 const nodeUrl = '<Your_Node_URL_Here>';
 ```
 
-### 3. Building the Intents Array
+### 3. Create the Intent
 
-To build an array of intents for our bundler to solve, you can directly utilize the predefined interfaces. Here's an example demonstrating how to construct the `intents` array with specific transaction intentions:
+
 
 ```tsx
-const intents: InterfaceIntent = {
-  from: {
-    type: 'TOKEN',
-    address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    amount: intentBuilder.createBigInt('2300'),
-    chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
-  },
-  to: {
-    type: 'TOKEN',
-    address: 'NATIVE', // ETH as native currency
-    amount: intentBuilder.createBigInt('1'),
-    chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
-  },
-    expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // 24 hours from now
-};
+const sender = '0x';
+const fromMode = 'currency';
+const fromSelectedToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+const inputValue = '0.1';
+const toMode = 'staking';
+const toSelectedToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+const toAmount = '0.1';
+const fromSelectedProject = '';
+const toSelectedProject = Projects.Lido;
+
+
+const intent = intentBuilder.createIntent(sender, fromMode, fromSelectedToken, inputValue, toMode, toSelectedToken, toAmount, fromSelectedProject, toSelectedProject)
 ```
+
+
 
 ### 3. Execute the Intent
 
@@ -66,7 +65,7 @@ After setting up your intents array, the next step is to execute these intents u
 
 ```tsx
 intentBuilder
-  .execute(intents, signer, nodeUrl)
+  .execute(intent, signer, nodeUrl)
   .then(() => console.log('Intent executed successfully.'))
   .catch(error => console.error('Error executing intent:', error));
 ```
@@ -85,13 +84,3 @@ The `intents.js` SDK simplifies interactions with staking operations through the
 - `Spark`
 - `SushiSwap`
 
-#### Example of Usage:
-
-When defining an intent to stake with a specific provider, you can reference the provider's address directly through the `Projects` class. Here's how you can specify staking with Lido as an example:
-
-```tsx
-toStake: {
-    type: AssetKind.STAKE,
-    address: Projects.Lido
-},
-```
