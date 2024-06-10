@@ -6,9 +6,13 @@ import {
   ProcessingStatus,
   Asset,
   Stake,
+  Loan
 } from 'blndgs-model/dist/asset_pb';
 
 import { Projects } from './Projects';
+
+
+
 
 export class IntentBuilder {
 
@@ -18,28 +22,65 @@ export class IntentBuilder {
 
     // Determine the "from" asset or loan
     if (fromMode === 'currency') {
-      fromCaseValue = { case: "fromAsset", value: new Asset(fromSelectedToken, this.createBigInt(inputValue), this.createBigInt(CHAINS.Ethereum)) };
+        fromCaseValue = { 
+            case: "fromAsset", 
+            value: new Asset({
+                address: fromSelectedToken,
+                amount: this.createBigInt(inputValue),
+                chainId: this.createBigInt(CHAINS.Ethereum)
+            }) 
+        };
     } else if (fromMode === 'loan') {
-      const projectAddress = fromSelectedProject ? Projects[this.capitalize(fromSelectedProject)] : null;
-      fromCaseValue = { case: "fromLoan", value: new Asset(projectAddress, this.createBigInt(inputValue), this.createBigInt(CHAINS.Ethereum)) };
+        const projectAddress = fromSelectedProject ? Projects[this.capitalize(fromSelectedProject)] : undefined;
+        fromCaseValue = { 
+            case: "fromLoan", 
+            value: new Loan({
+                asset: projectAddress,  // Assuming 'asset' is used here to store the project address
+                amount: this.createBigInt(inputValue),
+                address: projectAddress,  // Assuming address is needed here as well
+                chainId: this.createBigInt(CHAINS.Ethereum).toString()  // Adjust this if your chain ID needs to be a string
+            }) 
+        };
     }
 
-    // Determine the "to" asset, loan or stake
+    // Determine the "to" asset, loan, or stake
     if (toMode === 'currency') {
-      toCaseValue = { case: "toAsset", value: new Asset(toSelectedToken, this.createBigInt(toAmount), this.createBigInt(CHAINS.Ethereum)) };
+        toCaseValue = { 
+            case: "toAsset", 
+            value: new Asset({
+                address: toSelectedToken,
+                amount: this.createBigInt(toAmount),
+                chainId: this.createBigInt(CHAINS.Ethereum)
+            }) 
+        };
     } else if (toMode === 'loan') {
-      const projectAddress = toSelectedProject ? Projects[this.capitalize(toSelectedProject)] : null;
-      toCaseValue = { case: "toLoan", value: new Asset(projectAddress, this.createBigInt(toAmount), this.createBigInt(CHAINS.Ethereum)) };
+        const projectAddress = toSelectedProject ? Projects[this.capitalize(toSelectedProject)] : undefined;
+        toCaseValue = { 
+            case: "toLoan", 
+            value: new Loan({
+                asset: projectAddress,
+                amount: this.createBigInt(toAmount),
+                address: projectAddress,
+                chainId: this.createBigInt(CHAINS.Ethereum).toString()  // Adjust this if your chain ID needs to be a string
+            }) 
+        };
     } else if (toMode === 'staking') {
-      toCaseValue = { case: "toStake", value: new Stake('NATIVE', this.createBigInt(CHAINS.Ethereum)) };
+        toCaseValue = { 
+            case: "toStake", 
+            value: new Stake({
+                address: 'NATIVE',  // Assuming 'NATIVE' refers to a native blockchain asset
+                chainId: this.createBigInt(CHAINS.Ethereum)
+            }) 
+        };
     }
 
     return new Intent({
-      sender: sender,
-      from: fromCaseValue,
-      to: toCaseValue,
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
     });
-  }
+}
+
 
 
 
