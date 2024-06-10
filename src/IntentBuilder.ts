@@ -3,7 +3,6 @@ import { BUNDLER_URL, CHAIN_ID, ENTERY_POINT, FACTORY, NODE_URL, CHAINS } from '
 import { Client, Presets, UserOperationBuilder } from 'userop';
 import {
   Intent,
-  ProcessingStatus,
   Asset,
   Stake,
   Loan
@@ -17,71 +16,70 @@ import { Projects } from './Projects';
 export class IntentBuilder {
 
   public createIntent(sender: string, fromMode: string, fromSelectedToken: string, inputValue: string, toMode: string, toSelectedToken: string, toAmount: string, fromSelectedProject: string, toSelectedProject: string): Intent {
-    let fromCaseValue;
-    let toCaseValue;
+    let fromCaseValue
+    let toCaseValue
+    
 
     // Determine the "from" asset or loan
     if (fromMode === 'currency') {
-        fromCaseValue = { 
-            case: "fromAsset", 
-            value: new Asset({
-                address: fromSelectedToken,
-                amount: this.createBigInt(inputValue),
-                chainId: this.createBigInt(CHAINS.Ethereum)
-            }) 
-        };
+      fromCaseValue = {
+        case: "fromAsset",
+        value: new Asset({
+          address: fromSelectedToken,
+          amount: this.createBigInt(inputValue),
+          chainId: this.createBigInt(CHAINS.Ethereum)
+        })
+      };
     } else if (fromMode === 'loan') {
-        const projectAddress = fromSelectedProject ? Projects[this.capitalize(fromSelectedProject)] : undefined;
-        fromCaseValue = { 
-            case: "fromLoan", 
-            value: new Loan({
-                asset: projectAddress,  // Assuming 'asset' is used here to store the project address
-                amount: this.createBigInt(inputValue),
-                address: projectAddress,  // Assuming address is needed here as well
-                chainId: this.createBigInt(CHAINS.Ethereum).toString()  // Adjust this if your chain ID needs to be a string
-            }) 
-        };
+      const projectAddress = fromSelectedProject ? Projects[this.capitalize(fromSelectedProject)] : undefined;
+      fromCaseValue = {
+        case: "fromLoan",
+        value: new Loan({
+          asset: fromSelectedToken,  
+          amount: this.createBigInt(inputValue),
+          address: projectAddress,  
+          chainId: this.createBigInt(CHAINS.Ethereum)
+        })
+      };
     }
 
     // Determine the "to" asset, loan, or stake
     if (toMode === 'currency') {
-        toCaseValue = { 
-            case: "toAsset", 
-            value: new Asset({
-                address: toSelectedToken,
-                amount: this.createBigInt(toAmount),
-                chainId: this.createBigInt(CHAINS.Ethereum)
-            }) 
-        };
+      toCaseValue = {
+        case: "toAsset",
+        value: new Asset({
+          address: toSelectedToken,
+          amount: this.createBigInt(toAmount),
+          chainId: this.createBigInt(CHAINS.Ethereum)
+        })
+      };
     } else if (toMode === 'loan') {
-        const projectAddress = toSelectedProject ? Projects[this.capitalize(toSelectedProject)] : undefined;
-        toCaseValue = { 
-            case: "toLoan", 
-            value: new Loan({
-                asset: projectAddress,
-                amount: this.createBigInt(toAmount),
-                address: projectAddress,
-                chainId: this.createBigInt(CHAINS.Ethereum).toString()  // Adjust this if your chain ID needs to be a string
-            }) 
-        };
+      const projectAddress = toSelectedProject ? Projects[this.capitalize(toSelectedProject)] : undefined;
+      toCaseValue = {
+        case: "toLoan",
+        value: new Loan({
+          asset: toSelectedToken,
+          amount: this.createBigInt(toAmount),
+          address: projectAddress,
+          chainId: this.createBigInt(CHAINS.Ethereum)
+        })
+      };
     } else if (toMode === 'staking') {
-        toCaseValue = { 
-            case: "toStake", 
-            value: new Stake({
-                address: 'NATIVE',  // Assuming 'NATIVE' refers to a native blockchain asset
-                chainId: this.createBigInt(CHAINS.Ethereum)
-            }) 
-        };
+      toCaseValue = {
+        case: "toStake",
+        value: new Stake({
+          address: Projects.Lido,  
+          chainId: this.createBigInt(CHAINS.Ethereum)
+        })
+      };
     }
 
     return new Intent({
-        sender: sender,
-        from: fromCaseValue,
-        to: toCaseValue,
+      sender: sender,
+      from: fromCaseValue,
+      to: toCaseValue,
     });
-}
-
-
+  }
 
 
   public createBigInt(value: string) {
