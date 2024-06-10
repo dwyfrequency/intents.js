@@ -1,10 +1,6 @@
 import { IntentBuilder } from './src';
 import {
-  Intent,
-  AssetType,
   AssetKind,
-  ProcessingStatus,
-  BigInt
 } from 'blndgs-model/dist/asset_pb';
 import { ethers } from 'ethers';
 import { CHAINS } from './src/Constants';

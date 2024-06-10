@@ -6,8 +6,7 @@
     "logrocket": "^8.1.0",
     "node-fetch": "^3.3.2",
     "typescript": "^5.4.3",
-    "userop": "^0.3.8",
-    "viem": "^2.13.2"
+    "userop": "^0.3.8"
   },
   "description": "Abstract State Change Expression Library",
   "devDependencies": {
