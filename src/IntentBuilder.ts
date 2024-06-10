@@ -15,7 +15,7 @@ export class IntentBuilder {
 
   capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   
-  public createIntent(sender: string, fromMode: string, fromSelectedToken: string, inputValue: string, toMode: string, toSelectedToken: string, toAmount: string, fromSelectedProject: string, toSelectedProject: string): Intent {
+  public createIntent(sender: string, fromMode: string, fromSelectedToken: string, inputValue: string, toMode: string, toSelectedToken: string, toAmount: string, fromSelectedProject= "", toSelectedProject = ""): Intent {
     let fromCaseValue: { case: 'fromAsset' | 'fromLoan', value: Asset | Loan } | undefined;
     let toCaseValue: { case: 'toAsset' | 'toLoan' | 'toStake', value: Asset | Loan | Stake } | undefined;
 
