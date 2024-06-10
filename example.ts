@@ -5,7 +5,7 @@ import {
   AssetKind,
   ProcessingStatus,
   BigInt
-} from 'blndgs-model/dist/proto/v1/asset';
+} from 'blndgs-model/dist/asset_pb';
 import { ethers } from 'ethers';
 import { CHAINS } from './src/Constants';
 
@@ -19,13 +19,13 @@ const intentBuilder = new IntentBuilder();
 const intents = {
   sender: '',
   fromAsset: {
-    type: AssetType.ASSET_KIND_TOKEN,
+    type: AssetKind.TOKEN,
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     amount: intentBuilder.createBigInt('2300'),
     chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
   },
   toStake: {
-    type: AssetType.ASSET_KIND_STAKE,
+    type: AssetKind.STAKE,
     address: 'NATIVE', //ETH
     amount: intentBuilder.createBigInt('1'),
     chainId: intentBuilder.createBigInt(CHAINS.Ethereum),

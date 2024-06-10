@@ -47,20 +47,16 @@ const intents: InterfaceIntent = {
   from: {
     type: 'TOKEN',
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    amount: 2300,
-    chainId: BigNumber.from(CHAINS.Ethereum),
+    amount: intentBuilder.createBigInt('2300'),
+    chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
   },
   to: {
     type: 'TOKEN',
     address: 'NATIVE', // ETH as native currency
-    amount: 1,
-    chainId: BigNumber.from(CHAINS.Ethereum),
+    amount: intentBuilder.createBigInt('1'),
+    chainId: intentBuilder.createBigInt(CHAINS.Ethereum),
   },
-  extraData: {
     expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // 24 hours from now
-    partiallyFillable: false,
-    kind: 'sell',
-  },
 };
 ```
 
@@ -81,19 +77,9 @@ The `intents.js` SDK simplifies interactions with staking operations through the
 
 #### Available Staking Providers:
 
-- `BeaconChain`
 - `Lido`
 - `RocketPool`
 - `Mantle`
-- `StakeWise`
-- `Ankr`
-- `Swell`
-- `Liquid`
-- `Binance`
-- `Stader`
-- `Origin`
-- `Frax`
-- `Coinbase`
 - `Aave`
 - `Compound`
 - `Spark`
@@ -104,8 +90,8 @@ The `intents.js` SDK simplifies interactions with staking operations through the
 When defining an intent to stake with a specific provider, you can reference the provider's address directly through the `Projects` class. Here's how you can specify staking with Lido as an example:
 
 ```tsx
-to: {
-    type: "STAKE",
-    address: Projects.Staking.Lido
+toStake: {
+    type: AssetKind.STAKE,
+    address: Projects.Lido
 },
 ```

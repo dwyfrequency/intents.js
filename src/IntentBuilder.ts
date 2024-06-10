@@ -1,7 +1,7 @@
 import { BytesLike, ethers } from 'ethers';
 import { BUNDLER_URL, chainID, entryPointAddr, factoryAddr, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
-import { Intent} from 'blndgs-model/dist/proto/v1/asset';
+import { Intent} from 'blndgs-model/dist/asset_pb';
 
 
 export class IntentBuilder {
