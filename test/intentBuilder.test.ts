@@ -1,4 +1,4 @@
-import { IntentBuilder, Projects, Helpers } from '../src';
+import { IntentBuilder, Projects, Helpers, Intent, Asset } from '../src';
 
 import { ethers } from 'ethers';
 import { TOKENS } from './constants';
@@ -14,6 +14,8 @@ describe('execute function use cases tests', () => {
   let randomAccount: ethers.Wallet;
   let sender: string;
   let signer: ethers.Wallet;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let fromCaseValue: any, toCaseValue: any;
 
   beforeAll(async () => {
     intentBuilder = new IntentBuilder();
@@ -37,12 +39,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('ETH -> DAI Swap', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.ETH, 0.1, 'currency', TOKENS.Dai, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'toAsset',
+      value: new Asset({
+        address: TOKENS.Dai,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
@@ -52,12 +76,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('ETH -> WETH Swap', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.ETH, 0.2, 'currency', TOKENS.Weth, 0.2);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.2),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'toAsset',
+      value: new Asset({
+        address: TOKENS.Weth,
+        amount: intentBuilder.createBigInt(0.2),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
@@ -67,23 +113,70 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('DAI -> ETH Swap', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.Dai, 10, 'currency', TOKENS.ETH, 10);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.Dai,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'toAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    await intentBuilder.execute(intent, signer);
+
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
 
   it('WETH -> ETH Swap', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.Weth, 0.1, 'currency', TOKENS.ETH, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.Weth,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'toAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
@@ -92,11 +185,33 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('DAI -> USDC Swap', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.Dai, 10, 'currency', TOKENS.Usdc, 10);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.Dai,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'toAsset',
+      value: new Asset({
+        address: TOKENS.Usdc,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
 
@@ -104,12 +219,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('DAI -> ETH Stake', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.Dai, 100, 'staking', Projects.Lido, 100);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.Dai,
+        amount: intentBuilder.createBigInt(100),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'staking',
+      value: new Asset({
+        address: Projects.Lido,
+        amount: intentBuilder.createBigInt(100),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
     const initialStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
     const finalStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
@@ -119,12 +256,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('WETH -> ETH Stake', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.Weth, 0.1, 'staking', Projects.Lido, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.Weth,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'staking',
+      value: new Asset({
+        address: Projects.Lido,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
     const initialStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
     const finalStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
@@ -134,12 +293,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('ETH -> ETH Stake', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.ETH, 0.1, 'staking', Projects.Lido, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'staking',
+      value: new Asset({
+        address: Projects.Lido,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const initialStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const finalStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
@@ -149,22 +330,68 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('ETH -> ETH Loan', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.ETH, 0.1, 'loan', Projects.Aave, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: Projects.Aave,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   }, 100000);
 
+  // The remaining tests follow a similar pattern, so I'll provide the code for them without individual explanations
+
   it('ERC20 -> ERC20 Loan', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.Dai, 0.1, 'loan', Projects.Aave, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.Dai,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: Projects.Aave,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
     const initialADaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
     const finalADaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
@@ -174,12 +401,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('ETH -> Weth Loan', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.ETH, 0.1, 'loan', Projects.Aave, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: Projects.Aave,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
@@ -189,12 +438,34 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('ETH -> Dai Loan', async () => {
-    const intent = intentBuilder.createIntent(sender, 'currency', TOKENS.ETH, 0.1, 'loan', Projects.Aave, 0.1);
+    fromCaseValue = {
+      case: 'fromAsset',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: Projects.Aave,
+        amount: intentBuilder.createBigInt(0.1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
@@ -204,38 +475,108 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('Loaned Dai -> ETH', async () => {
-    const intent = intentBuilder.createIntent(sender, 'loan', TOKENS.ADai, 10, 'currency', TOKENS.ETH, 10);
+    fromCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: TOKENS.ADai,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'currency',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    await intentBuilder.execute(intent, signer);
+
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
 
   it('Loaned Weth -> ETH', async () => {
-    const intent = intentBuilder.createIntent(sender, 'loan', TOKENS.Aweth, 10, 'currency', TOKENS.ETH, 10);
+    fromCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: TOKENS.Aweth,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'currency',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(10),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    await intentBuilder.execute(intent, signer);
+
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
     const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
 
   it('Loaned Dai -> Usdc', async () => {
-    const intent = intentBuilder.createIntent(sender, 'loan', TOKENS.ADai, 5, 'currency', TOKENS.Usdc, 5);
+    fromCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: TOKENS.ADai,
+        amount: intentBuilder.createBigInt(5),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'currency',
+      value: new Asset({
+        address: TOKENS.Usdc,
+        amount: intentBuilder.createBigInt(5),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
     const initialUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
 
-    await intentBuilder.execute(intent, signer);
+    await intentBuilder.execute(
+      new Intent({
+        sender: sender,
+        from: fromCaseValue,
+        to: toCaseValue,
+      }),
+      signer,
+    );
 
     const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
     const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
@@ -245,13 +586,35 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('Failed Loaned ETH -> ERC20', async () => {
-    const intent = intentBuilder.createIntent(sender, 'loan', TOKENS.ETH, 1, 'currency', TOKENS.Usdc, 1);
+    fromCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: TOKENS.ETH,
+        amount: intentBuilder.createBigInt(1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'currency',
+      value: new Asset({
+        address: TOKENS.Usdc,
+        amount: intentBuilder.createBigInt(1),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
     const initialUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
 
     try {
-      await intentBuilder.execute(intent, signer);
+      await intentBuilder.execute(
+        new Intent({
+          sender: sender,
+          from: fromCaseValue,
+          to: toCaseValue,
+        }),
+        signer,
+      );
 
       const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
       const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
@@ -264,21 +627,35 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('Failed Non-Loaned ERC20 -> ERC20', async () => {
-    const intent = intentBuilder.createIntent(
-      sender,
-      'loan',
-      TOKENS.Usdc, // Token not available on Aave
-      5,
-      'currency',
-      TOKENS.Usdc,
-      5,
-    );
+    fromCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: TOKENS.Usdc, // Token not available on Aave
+        amount: intentBuilder.createBigInt(5),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'currency',
+      value: new Asset({
+        address: TOKENS.Usdc,
+        amount: intentBuilder.createBigInt(5),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     const initialNonAaveTokenBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
     const initialUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
 
     try {
-      await intentBuilder.execute(intent, signer);
+      await intentBuilder.execute(
+        new Intent({
+          sender: sender,
+          from: fromCaseValue,
+          to: toCaseValue,
+        }),
+        signer,
+      );
 
       const finalNonAaveTokenBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
       const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
@@ -291,10 +668,32 @@ describe('execute function use cases tests', () => {
   }, 100000);
 
   it('Failed Loan -> Stake', async () => {
-    const intent = intentBuilder.createIntent(sender, 'loan', TOKENS.ADai, 5, 'staking', Projects.Lido, 5);
+    fromCaseValue = {
+      case: 'loan',
+      value: new Asset({
+        address: TOKENS.ADai,
+        amount: intentBuilder.createBigInt(5),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
+    toCaseValue = {
+      case: 'staking',
+      value: new Asset({
+        address: Projects.Lido,
+        amount: intentBuilder.createBigInt(5),
+        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+      }),
+    };
 
     try {
-      await intentBuilder.execute(intent, signer);
+      await intentBuilder.execute(
+        new Intent({
+          sender: sender,
+          from: fromCaseValue,
+          to: toCaseValue,
+        }),
+        signer,
+      );
     } catch (error) {
       expect(error).toBeDefined();
     }
