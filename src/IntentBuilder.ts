@@ -1,5 +1,5 @@
 import { BytesLike, ethers } from 'ethers';
-import { BUNDLER_URL, CHAIN_ID, ENTERY_POINT, FACTORY, NODE_URL } from './Constants';
+import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
@@ -123,7 +123,7 @@ export class IntentBuilder {
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), ENTERY_POINT, CHAIN_ID],
+      [ethers.utils.keccak256(packedData), ENTRY_POINT, CHAIN_ID],
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
@@ -160,7 +160,7 @@ export class IntentBuilder {
     ];
 
     // Create a contract instance
-    const contract = new ethers.Contract(ENTERY_POINT, abi, provider);
+    const contract = new ethers.Contract(ENTRY_POINT, abi, provider);
 
     try {
       const nonce = await contract.getNonce(sender, '0');
