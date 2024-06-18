@@ -51,7 +51,6 @@ describe('execute function use cases tests', () => {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Dai,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -88,7 +87,6 @@ describe('execute function use cases tests', () => {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Weth,
-        amount: intentBuilder.createBigInt(0.2),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -125,7 +123,6 @@ describe('execute function use cases tests', () => {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        amount: intentBuilder.createBigInt(10),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -162,7 +159,6 @@ describe('execute function use cases tests', () => {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -197,7 +193,6 @@ describe('execute function use cases tests', () => {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Usdc,
-        amount: intentBuilder.createBigInt(10),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -231,7 +226,6 @@ describe('execute function use cases tests', () => {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        amount: intentBuilder.createBigInt(100),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -268,7 +262,6 @@ describe('execute function use cases tests', () => {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -305,7 +298,6 @@ describe('execute function use cases tests', () => {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -342,7 +334,6 @@ describe('execute function use cases tests', () => {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -376,7 +367,6 @@ describe('execute function use cases tests', () => {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -413,7 +403,6 @@ describe('execute function use cases tests', () => {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -450,7 +439,6 @@ describe('execute function use cases tests', () => {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        amount: intentBuilder.createBigInt(0.1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -487,7 +475,6 @@ describe('execute function use cases tests', () => {
       case: 'currency',
       value: new Asset({
         address: TOKENS.ETH,
-        amount: intentBuilder.createBigInt(10),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -524,7 +511,6 @@ describe('execute function use cases tests', () => {
       case: 'currency',
       value: new Asset({
         address: TOKENS.ETH,
-        amount: intentBuilder.createBigInt(10),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -561,7 +547,6 @@ describe('execute function use cases tests', () => {
       case: 'currency',
       value: new Asset({
         address: TOKENS.Usdc,
-        amount: intentBuilder.createBigInt(5),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -598,7 +583,6 @@ describe('execute function use cases tests', () => {
       case: 'currency',
       value: new Asset({
         address: TOKENS.Usdc,
-        amount: intentBuilder.createBigInt(1),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -639,7 +623,6 @@ describe('execute function use cases tests', () => {
       case: 'currency',
       value: new Asset({
         address: TOKENS.Usdc,
-        amount: intentBuilder.createBigInt(5),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
@@ -680,7 +663,6 @@ describe('execute function use cases tests', () => {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        amount: intentBuilder.createBigInt(5),
         chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
