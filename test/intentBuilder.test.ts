@@ -687,15 +687,15 @@ describe('execute function use cases tests', () => {
       case: 'fromAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        amount: intentBuilder.createBigInt(0.5),
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        amount: createBigInt(0.5),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Dai,
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
 
@@ -720,12 +720,12 @@ describe('execute function use cases tests', () => {
 
   describe('Negative tests with extreme amounts', () => {
     it('should fail with negative amount', async () => {
-      const amount = intentBuilder.createBigInt(-1); // Invalid negative amount
+      const amount = createBigInt(-1); // Invalid negative amount
       expect(() => {
         new Asset({
           address: TOKENS.ETH,
           amount: amount,
-          chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+          chainId: createBigInt(Projects.CHAINS.Ethereum),
         });
       }).toThrowError();
     });
@@ -735,8 +735,8 @@ describe('execute function use cases tests', () => {
         case: 'fromAsset',
         value: new Asset({
           address: TOKENS.ETH,
-          amount: intentBuilder.createBigInt(0), // Zero amount
-          chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+          amount: createBigInt(0), // Zero amount
+          chainId: createBigInt(Projects.CHAINS.Ethereum),
         }),
       };
       try {
@@ -754,13 +754,13 @@ describe('execute function use cases tests', () => {
     });
 
     it('should handle high amount', async () => {
-      const highAmount = intentBuilder.createBigInt(10000000000000000000000); // High amount
+      const highAmount = createBigInt(10000000000000000000000); // High amount
       fromCaseValue = {
         case: 'fromAsset',
         value: new Asset({
           address: TOKENS.ETH,
           amount: highAmount,
-          chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+          chainId: createBigInt(Projects.CHAINS.Ethereum),
         }),
       };
       // Assuming this might fail due to lack of balance or other reasons
@@ -779,20 +779,20 @@ describe('execute function use cases tests', () => {
     });
   });
   it('DAI -> ETH Swap with Maximum Precision', async () => {
-    const maxPrecisionAmount = intentBuilder.createBigInt(Number("1".padEnd(19, '0'))); // 18 decimals
+    const maxPrecisionAmount = createBigInt(Number('1'.padEnd(19, '0'))); // 18 decimals
     fromCaseValue = {
       case: 'fromAsset',
       value: new Asset({
         address: TOKENS.Dai,
         amount: maxPrecisionAmount,
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
 
@@ -823,19 +823,19 @@ describe('execute function use cases tests', () => {
           case: 'fromAsset',
           value: new Asset({
             address: TOKENS.ETH,
-            amount: intentBuilder.createBigInt(0.1),
-            chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+            amount: createBigInt(0.1),
+            chainId: createBigInt(Projects.CHAINS.Ethereum),
           }),
         },
         to: {
           case: 'toAsset',
           value: new Asset({
             address: TOKENS.Dai,
-            chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+            chainId: createBigInt(Projects.CHAINS.Ethereum),
           }),
         },
       }),
-      signer
+      signer,
     );
 
     const swap2 = intentBuilder.execute(
@@ -845,19 +845,19 @@ describe('execute function use cases tests', () => {
           case: 'fromAsset',
           value: new Asset({
             address: TOKENS.Dai,
-            amount: intentBuilder.createBigInt(50),
-            chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+            amount: createBigInt(50),
+            chainId: createBigInt(Projects.CHAINS.Ethereum),
           }),
         },
         to: {
           case: 'toAsset',
           value: new Asset({
             address: TOKENS.ETH,
-            chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+            chainId: createBigInt(Projects.CHAINS.Ethereum),
           }),
         },
       }),
-      signer
+      signer,
     );
 
     await Promise.all([swap1, swap2]);
@@ -869,15 +869,15 @@ describe('execute function use cases tests', () => {
       case: 'fromAsset',
       value: new Asset({
         address: TOKENS.Wbtc,
-        amount: intentBuilder.createBigInt(0.1), // 1 WBTC (8 decimals)
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        amount: createBigInt(0.1), // 1 WBTC (8 decimals)
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
 
@@ -900,21 +900,20 @@ describe('execute function use cases tests', () => {
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
 
-
   it('USDC -> DAI Swap', async () => {
     fromCaseValue = {
       case: 'fromAsset',
       value: new Asset({
         address: TOKENS.Usdc,
-        amount: intentBuilder.createBigInt(10), 
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        amount: createBigInt(10),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Dai,
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
 
@@ -942,15 +941,15 @@ describe('execute function use cases tests', () => {
       case: 'fromAsset',
       value: new Asset({
         address: TOKENS.Usdc,
-        amount: intentBuilder.createBigInt(10), // 5 USDC
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        amount: createBigInt(10), // 5 USDC
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'staking',
       value: new Stake({
-        address: Projects.Lido, 
-        chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+        address: Projects.Lido,
+        chainId: createBigInt(Projects.CHAINS.Ethereum),
       }),
     };
 
@@ -967,7 +966,6 @@ describe('execute function use cases tests', () => {
 
     const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
 
-    expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance)); 
+    expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance));
   }, 100000);
-
 });
