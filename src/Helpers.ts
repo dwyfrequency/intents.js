@@ -21,7 +21,7 @@ export class Helpers {
     try {
       const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
       console.log('Response:', response);
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error('Error:', error);
     }

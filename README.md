@@ -56,14 +56,14 @@ const signer = provider.getSigner();
 const intentBuilder = new IntentBuilder();
 
 const sender = '0x';
-const fromSelectedToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-const inputValue = '0.1';
+const Token 'NATIVE';
+const amount = 0.1;
 
 const fromCaseValue = {
   case: 'fromAsset',
   value: new Asset({
-    address: fromSelectedToken,
-    amount: intentBuilder.createBigInt(Number(inputValue)),
+    address: Token,
+    amount: intentBuilder.createBigInt(Number(amount)),
     chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
   }),
 };
