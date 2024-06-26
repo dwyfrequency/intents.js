@@ -59,3 +59,16 @@ export async function checkBalance(address: string, tokenAddress?: string): Prom
     return '0';
   }
 }
+
+export function createBigInt(value: number) {
+  // Convert the input to a string if it's a number
+  const inputString = value.toString();
+
+  const buffer = new Uint8Array(inputString.length);
+  for (let i = 0; i < inputString.length; i++) {
+    buffer[i] = parseInt(inputString.charAt(i), 10);
+  }
+  return {
+    value: buffer,
+  };
+}
