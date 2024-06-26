@@ -6,15 +6,15 @@ const signer = provider.getSigner();
 
 const intentBuilder = new IntentBuilder();
 
-const sender = '0x';
-const fromSelectedToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-const inputValue = '0.1';
+const sender = '0xAddress';
+const Token = 'NATIVE';
+const amount = 0.1;
 
 const fromCaseValue = {
   case: 'fromAsset',
   value: new Asset({
-    address: fromSelectedToken,
-    amount: createBigInt(Number(inputValue)),
+    address: Token,
+    amount: createBigInt(Number(amount)),
     chainId: createBigInt(Projects.CHAINS.Ethereum),
   }),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

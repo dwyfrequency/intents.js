@@ -17,12 +17,12 @@ export async function faucet(addrss: string) {
     id: 1, // The ID can be any number or string
   };
 
-  try {
-    const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
-    console.log('Response:', response);
-    window.location.reload();
-  } catch (error) {
-    console.error('Error:', error);
+    try {
+      const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
+      console.log('Response:', response);
+      // window.location.reload();
+    } catch (error) {
+      console.error('Error:', error);
   }
 }
 
@@ -52,6 +52,10 @@ export async function checkBalance(address: string, tokenAddress?: string): Prom
       const balance = await provider.getBalance(address);
       const formattedBalance = ethers.utils.formatEther(balance);
       console.log(`Ethereum Balance: ${formattedBalance}`);
+        return formattedBalance;
+      }
+    } catch (error) {
+      console.error('Error checking balance:', error);
       return formattedBalance;
     }
   } catch (error) {
