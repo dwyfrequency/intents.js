@@ -1,4 +1,4 @@
-import { IntentBuilder, Projects, Helpers, Intent, Asset } from '../src';
+import { IntentBuilder, Projects, Intent, Asset, checkBalance, faucet } from '../src';
 
 import { ethers } from 'ethers';
 import { TOKENS } from './constants';
@@ -25,16 +25,16 @@ describe('execute function use cases tests', () => {
   });
 
   it('should have an initial ETH balance of 0', async () => {
-    const balance = await Helpers.checkBalance(sender);
+    const balance = await checkBalance(sender);
     expect(parseFloat(balance)).toBe(0);
   }, 100000);
 
   it('should faucet the account with 1 ETH and check the balance', async () => {
     // Faucet the account with 1 ETH
-    await Helpers.faucet(sender);
+    await faucet(sender);
 
     // Check the balance after faucet
-    const balanceAfter = await Helpers.checkBalance(sender);
+    const balanceAfter = await checkBalance(sender);
     expect(parseFloat(balanceAfter)).toBe(0.5);
   }, 100000);
 
@@ -56,8 +56,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     await intentBuilder.execute(
       new Intent({
@@ -68,8 +68,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -93,8 +93,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Weth);
 
     await intentBuilder.execute(
       new Intent({
@@ -105,8 +105,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Weth);
 
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -130,8 +130,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
 
     await intentBuilder.execute(
       new Intent({
@@ -142,8 +142,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -167,8 +167,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Weth);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
     await intentBuilder.execute(
       new Intent({
         sender: sender,
@@ -178,8 +178,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Weth);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   }, 100000);
@@ -202,7 +202,7 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     await intentBuilder.execute(
       new Intent({
@@ -213,7 +213,7 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   }, 100000);
@@ -236,8 +236,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
-    const initialStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
+    const initialStEthBalance = await checkBalance(sender, TOKENS.Steth);
 
     await intentBuilder.execute(
       new Intent({
@@ -248,8 +248,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
-    const finalStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
+    const finalStEthBalance = await checkBalance(sender, TOKENS.Steth);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -273,8 +273,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
-    const initialStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Weth);
+    const initialStEthBalance = await checkBalance(sender, TOKENS.Steth);
 
     await intentBuilder.execute(
       new Intent({
@@ -285,8 +285,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Weth);
-    const finalStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Weth);
+    const finalStEthBalance = await checkBalance(sender, TOKENS.Steth);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -310,8 +310,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const initialStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const initialStEthBalance = await checkBalance(sender, TOKENS.Steth);
 
     await intentBuilder.execute(
       new Intent({
@@ -322,8 +322,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const finalStEthBalance = await Helpers.checkBalance(sender, TOKENS.Steth);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const finalStEthBalance = await checkBalance(sender, TOKENS.Steth);
 
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
     expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -347,7 +347,7 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
     await intentBuilder.execute(
       new Intent({
         sender: sender,
@@ -357,7 +357,7 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   }, 100000);
 
@@ -381,8 +381,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
-    const initialADaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
+    const initialADaiBalance = await checkBalance(sender, TOKENS.ADai);
 
     await intentBuilder.execute(
       new Intent({
@@ -393,8 +393,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Dai);
-    const finalADaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
+    const finalADaiBalance = await checkBalance(sender, TOKENS.ADai);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
@@ -418,8 +418,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Aweth);
 
     await intentBuilder.execute(
       new Intent({
@@ -430,8 +430,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Aweth);
 
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -455,8 +455,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.ADai);
 
     await intentBuilder.execute(
       new Intent({
@@ -467,8 +467,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.ADai);
 
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -492,8 +492,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.ADai);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
 
     await intentBuilder.execute(
       new Intent({
@@ -504,8 +504,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.ADai);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -529,8 +529,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.Aweth);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
 
     await intentBuilder.execute(
       new Intent({
@@ -541,8 +541,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.Aweth);
-    const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.Aweth);
+    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -566,8 +566,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
-    const initialUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
+    const initialDaiBalance = await checkBalance(sender, TOKENS.ADai);
+    const initialUsdcBalance = await checkBalance(sender, TOKENS.Usdc);
 
     await intentBuilder.execute(
       new Intent({
@@ -578,8 +578,8 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalDaiBalance = await Helpers.checkBalance(sender, TOKENS.ADai);
-    const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
+    const finalDaiBalance = await checkBalance(sender, TOKENS.ADai);
+    const finalUsdcBalance = await checkBalance(sender, TOKENS.Usdc);
 
     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
     expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
@@ -603,8 +603,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-    const initialUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
+    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
+    const initialUsdcBalance = await checkBalance(sender, TOKENS.Usdc);
 
     try {
       await intentBuilder.execute(
@@ -616,8 +616,8 @@ describe('execute function use cases tests', () => {
         signer,
       );
 
-      const finalEthBalance = await Helpers.checkBalance(sender, TOKENS.ETH);
-      const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
+      const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
+      const finalUsdcBalance = await checkBalance(sender, TOKENS.Usdc);
 
       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
       expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
@@ -644,8 +644,8 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialNonAaveTokenBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
-    const initialUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
+    const initialNonAaveTokenBalance = await checkBalance(sender, TOKENS.Usdc);
+    const initialUsdcBalance = await checkBalance(sender, TOKENS.Usdc);
 
     try {
       await intentBuilder.execute(
@@ -657,8 +657,8 @@ describe('execute function use cases tests', () => {
         signer,
       );
 
-      const finalNonAaveTokenBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
-      const finalUsdcBalance = await Helpers.checkBalance(sender, TOKENS.Usdc);
+      const finalNonAaveTokenBalance = await checkBalance(sender, TOKENS.Usdc);
+      const finalUsdcBalance = await checkBalance(sender, TOKENS.Usdc);
 
       expect(parseFloat(finalNonAaveTokenBalance)).toBeLessThan(parseFloat(initialNonAaveTokenBalance));
       expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
