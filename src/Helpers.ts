@@ -1,6 +1,8 @@
 import { ethers } from 'ethers';
 import { NODE_URL } from './Constants';
 
+export class Helpers {
+
 export async function faucet(addrss: string) {
   // Import ethers
 
