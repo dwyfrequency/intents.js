@@ -1,4 +1,4 @@
-import { IntentBuilder, Projects, Intent, Asset, Stake } from './src';
+import { IntentBuilder, Projects, Intent, Asset, Stake, createBigInt } from './src';
 import { ethers } from 'ethers';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -14,8 +14,8 @@ const fromCaseValue = {
   case: 'fromAsset',
   value: new Asset({
     address: Token,
-    amount: intentBuilder.createBigInt(Number(amount)),
-    chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+    amount: createBigInt(Number(amount)),
+    chainId: createBigInt(Projects.CHAINS.Ethereum),
   }),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
@@ -24,7 +24,7 @@ const toCaseValue = {
   case: 'toStake',
   value: new Stake({
     address: Projects.Lido,
-    chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
+    chainId: createBigInt(Projects.CHAINS.Ethereum),
   }),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;

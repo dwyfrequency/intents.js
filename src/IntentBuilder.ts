@@ -6,19 +6,6 @@ import { Intent } from 'blndgs-model/dist/asset_pb';
 export class IntentBuilder {
   capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-  public createBigInt(value: number) {
-    // Convert the input to a string if it's a number
-    const inputString = value.toString();
-
-    const buffer = new Uint8Array(inputString.length);
-    for (let i = 0; i < inputString.length; i++) {
-      buffer[i] = parseInt(inputString.charAt(i), 10);
-    }
-    return {
-      value: buffer,
-    };
-  }
-
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: FACTORY,
