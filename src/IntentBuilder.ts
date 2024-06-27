@@ -1,9 +1,26 @@
 import { BytesLike, ethers } from 'ethers';
-import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
+import { BUNDLER_URL_MAIN, BUNDLER_URL_LIVE, BUNDLER_URL_DEV, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
+const env = process.env.env;
+
+let BUNDLER_URL:string;
+
+if(env === 'LIVE') {
+  BUNDLER_URL = BUNDLER_URL_LIVE
+}
+if(env === 'MAIN') {
+  BUNDLER_URL = BUNDLER_URL_MAIN
+}
+if(env === 'DEV') {
+  BUNDLER_URL = BUNDLER_URL_DEV
+}
+
+
 export class IntentBuilder {
+
+
   capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {

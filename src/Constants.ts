@@ -3,7 +3,10 @@ dotenv.config();
 
 import { BigNumber } from 'ethers';
 
-export const BUNDLER_URL = 'https://dev.balloondogs.network:4338';
+export const BUNDLER_URL_LIVE = 'https://dev.balloondogs.network:4338';
+export const BUNDLER_URL_MAIN = 'https://dev.balloondogs.network:4338';
+export const BUNDLER_URL_DEV = 'https://testnet.balloondogs.network:4338';
+
 export const CHAIN_ID = BigNumber.from(888);
 
 export const ENTRY_POINT = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789';
