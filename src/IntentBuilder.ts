@@ -28,6 +28,38 @@ export class IntentBuilder {
     }
   }
 
+
+  async executeZeroDev(intents: Intent, signer: ethers.Signer): Promise<void> {
+
+
+    //Set all the values to build the UserOp including intent in calldata
+
+    // const builder = new UserOperationBuilder()
+    // .useDefaults({ sender })
+    // .setCallData(intent)
+    // .setPreVerificationGas('0x493E0')
+    // .setMaxFeePerGas('0x493E0')
+    // .setMaxPriorityFeePerGas('0')
+    // .setVerificationGasLimit('0x493E0')
+    // .setCallGasLimit('0xC3500')
+    // .setNonce(nonce)
+    // .setInitCode(initCode);
+
+
+
+    //Execute it
+
+    // const signature = await this.getSignature(signer, builder);
+    // builder.setSignature(signature);
+
+    // const client = await Client.init(BUNDLER_URL);
+
+    // const res = await client.sendUserOperation(builder, {
+    //   onBuild: op => console.log('Signed UserOperation:', op),
+    // });
+  }
+
+
   async execute(intents: Intent, signer: ethers.Signer): Promise<void> {
     let ownerAddress = await signer.getAddress();
     console.log('ownerAddress ' + ownerAddress);
