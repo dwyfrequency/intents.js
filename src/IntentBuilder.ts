@@ -1,23 +1,10 @@
 import { BytesLike, ethers } from 'ethers';
-import { BUNDLER_URL, CHAIN_ID, ENTERY_POINT, FACTORY, NODE_URL } from './Constants';
+import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
 export class IntentBuilder {
   capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-  public createBigInt(value: number) {
-    // Convert the input to a string if it's a number
-    const inputString = value.toString();
-
-    const buffer = new Uint8Array(inputString.length);
-    for (let i = 0; i < inputString.length; i++) {
-      buffer[i] = parseInt(inputString.charAt(i), 10);
-    }
-    return {
-      value: buffer,
-    };
-  }
 
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
@@ -123,7 +110,7 @@ export class IntentBuilder {
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), ENTERY_POINT, CHAIN_ID],
+      [ethers.utils.keccak256(packedData), ENTRY_POINT, CHAIN_ID],
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
@@ -160,7 +147,7 @@ export class IntentBuilder {
     ];
 
     // Create a contract instance
-    const contract = new ethers.Contract(ENTERY_POINT, abi, provider);
+    const contract = new ethers.Contract(ENTRY_POINT, abi, provider);
 
     try {
       const nonce = await contract.getNonce(sender, '0');
