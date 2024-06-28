@@ -699,7 +699,6 @@ describe('execute function use cases tests', () => {
       }),
     };
 
-    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
     const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     await intentBuilder.execute(
@@ -711,7 +710,6 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
     const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     const expectedDai = parseFloat(initialDaiBalance) * (1 + slippageTolerance);
