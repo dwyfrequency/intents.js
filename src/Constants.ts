@@ -5,9 +5,9 @@ import { BigNumber } from 'ethers';
 
 // URL Map for different environments
 const URL_MAP: { [key: string]: string } = {
-  LIVE: 'https://dev.balloondogs.network:4338',
-  MAIN: 'https://dev.balloondogs.network:4338',
-  DEV: 'https://testnet.balloondogs.network:4338',
+  LIVE: 'https://test.balloondogs.network:4338',
+  TEST: 'https://test.balloondogs.network:4338',
+  DEV: 'https://dev.balloondogs.network:4338',
 };
 
 // Validate and get BUNDLER_URL based on the environment
