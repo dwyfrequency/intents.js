@@ -1,26 +1,9 @@
 import { BytesLike, ethers } from 'ethers';
-import { BUNDLER_URL_MAIN, BUNDLER_URL_LIVE, BUNDLER_URL_DEV, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
+import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
-const env = process.env.env;
-
-let BUNDLER_URL:string;
-
-if(env === 'LIVE') {
-  BUNDLER_URL = BUNDLER_URL_LIVE
-}
-if(env === 'MAIN') {
-  BUNDLER_URL = BUNDLER_URL_MAIN
-}
-if(env === 'DEV') {
-  BUNDLER_URL = BUNDLER_URL_DEV
-}
-
-
 export class IntentBuilder {
-
-
   capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
@@ -28,9 +11,7 @@ export class IntentBuilder {
       factory: FACTORY,
       salt: salt,
     });
-    const sender = simpleAccount.getSender();
-
-    return sender;
+    return simpleAccount.getSender();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,58 +27,62 @@ export class IntentBuilder {
   }
 
   async execute(intents: Intent, signer: ethers.Signer): Promise<void> {
-    let ownerAddress = await signer.getAddress();
-    console.log('ownerAddress ' + ownerAddress);
-    ownerAddress = ownerAddress.substring(2, ownerAddress.length); //remove 0x value
-    const sender = intents.sender;
+    try {
+      let ownerAddress = await signer.getAddress();
+      console.log('ownerAddress ' + ownerAddress);
+      ownerAddress = ownerAddress.substring(2); // Remove 0x value
+      const sender = intents.sender;
 
-    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-    const nonce = await this.getNonce(sender);
-    const initCode = await this.getInitCode(nonce, ownerAddress);
+      const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
+      const nonce = await this.getNonce(sender);
+      const initCode = await this.getInitCode(nonce, ownerAddress);
 
-    const builder = new UserOperationBuilder()
-      .useDefaults({ sender })
-      .setCallData(intent)
-      .setPreVerificationGas('0x493E0')
-      .setMaxFeePerGas('0x493E0')
-      .setMaxPriorityFeePerGas('0')
-      .setVerificationGasLimit('0x493E0')
-      .setCallGasLimit('0xC3500')
-      .setNonce(nonce)
-      .setInitCode(initCode);
+      const builder = new UserOperationBuilder()
+        .useDefaults({ sender })
+        .setCallData(intent)
+        .setPreVerificationGas('0x493E0')
+        .setMaxFeePerGas('0x493E0')
+        .setMaxPriorityFeePerGas('0')
+        .setVerificationGasLimit('0x493E0')
+        .setCallGasLimit('0xC3500')
+        .setNonce(nonce)
+        .setInitCode(initCode);
 
-    const signature = await this.getSignature(signer, builder);
-    builder.setSignature(signature);
+      const signature = await this.getSignature(signer, builder);
+      builder.setSignature(signature);
 
-    const client = await Client.init(BUNDLER_URL);
+      const client = await Client.init(BUNDLER_URL);
 
-    const res = await client.sendUserOperation(builder, {
-      onBuild: op => console.log('Signed UserOperation:', op),
-    });
+      const res = await client.sendUserOperation(builder, {
+        onBuild: op => console.log('Signed UserOperation:', op),
+      });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const solvedHash = (res as any).userOpHash.solved_hash;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const solvedHash = (res as any).userOpHash.solved_hash;
 
-    const headers = {
-      accept: 'application/json',
-      'content-type': 'application/json',
-    };
+      const headers = {
+        accept: 'application/json',
+        'content-type': 'application/json',
+      };
 
-    const body = JSON.stringify({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'eth_getUserOperationReceipt',
-      params: [solvedHash],
-    });
+      const body = JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'eth_getUserOperationReceipt',
+        params: [solvedHash],
+      });
 
-    const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
-      method: 'POST',
-      headers: headers,
-      body: body,
-    });
+      const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
+        method: 'POST',
+        headers: headers,
+        body: body,
+      });
 
-    const reciept = await resReceipt.json();
-    console.log(reciept);
+      const receipt = await resReceipt.json();
+      console.log(receipt);
+    } catch (error) {
+      console.error('Error executing intent:', error);
+    }
   }
 
   private async getInitCode(nonce: string, ownerAddress: string) {
@@ -107,8 +92,7 @@ export class IntentBuilder {
       : `${FACTORY}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async getSignature(signer: ethers.Signer, builder: any) {
+  private async getSignature(signer: ethers.Signer, builder: UserOperationBuilder) {
     const packedData = ethers.utils.defaultAbiCoder.encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
       [
@@ -134,7 +118,7 @@ export class IntentBuilder {
     return await signer.signMessage(ethers.utils.arrayify(userOpHash));
   }
 
-  private async getNonce(sender: string) {
+  private async getNonce(sender: string): Promise<string> {
     const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
     const abi = [
       {
@@ -163,7 +147,6 @@ export class IntentBuilder {
       },
     ];
 
-    // Create a contract instance
     const contract = new ethers.Contract(ENTRY_POINT, abi, provider);
 
     try {
@@ -172,6 +155,7 @@ export class IntentBuilder {
       return nonce.toString();
     } catch (error) {
       console.error('Error getting nonce:', error);
+      throw error;
     }
   }
 }
