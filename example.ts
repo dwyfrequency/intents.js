@@ -4,34 +4,32 @@ import { ethers } from 'ethers';
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-const Token = 'NATIVE';
+const nativeToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 const amount = 0.1;
 
-const fromCaseValue = {
-  case: 'fromAsset',
-  value: new Asset({
-    address: Token,
-    amount: createBigInt(Number(amount)),
-    chainId: createBigInt(CHAINS.Ethereum),
-  }),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+const asset = new Asset({
+  address: nativeToken,
+  amount: createBigInt(Number(amount)),
+  chainId: createBigInt(CHAINS.Ethereum),
+});
 
-const toCaseValue = {
-  case: 'toStake',
-  value: new Stake({
-    address: Projects.Lido,
-    chainId: createBigInt(CHAINS.Ethereum),
-  }),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+const stake = new Stake({
+  address: Projects.Lido,
+  chainId: createBigInt(CHAINS.Ethereum),
+});
 
 async function executeIntent() {
   const intentBuilder = await IntentBuilder.createInstance();
   await intentBuilder.execute(
     new Intent({
-      from: fromCaseValue,
-      to: toCaseValue,
+      from: {
+        case: 'fromAsset',
+        value: asset,
+      },
+      to: {
+        case: 'toStake',
+        value: stake,
+      },
     }),
     signer,
   );
