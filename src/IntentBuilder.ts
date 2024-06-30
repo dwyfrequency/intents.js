@@ -4,6 +4,12 @@ import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
 export class IntentBuilder {
+  private client: Client;
+
+  public async init() {
+    this.client = await Client.init(BUNDLER_URL);
+  }
+
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
       factory: FACTORY,
@@ -13,7 +19,7 @@ export class IntentBuilder {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async fetchWithNodeFetch(url: string, options: any) {
+  private async fetchWithNodeFetch(url: string, options: any) {
     const isNode = typeof window === 'undefined';
     if (isNode) {
       const fetchModule = await import('node-fetch');
@@ -49,9 +55,7 @@ export class IntentBuilder {
       const signature = await this.getSignature(signer, builder);
       builder.setSignature(signature);
 
-      const client = await Client.init(BUNDLER_URL);
-
-      const res = await client.sendUserOperation(builder, {
+      const res = await this.client.sendUserOperation(builder, {
         onBuild: op => console.log('Signed UserOperation:', op),
       });
 

@@ -19,6 +19,7 @@ describe('execute function use cases tests', () => {
 
   beforeAll(async () => {
     intentBuilder = new IntentBuilder();
+    await intentBuilder.init();
     randomAccount = generateRandomAccount();
     signer = randomAccount;
     sender = await intentBuilder.getSender(signer);
