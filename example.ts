@@ -4,7 +4,6 @@ import { ethers } from 'ethers';
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-const sender = '0xAddress';
 const Token = 'NATIVE';
 const amount = 0.1;
 
@@ -28,11 +27,9 @@ const toCaseValue = {
 } as any;
 
 async function executeIntent() {
-  const intentBuilder = new IntentBuilder();
-  await intentBuilder.init();
+  const intentBuilder = await IntentBuilder.createInstance();
   await intentBuilder.execute(
     new Intent({
-      sender: sender,
       from: fromCaseValue,
       to: toCaseValue,
     }),

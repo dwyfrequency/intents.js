@@ -4,10 +4,10 @@ import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
 export class IntentBuilder {
-  private client: Client;
+  private constructor(private _client: Client) {}
 
-  public async init() {
-    this.client = await Client.init(BUNDLER_URL);
+  static async createInstance() {
+    return new IntentBuilder(await Client.init(BUNDLER_URL));
   }
 
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
@@ -35,7 +35,7 @@ export class IntentBuilder {
       let ownerAddress = await signer.getAddress();
       console.log('ownerAddress ' + ownerAddress);
       ownerAddress = ownerAddress.substring(2); // Remove 0x value
-      const sender = intents.sender;
+      const sender = await this.getSender(signer);
 
       const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
       const nonce = await this.getNonce(sender);
@@ -55,7 +55,7 @@ export class IntentBuilder {
       const signature = await this.getSignature(signer, builder);
       builder.setSignature(signature);
 
-      const res = await this.client.sendUserOperation(builder, {
+      const res = await this._client.sendUserOperation(builder, {
         onBuild: op => console.log('Signed UserOperation:', op),
       });
 
