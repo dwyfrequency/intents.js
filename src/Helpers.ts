@@ -1,28 +1,21 @@
 import { ethers } from 'ethers';
 import { NODE_URL } from './Constants';
 
-export class Helpers {
-
-export async function faucet(addrss: string) {
-  // Import ethers
-
-  // Connect to your Ethereum node or gateway
+export async function faucet(address: string): Promise<void> {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 
-  // Define the JSON-RPC request for the tenderly_addBalance method
   const method = 'tenderly_addBalance';
-  const params = [[addrss], '0x6f05b59d3b20000'];
+  const params = [[address], '0x6f05b59d3b20000'];
   const jsonRpcRequest = {
     jsonrpc: '2.0',
     method: method,
     params: params,
-    id: 1, // The ID can be any number or string
+    id: 1,
   };
 
   try {
     const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
     console.log('Response:', response);
-    // window.location.reload();
   } catch (error) {
     console.error('Error:', error);
   }
@@ -62,15 +55,12 @@ export async function checkBalance(address: string, tokenAddress?: string): Prom
   }
 }
 
-export function createBigInt(value: number) {
-  // Convert the input to a string if it's a number
+export function createBigInt(value: number): { value: Uint8Array } {
   const inputString = value.toString();
 
   const buffer = new Uint8Array(inputString.length);
   for (let i = 0; i < inputString.length; i++) {
     buffer[i] = parseInt(inputString.charAt(i), 10);
   }
-  return {
-    value: buffer,
-  };
+  return { value: buffer };
 }

@@ -1,4 +1,4 @@
-import { IntentBuilder, Projects, Intent, Asset, Stake, checkBalance, faucet, createBigInt } from '../src';
+import { IntentBuilder, Projects, CHAINS, Intent, Asset, Stake, checkBalance, faucet, createBigInt } from '../src';
 
 import { ethers } from 'ethers';
 import { TOKENS } from './constants';
@@ -44,14 +44,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -80,14 +80,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.2),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Weth,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -116,14 +116,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Dai,
         amount: createBigInt(10),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -152,14 +152,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Weth,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -186,14 +186,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Dai,
         amount: createBigInt(10),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -219,14 +219,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Dai,
         amount: createBigInt(100),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -255,14 +255,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Weth,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -291,14 +291,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -327,14 +327,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -360,14 +360,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Dai,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -396,14 +396,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -432,14 +432,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'loan',
       value: new Asset({
         address: Projects.Aave,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -468,14 +468,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ADai,
         amount: createBigInt(10),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'currency',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -504,14 +504,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Aweth,
         amount: createBigInt(10),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'currency',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -540,14 +540,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ADai,
         amount: createBigInt(5),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'currency',
       value: new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -576,14 +576,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(1),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'currency',
       value: new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -616,14 +616,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Usdc, // Token not available on Aave
         amount: createBigInt(5),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'currency',
       value: new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -656,14 +656,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ADai,
         amount: createBigInt(5),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'staking',
       value: new Asset({
         address: Projects.Lido,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -688,18 +688,17 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.ETH,
         amount: createBigInt(0.5),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
-    const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
     const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     await intentBuilder.execute(
@@ -711,7 +710,6 @@ describe('execute function use cases tests', () => {
       signer,
     );
 
-    const finalEthBalance = await checkBalance(sender, TOKENS.ETH);
     const finalDaiBalance = await checkBalance(sender, TOKENS.Dai);
 
     const expectedDai = parseFloat(initialDaiBalance) * (1 + slippageTolerance);
@@ -725,7 +723,7 @@ describe('execute function use cases tests', () => {
         new Asset({
           address: TOKENS.ETH,
           amount: amount,
-          chainId: createBigInt(Projects.CHAINS.Ethereum),
+          chainId: createBigInt(CHAINS.Ethereum),
         });
       }).toThrowError();
     });
@@ -736,7 +734,7 @@ describe('execute function use cases tests', () => {
         value: new Asset({
           address: TOKENS.ETH,
           amount: createBigInt(0), // Zero amount
-          chainId: createBigInt(Projects.CHAINS.Ethereum),
+          chainId: createBigInt(CHAINS.Ethereum),
         }),
       };
       try {
@@ -760,7 +758,7 @@ describe('execute function use cases tests', () => {
         value: new Asset({
           address: TOKENS.ETH,
           amount: highAmount,
-          chainId: createBigInt(Projects.CHAINS.Ethereum),
+          chainId: createBigInt(CHAINS.Ethereum),
         }),
       };
       // Assuming this might fail due to lack of balance or other reasons
@@ -785,14 +783,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Dai,
         amount: maxPrecisionAmount,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -824,14 +822,14 @@ describe('execute function use cases tests', () => {
           value: new Asset({
             address: TOKENS.ETH,
             amount: createBigInt(0.1),
-            chainId: createBigInt(Projects.CHAINS.Ethereum),
+            chainId: createBigInt(CHAINS.Ethereum),
           }),
         },
         to: {
           case: 'toAsset',
           value: new Asset({
             address: TOKENS.Dai,
-            chainId: createBigInt(Projects.CHAINS.Ethereum),
+            chainId: createBigInt(CHAINS.Ethereum),
           }),
         },
       }),
@@ -846,14 +844,14 @@ describe('execute function use cases tests', () => {
           value: new Asset({
             address: TOKENS.Dai,
             amount: createBigInt(50),
-            chainId: createBigInt(Projects.CHAINS.Ethereum),
+            chainId: createBigInt(CHAINS.Ethereum),
           }),
         },
         to: {
           case: 'toAsset',
           value: new Asset({
             address: TOKENS.ETH,
-            chainId: createBigInt(Projects.CHAINS.Ethereum),
+            chainId: createBigInt(CHAINS.Ethereum),
           }),
         },
       }),
@@ -870,14 +868,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Wbtc,
         amount: createBigInt(0.1), // 1 WBTC (8 decimals)
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -906,14 +904,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Usdc,
         amount: createBigInt(10),
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'toAsset',
       value: new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
@@ -942,14 +940,14 @@ describe('execute function use cases tests', () => {
       value: new Asset({
         address: TOKENS.Usdc,
         amount: createBigInt(10), // 5 USDC
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
     toCaseValue = {
       case: 'staking',
       value: new Stake({
         address: Projects.Lido,
-        chainId: createBigInt(Projects.CHAINS.Ethereum),
+        chainId: createBigInt(CHAINS.Ethereum),
       }),
     };
 
