@@ -2,6 +2,7 @@ import { BytesLike, ethers } from 'ethers';
 import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
 import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
+import { state } from './index';
 
 export class IntentBuilder {
   private constructor(private _client: Client) {}
@@ -30,8 +31,19 @@ export class IntentBuilder {
     }
   }
 
-  async execute(intents: Intent, signer: ethers.Signer): Promise<void> {
+  async execute(from: state, to: state, signer: ethers.Signer): Promise<void> {
     try {
+      const intents = new Intent({
+        from: {
+          case: 'fromAsset',
+          value: from,
+        },
+        to: {
+          case: 'toStake',
+          value: to,
+        },
+      });
+
       let ownerAddress = await signer.getAddress();
       console.log('ownerAddress ' + ownerAddress);
       ownerAddress = ownerAddress.substring(2); // Remove 0x value
