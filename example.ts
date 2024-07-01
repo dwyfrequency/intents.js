@@ -1,8 +1,7 @@
 import { IntentBuilder, Projects, CHAINS, Asset, Stake, createBigInt } from './src';
 import { ethers } from 'ethers';
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
+const signer = new ethers.Wallet('private key');
 
 const eth = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 const amount = 0.1;
