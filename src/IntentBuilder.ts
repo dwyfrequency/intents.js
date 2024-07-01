@@ -1,8 +1,9 @@
-import { BytesLike, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
-import { Client, Presets, UserOperationBuilder } from 'userop';
-import { Intent } from 'blndgs-model/dist/asset_pb';
-import { state } from './index';
+import { Client, UserOperationBuilder } from 'userop';
+import { Intent, Loan, Stake } from 'blndgs-model/dist/asset_pb';
+import { FromState, getSender, State, ToState } from './index';
+import { Asset } from 'blndgs-model';
 
 export class IntentBuilder {
   private constructor(private _client: Client) {}
@@ -11,47 +12,18 @@ export class IntentBuilder {
     return new IntentBuilder(await Client.init(BUNDLER_URL));
   }
 
-  public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
-    const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
-      factory: FACTORY,
-      salt: salt,
-    });
-    return simpleAccount.getSender();
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async fetchWithNodeFetch(url: string, options: any) {
-    const isNode = typeof window === 'undefined';
-    if (isNode) {
-      const fetchModule = await import('node-fetch');
-      const fetch = fetchModule.default;
-      return fetch(url, options);
-    } else {
-      return window.fetch(url, options);
-    }
-  }
-
-  async execute(from: state, to: state, signer: ethers.Signer): Promise<void> {
+  async execute(from: State, to: State, signer: ethers.Signer): Promise<void> {
     try {
       const intents = new Intent({
-        from: {
-          case: 'fromAsset',
-          value: from,
-        },
-        to: {
-          case: 'toStake',
-          value: to,
-        },
+        from: this.setFrom(from),
+        to: this.setTo(to),
       });
 
-      let ownerAddress = await signer.getAddress();
-      console.log('ownerAddress ' + ownerAddress);
-      ownerAddress = ownerAddress.substring(2); // Remove 0x value
-      const sender = await this.getSender(signer);
+      const sender = await getSender(signer);
 
       const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
       const nonce = await this.getNonce(sender);
-      const initCode = await this.getInitCode(nonce, ownerAddress);
+      const initCode = await this.getInitCode(nonce, signer);
 
       const builder = new UserOperationBuilder()
         .useDefaults({ sender })
@@ -99,7 +71,36 @@ export class IntentBuilder {
     }
   }
 
-  private async getInitCode(nonce: string, ownerAddress: string) {
+  private setFrom(state: State): FromState {
+    switch (true) {
+      case state instanceof Asset:
+        return { case: 'fromAsset', value: state };
+      case state instanceof Loan:
+        return { case: 'fromLoan', value: state };
+      case state instanceof Stake:
+        return { case: 'fromStake', value: state };
+      default:
+        return { case: undefined };
+    }
+  }
+
+  private setTo(state: State): ToState {
+    switch (true) {
+      case state instanceof Asset:
+        return { case: 'toAsset', value: state };
+      case state instanceof Stake:
+        return { case: 'toStake', value: state };
+      case state instanceof Loan:
+        return { case: 'toLoan', value: state };
+      default:
+        return { case: undefined };
+    }
+  }
+
+  private async getInitCode(nonce: string, signer: ethers.Signer) {
+    let ownerAddress = await signer.getAddress();
+    console.log('ownerAddress ' + ownerAddress);
+    ownerAddress = ownerAddress.substring(2); // Remove 0x value
     console.log('nonce ' + nonce);
     return nonce !== '0'
       ? '0x'
@@ -170,6 +171,18 @@ export class IntentBuilder {
     } catch (error) {
       console.error('Error getting nonce:', error);
       throw error;
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async fetchWithNodeFetch(url: string, options: any) {
+    const isNode = typeof window === 'undefined';
+    if (isNode) {
+      const fetchModule = await import('node-fetch');
+      const fetch = fetchModule.default;
+      return fetch(url, options);
+    } else {
+      return window.fetch(url, options);
     }
   }
 }

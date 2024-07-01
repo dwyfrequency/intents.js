@@ -1,5 +1,6 @@
-import { ethers } from 'ethers';
-import { NODE_URL } from './Constants';
+import { BytesLike, ethers } from 'ethers';
+import { BUNDLER_URL, FACTORY, NODE_URL } from './Constants';
+import { Presets } from 'userop';
 
 export async function faucet(address: string): Promise<void> {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
@@ -63,4 +64,12 @@ export function createBigInt(value: number): { value: Uint8Array } {
     buffer[i] = parseInt(inputString.charAt(i), 10);
   }
   return { value: buffer };
+}
+
+export async function getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
+  const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
+    factory: FACTORY,
+    salt: salt,
+  });
+  return simpleAccount.getSender();
 }
