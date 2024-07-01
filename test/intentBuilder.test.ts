@@ -18,7 +18,7 @@ describe('execute function use cases tests', () => {
   let fromCaseValue: any, toCaseValue: any;
 
   beforeAll(async () => {
-    intentBuilder = new IntentBuilder();
+    intentBuilder = await IntentBuilder.createInstance();
     randomAccount = generateRandomAccount();
     signer = randomAccount;
     sender = await intentBuilder.getSender(signer);
@@ -60,7 +60,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -96,7 +95,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -132,7 +130,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -167,7 +164,6 @@ describe('execute function use cases tests', () => {
     const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -201,7 +197,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -235,7 +230,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -271,7 +265,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -307,7 +300,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -341,7 +333,6 @@ describe('execute function use cases tests', () => {
     const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -376,7 +367,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -412,7 +402,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -448,7 +437,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -484,7 +472,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -520,7 +507,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -556,7 +542,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -593,7 +578,6 @@ describe('execute function use cases tests', () => {
     try {
       await intentBuilder.execute(
         new Intent({
-          sender: sender,
           from: fromCaseValue,
           to: toCaseValue,
         }),
@@ -633,7 +617,6 @@ describe('execute function use cases tests', () => {
     try {
       await intentBuilder.execute(
         new Intent({
-          sender: sender,
           from: fromCaseValue,
           to: toCaseValue,
         }),
@@ -670,7 +653,6 @@ describe('execute function use cases tests', () => {
     try {
       await intentBuilder.execute(
         new Intent({
-          sender: sender,
           from: fromCaseValue,
           to: toCaseValue,
         }),
@@ -703,7 +685,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -740,7 +721,6 @@ describe('execute function use cases tests', () => {
       try {
         await intentBuilder.execute(
           new Intent({
-            sender: sender,
             from: fromCaseValue,
             to: toCaseValue,
           }),
@@ -765,7 +745,6 @@ describe('execute function use cases tests', () => {
       try {
         await intentBuilder.execute(
           new Intent({
-            sender: sender,
             from: fromCaseValue,
             to: toCaseValue,
           }),
@@ -799,7 +778,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -816,7 +794,6 @@ describe('execute function use cases tests', () => {
   it('handles concurrent ETH -> DAI and DAI -> ETH swaps', async () => {
     const swap1 = intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: {
           case: 'fromAsset',
           value: new Asset({
@@ -838,7 +815,6 @@ describe('execute function use cases tests', () => {
 
     const swap2 = intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: {
           case: 'fromAsset',
           value: new Asset({
@@ -884,7 +860,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -920,7 +895,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),
@@ -955,7 +929,6 @@ describe('execute function use cases tests', () => {
 
     await intentBuilder.execute(
       new Intent({
-        sender: sender,
         from: fromCaseValue,
         to: toCaseValue,
       }),

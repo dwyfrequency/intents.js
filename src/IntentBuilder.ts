@@ -4,7 +4,11 @@ import { Client, Presets, UserOperationBuilder } from 'userop';
 import { Intent } from 'blndgs-model/dist/asset_pb';
 
 export class IntentBuilder {
-  capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  private constructor(private _client: Client) {}
+
+  static async createInstance() {
+    return new IntentBuilder(await Client.init(BUNDLER_URL));
+  }
 
   public async getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
@@ -15,7 +19,7 @@ export class IntentBuilder {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async fetchWithNodeFetch(url: string, options: any) {
+  private async fetchWithNodeFetch(url: string, options: any) {
     const isNode = typeof window === 'undefined';
     if (isNode) {
       const fetchModule = await import('node-fetch');
@@ -26,44 +30,12 @@ export class IntentBuilder {
     }
   }
 
-
-  async executeZeroDev(intents: Intent, signer: ethers.Signer): Promise<void> {
-
-
-    //Set all the values to build the UserOp including intent in calldata
-
-    // const builder = new UserOperationBuilder()
-    // .useDefaults({ sender })
-    // .setCallData(intent)
-    // .setPreVerificationGas('0x493E0')
-    // .setMaxFeePerGas('0x493E0')
-    // .setMaxPriorityFeePerGas('0')
-    // .setVerificationGasLimit('0x493E0')
-    // .setCallGasLimit('0xC3500')
-    // .setNonce(nonce)
-    // .setInitCode(initCode);
-
-
-
-    //Execute it
-
-    // const signature = await this.getSignature(signer, builder);
-    // builder.setSignature(signature);
-
-    // const client = await Client.init(BUNDLER_URL);
-
-    // const res = await client.sendUserOperation(builder, {
-    //   onBuild: op => console.log('Signed UserOperation:', op),
-    // });
-  }
-
-
   async execute(intents: Intent, signer: ethers.Signer): Promise<void> {
     try {
       let ownerAddress = await signer.getAddress();
       console.log('ownerAddress ' + ownerAddress);
       ownerAddress = ownerAddress.substring(2); // Remove 0x value
-      const sender = intents.sender;
+      const sender = await this.getSender(signer);
 
       const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
       const nonce = await this.getNonce(sender);
@@ -83,9 +55,7 @@ export class IntentBuilder {
       const signature = await this.getSignature(signer, builder);
       builder.setSignature(signature);
 
-      const client = await Client.init(BUNDLER_URL);
-
-      const res = await client.sendUserOperation(builder, {
+      const res = await this._client.sendUserOperation(builder, {
         onBuild: op => console.log('Signed UserOperation:', op),
       });
 
