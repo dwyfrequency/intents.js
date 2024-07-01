@@ -1,4 +1,4 @@
-export const Projects = {
+export const PROJECTS = {
   Lido: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
   RocketPool: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
   Mantle: '0xe3cBd06D7dadB3F4e6557bAb7EdD924CD1489E8f',

@@ -1,4 +1,4 @@
-import { IntentBuilder, Projects, CHAINS, Asset, Stake, createBigInt } from './src';
+import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, createBigInt } from './src';
 import { ethers } from 'ethers';
 
 const signer = new ethers.Wallet('private key');
@@ -13,7 +13,7 @@ const from = new Asset({
 });
 
 const to = new Stake({
-  address: Projects.Lido,
+  address: PROJECTS.Lido,
   chainId: createBigInt(CHAINS.Ethereum),
 });
 

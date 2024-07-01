@@ -1,4 +1,4 @@
-import { IntentBuilder, Projects, CHAINS, Asset, Stake, checkBalance, faucet, createBigInt } from '../src';
+import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, checkBalance, faucet, createBigInt } from '../src';
 
 import { ethers } from 'ethers';
 // @ts-ignore
@@ -164,7 +164,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Lido,
+        address: PROJECTS.Lido,
         chainId: createBigInt(CHAINS.Ethereum),
       });
     const initialDaiBalance = await checkBalance(sender, TOKENS.Dai);
@@ -191,7 +191,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Lido,
+        address: PROJECTS.Lido,
         chainId: createBigInt(CHAINS.Ethereum),
       });
 
@@ -219,7 +219,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Lido,
+        address: PROJECTS.Lido,
         chainId: createBigInt(CHAINS.Ethereum),
       });
 
@@ -247,7 +247,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Aave,
+        address: PROJECTS.Aave,
         chainId: createBigInt(CHAINS.Ethereum),
       });
 
@@ -272,7 +272,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Aave,
+        address: PROJECTS.Aave,
         chainId: createBigInt(CHAINS.Ethereum),
       });
 
@@ -300,7 +300,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Aave,
+        address: PROJECTS.Aave,
         chainId: createBigInt(CHAINS.Ethereum),
       });
 
@@ -323,7 +323,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Aave,
+        address: PROJECTS.Aave,
         chainId: createBigInt(CHAINS.Ethereum),
       });
     const initialEthBalance = await checkBalance(sender, TOKENS.ETH);
@@ -465,7 +465,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
-        address: Projects.Lido,
+        address: PROJECTS.Lido,
         chainId: createBigInt(CHAINS.Ethereum),
       });
     try {
@@ -661,7 +661,7 @@ describe('execute function use cases tests', () => {
         chainId: createBigInt(CHAINS.Ethereum),
       }),
       to = new Stake({
-        address: Projects.Lido,
+        address: PROJECTS.Lido,
         chainId: createBigInt(CHAINS.Ethereum),
       });
 

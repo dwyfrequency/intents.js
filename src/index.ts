@@ -3,7 +3,7 @@ import type { PartialMessage } from '@bufbuild/protobuf';
 
 type state = Asset | Loan | Stake;
 
-export * from './Projects';
+export * from './PROJECTS';
 export * from './IntentBuilder';
 export * from './Helpers';
 export { Intent, Asset, Loan, Stake, PartialMessage, state };
