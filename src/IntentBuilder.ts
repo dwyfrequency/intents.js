@@ -1,9 +1,8 @@
 import { ethers } from 'ethers';
 import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
 import { Client, UserOperationBuilder } from 'userop';
-import { Intent, Loan, Stake } from 'blndgs-model/dist/asset_pb';
 import { FromState, getSender, State, ToState } from './index';
-import { Asset } from 'blndgs-model';
+import { Asset, Intent, Loan, Stake } from './';
 
 export class IntentBuilder {
   private constructor(private _client: Client) {}

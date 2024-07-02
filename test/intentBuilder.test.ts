@@ -1,4 +1,4 @@
-import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, checkBalance, faucet, createBigInt, getSender } from '../src';
+import { IntentBuilder, PROJECTS, CHAINS, checkBalance, faucet, createBigInt, getSender, Asset, Stake } from '../src';
 
 import { ethers } from 'ethers';
 // @ts-ignore
