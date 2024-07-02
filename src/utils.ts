@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { NODE_URL } from './constants';
+import { NODE_URL } from './Constants';
 
 export async function faucet(address: string): Promise<void> {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
