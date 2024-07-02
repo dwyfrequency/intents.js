@@ -1,4 +1,4 @@
-import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, createBigInt } from './src';
+import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt } from './src';
 import { ethers } from 'ethers';
 
 const signer = new ethers.Wallet('private key');
@@ -8,13 +8,13 @@ const amount = 0.1;
 
 const from = new Asset({
   address: eth,
-  amount: createBigInt(Number(amount)),
-  chainId: createBigInt(CHAINS.Ethereum),
+  amount: toBigInt(Number(amount)),
+  chainId: toBigInt(CHAINS.Ethereum),
 });
 
 const to = new Stake({
   address: PROJECTS.Lido,
-  chainId: createBigInt(CHAINS.Ethereum),
+  chainId: toBigInt(CHAINS.Ethereum),
 });
 
 async function executeIntent() {

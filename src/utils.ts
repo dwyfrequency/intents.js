@@ -55,7 +55,7 @@ export async function checkBalance(address: string, tokenAddress?: string): Prom
   }
 }
 
-export function createBigInt(value: number): { value: Uint8Array } {
+export function toBigInt(value: number): { value: Uint8Array } {
   const inputString = value.toString();
 
   const buffer = new Uint8Array(inputString.length);

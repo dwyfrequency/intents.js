@@ -1,4 +1,4 @@
-import { IntentBuilder, PROJECTS, CHAINS, checkBalance, faucet, createBigInt, getSender, Asset, Stake } from '../src';
+import { IntentBuilder, PROJECTS, CHAINS, checkBalance, faucet, toBigInt, getSender, Asset, Stake } from '../src';
 
 import { ethers } from 'ethers';
 // @ts-ignore
@@ -38,12 +38,12 @@ describe('execute function use cases tests', () => {
   it('ETH -> DAI Swap', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -61,12 +61,12 @@ describe('execute function use cases tests', () => {
   it('ETH -> WETH Swap', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.2),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.2),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Weth,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -84,12 +84,12 @@ describe('execute function use cases tests', () => {
   it('DAI -> ETH Swap', async () => {
     const from = new Asset({
         address: TOKENS.Dai,
-        amount: createBigInt(10),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(10),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
@@ -107,12 +107,12 @@ describe('execute function use cases tests', () => {
   it('WETH -> ETH Swap', async () => {
     const from = new Asset({
         address: TOKENS.Weth,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
@@ -128,12 +128,12 @@ describe('execute function use cases tests', () => {
   it('DAI -> USDC Swap', async () => {
     const from = new Asset({
         address: TOKENS.Dai,
-        amount: createBigInt(10),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(10),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
@@ -148,12 +148,12 @@ describe('execute function use cases tests', () => {
   it('DAI -> ETH Stake', async () => {
     const from = new Asset({
         address: TOKENS.Dai,
-        amount: createBigInt(100),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(100),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Lido,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
     const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
@@ -170,12 +170,12 @@ describe('execute function use cases tests', () => {
   it('WETH -> ETH Stake', async () => {
     const from = new Asset({
         address: TOKENS.Weth,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Lido,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
@@ -193,12 +193,12 @@ describe('execute function use cases tests', () => {
   it('ETH -> ETH Stake', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Lido,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -216,12 +216,12 @@ describe('execute function use cases tests', () => {
   it('ETH -> ETH Loan', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Aave,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -236,12 +236,12 @@ describe('execute function use cases tests', () => {
   it('ERC20 -> ERC20 Loan', async () => {
     const from = new Asset({
         address: TOKENS.Dai,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Aave,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
@@ -259,12 +259,12 @@ describe('execute function use cases tests', () => {
   it('ETH -> Weth Loan', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Aave,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -282,12 +282,12 @@ describe('execute function use cases tests', () => {
   it('ETH -> Dai Loan', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Aave,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
@@ -304,12 +304,12 @@ describe('execute function use cases tests', () => {
   it('Loaned Dai -> ETH', async () => {
     const from = new Asset({
         address: TOKENS.ADai,
-        amount: createBigInt(10),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(10),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -326,12 +326,12 @@ describe('execute function use cases tests', () => {
   it('Loaned Weth -> ETH', async () => {
     const from = new Asset({
         address: TOKENS.Aweth,
-        amount: createBigInt(10),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(10),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -348,12 +348,12 @@ describe('execute function use cases tests', () => {
   it('Loaned Dai -> Usdc', async () => {
     const from = new Asset({
         address: TOKENS.ADai,
-        amount: createBigInt(5),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(5),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
@@ -370,12 +370,12 @@ describe('execute function use cases tests', () => {
   it('Failed Loaned ETH -> ERC20', async () => {
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
@@ -397,12 +397,12 @@ describe('execute function use cases tests', () => {
   it('Failed Non-Loaned ERC20 -> ERC20', async () => {
     const from = new Asset({
         address: TOKENS.Usdc, // Token not available on Aave
-        amount: createBigInt(5),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(5),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Usdc,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialNonAaveTokenBalance = await checkBalance(senderAddress, TOKENS.Usdc);
@@ -424,12 +424,12 @@ describe('execute function use cases tests', () => {
   it('Failed Loan -> Stake', async () => {
     const from = new Asset({
         address: TOKENS.ADai,
-        amount: createBigInt(5),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(5),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: PROJECTS.Lido,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     try {
       await intentBuilder.execute(from, to, signer);
@@ -442,12 +442,12 @@ describe('execute function use cases tests', () => {
     const slippageTolerance = 0.05; // 5% tolerance
     const from = new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.5),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.5),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
@@ -462,12 +462,12 @@ describe('execute function use cases tests', () => {
 
   describe('Negative tests with extreme amounts', () => {
     it('should fail with negative amount', async () => {
-      const amount = createBigInt(-1); // Invalid negative amount
+      const amount = toBigInt(-1); // Invalid negative amount
       expect(() => {
         new Asset({
           address: TOKENS.ETH,
           amount: amount,
-          chainId: createBigInt(CHAINS.Ethereum),
+          chainId: toBigInt(CHAINS.Ethereum),
         });
       }).toThrowError();
     });
@@ -475,12 +475,12 @@ describe('execute function use cases tests', () => {
     it('should fail with zero amount', async () => {
       const from = new Asset({
           address: TOKENS.ETH,
-          amount: createBigInt(0), // Zero amount
-          chainId: createBigInt(CHAINS.Ethereum),
+          amount: toBigInt(0), // Zero amount
+          chainId: toBigInt(CHAINS.Ethereum),
         }),
         to = new Asset({
           address: TOKENS.Dai,
-          chainId: createBigInt(CHAINS.Ethereum),
+          chainId: toBigInt(CHAINS.Ethereum),
         });
 
       try {
@@ -491,15 +491,15 @@ describe('execute function use cases tests', () => {
     });
 
     it('should handle high amount', async () => {
-      const highAmount = createBigInt(10000000000000000000000); // High amount
+      const highAmount = toBigInt(10000000000000000000000); // High amount
       const from = new Asset({
           address: TOKENS.ETH,
           amount: highAmount,
-          chainId: createBigInt(CHAINS.Ethereum),
+          chainId: toBigInt(CHAINS.Ethereum),
         }),
         to = new Asset({
           address: TOKENS.Dai,
-          chainId: createBigInt(CHAINS.Ethereum),
+          chainId: toBigInt(CHAINS.Ethereum),
         });
       // Assuming this might fail due to lack of balance or other reasons
       try {
@@ -510,15 +510,15 @@ describe('execute function use cases tests', () => {
     });
   });
   it('DAI -> ETH Swap with Maximum Precision', async () => {
-    const maxPrecisionAmount = createBigInt(Number('1'.padEnd(19, '0'))); // 18 decimals
+    const maxPrecisionAmount = toBigInt(Number('1'.padEnd(19, '0'))); // 18 decimals
     const from = new Asset({
         address: TOKENS.Dai,
         amount: maxPrecisionAmount,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
@@ -537,13 +537,13 @@ describe('execute function use cases tests', () => {
     const swap1 = intentBuilder.execute(
       new Asset({
         address: TOKENS.ETH,
-        amount: createBigInt(0.1),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
 
       new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       signer,
     );
@@ -551,13 +551,13 @@ describe('execute function use cases tests', () => {
     const swap2 = intentBuilder.execute(
       new Asset({
         address: TOKENS.Dai,
-        amount: createBigInt(50),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(50),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
 
       new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       signer,
     );
@@ -569,12 +569,12 @@ describe('execute function use cases tests', () => {
   it('WBTC -> ETH Swap', async () => {
     const from = new Asset({
         address: TOKENS.Wbtc,
-        amount: createBigInt(0.1), // 1 WBTC (8 decimals)
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(0.1), // 1 WBTC (8 decimals)
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.ETH,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialWbtcBalance = await checkBalance(senderAddress, TOKENS.Wbtc);
@@ -592,12 +592,12 @@ describe('execute function use cases tests', () => {
   it('USDC -> DAI Swap', async () => {
     const from = new Asset({
         address: TOKENS.Usdc,
-        amount: createBigInt(10),
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(10),
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Asset({
         address: TOKENS.Dai,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
@@ -614,12 +614,12 @@ describe('execute function use cases tests', () => {
   it('USDC Staking', async () => {
     const from = new Asset({
         address: TOKENS.Usdc,
-        amount: createBigInt(10), // 5 USDC
-        chainId: createBigInt(CHAINS.Ethereum),
+        amount: toBigInt(10), // 5 USDC
+        chainId: toBigInt(CHAINS.Ethereum),
       }),
       to = new Stake({
         address: PROJECTS.Lido,
-        chainId: createBigInt(CHAINS.Ethereum),
+        chainId: toBigInt(CHAINS.Ethereum),
       });
 
     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
