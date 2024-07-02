@@ -1,6 +1,8 @@
 import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt } from './src';
 import { ethers } from 'ethers';
 
+const BUNDLER_URL = 'https://api.balloondogs.network';
+
 const signer = new ethers.Wallet('private key');
 
 const eth = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
@@ -18,7 +20,7 @@ const to = new Stake({
 });
 
 async function executeIntent() {
-  const intentBuilder = await IntentBuilder.createInstance();
+  const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
 
   await intentBuilder.execute(from, to, signer);
 }

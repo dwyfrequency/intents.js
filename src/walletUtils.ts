@@ -1,5 +1,5 @@
 import { BytesLike, ethers } from 'ethers';
-import { BUNDLER_URL, ENTRY_POINT, FACTORY, NODE_URL } from './constants';
+import { ENTRY_POINT, FACTORY, NODE_URL } from './constants';
 import { Presets } from 'userop';
 
 export async function getInitCode(nonce: string, signer: ethers.Signer) {
@@ -53,8 +53,8 @@ export async function getNonce(sender: string): Promise<string> {
   }
 }
 
-export async function getSender(signer: ethers.Signer, salt: BytesLike = '0'): Promise<string> {
-  const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, BUNDLER_URL, {
+export async function getSender(signer: ethers.Signer, bundlerUrl: string, salt: BytesLike = '0'): Promise<string> {
+  const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, bundlerUrl, {
     factory: FACTORY,
     salt: salt,
   });

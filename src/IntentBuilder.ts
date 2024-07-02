@@ -1,15 +1,18 @@
 import { ethers } from 'ethers';
-import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT } from './constants';
+import { CHAIN_ID, ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
 import { FromState, getSender, State, ToState } from './index';
 import { Asset, Intent, Loan, Stake } from './';
 import { getInitCode, getNonce } from './walletUtils';
 
 export class IntentBuilder {
-  private constructor(private _client: Client) {}
+  private constructor(
+    private _client: Client,
+    private _bundlerUrl: string,
+  ) {}
 
-  static async createInstance() {
-    return new IntentBuilder(await Client.init(BUNDLER_URL));
+  static async createInstance(bundlerUrl: string) {
+    return new IntentBuilder(await Client.init(bundlerUrl), bundlerUrl);
   }
 
   async execute(from: State, to: State, signer: ethers.Signer): Promise<void> {
@@ -19,7 +22,7 @@ export class IntentBuilder {
         to: this.setTo(to),
       });
 
-      const sender = await getSender(signer);
+      const sender = await getSender(signer, this._bundlerUrl);
 
       const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
       const nonce = await getNonce(sender);
@@ -129,7 +132,7 @@ export class IntentBuilder {
       params: [solvedHash],
     });
 
-    const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
+    const resReceipt = await this.fetchWithNodeFetch(this._bundlerUrl, {
       method: 'POST',
       headers: headers,
       body: body,

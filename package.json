@@ -2,7 +2,6 @@
   "author": "",
   "dependencies": {
     "blndgs-model": "^0.4.0",
-    "dotenv": "^16.4.5",
     "ethers": "5.7.0",
     "node-fetch": "^3.3.2",
     "typescript": "^5.4.3",
@@ -43,7 +42,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "BUNDLER_URL=https://dev.balloondogs.network:4338 jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

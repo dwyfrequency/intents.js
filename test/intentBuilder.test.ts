@@ -14,11 +14,13 @@ describe('execute function use cases tests', () => {
   let intentBuilder: IntentBuilder;
   let senderAddress: string;
   let signer: ethers.Wallet;
+  if (!process.env.BUNDLER_URL) throw new Error('BUNDLER_URL is missing');
+  const BUNDLER_URL = process.env.BUNDLER_URL;
 
   beforeAll(async () => {
-    intentBuilder = await IntentBuilder.createInstance();
+    intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
     signer = generateRandomAccount();
-    senderAddress = await getSender(signer);
+    senderAddress = await getSender(signer, BUNDLER_URL);
   });
 
   it('should have an initial ETH balance of 0', async () => {
