@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
-import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
+import { BUNDLER_URL, CHAIN_ID, ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
 import { FromState, getSender, State, ToState } from './index';
 import { Asset, Intent, Loan, Stake } from './';
+import { getInitCode, getNonce } from './walletUtils';
 
 export class IntentBuilder {
   private constructor(private _client: Client) {}
@@ -21,8 +22,8 @@ export class IntentBuilder {
       const sender = await getSender(signer);
 
       const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-      const nonce = await this.getNonce(sender);
-      const initCode = await this.getInitCode(nonce, signer);
+      const nonce = await getNonce(sender);
+      const initCode = await getInitCode(nonce, signer);
 
       const builder = new UserOperationBuilder()
         .useDefaults({ sender })
@@ -45,26 +46,7 @@ export class IntentBuilder {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const solvedHash = (res as any).userOpHash.solved_hash;
 
-      const headers = {
-        accept: 'application/json',
-        'content-type': 'application/json',
-      };
-
-      const body = JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'eth_getUserOperationReceipt',
-        params: [solvedHash],
-      });
-
-      const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
-        method: 'POST',
-        headers: headers,
-        body: body,
-      });
-
-      const receipt = await resReceipt.json();
-      console.log(receipt);
+      console.log(await this.getReceipt(solvedHash));
     } catch (error) {
       console.error('Error executing intent:', error);
     }
@@ -96,16 +78,6 @@ export class IntentBuilder {
     }
   }
 
-  private async getInitCode(nonce: string, signer: ethers.Signer) {
-    let ownerAddress = await signer.getAddress();
-    console.log('ownerAddress ' + ownerAddress);
-    ownerAddress = ownerAddress.substring(2); // Remove 0x value
-    console.log('nonce ' + nonce);
-    return nonce !== '0'
-      ? '0x'
-      : `${FACTORY}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
-  }
-
   private async getSignature(signer: ethers.Signer, builder: UserOperationBuilder) {
     const packedData = ethers.utils.defaultAbiCoder.encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
@@ -132,47 +104,6 @@ export class IntentBuilder {
     return await signer.signMessage(ethers.utils.arrayify(userOpHash));
   }
 
-  private async getNonce(sender: string): Promise<string> {
-    const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
-    const abi = [
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'sender',
-            type: 'address',
-          },
-          {
-            internalType: 'uint192',
-            name: 'key',
-            type: 'uint192',
-          },
-        ],
-        name: 'getNonce',
-        outputs: [
-          {
-            internalType: 'uint256',
-            name: 'nonce',
-            type: 'uint256',
-          },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-      },
-    ];
-
-    const contract = new ethers.Contract(ENTRY_POINT, abi, provider);
-
-    try {
-      const nonce = await contract.getNonce(sender, '0');
-      console.log('Nonce:', nonce.toString());
-      return nonce.toString();
-    } catch (error) {
-      console.error('Error getting nonce:', error);
-      throw error;
-    }
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchWithNodeFetch(url: string, options: any) {
     const isNode = typeof window === 'undefined';
@@ -183,5 +114,27 @@ export class IntentBuilder {
     } else {
       return window.fetch(url, options);
     }
+  }
+
+  private async getReceipt(solvedHash: string) {
+    const headers = {
+      accept: 'application/json',
+      'content-type': 'application/json',
+    };
+
+    const body = JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'eth_getUserOperationReceipt',
+      params: [solvedHash],
+    });
+
+    const resReceipt = await this.fetchWithNodeFetch(BUNDLER_URL, {
+      method: 'POST',
+      headers: headers,
+      body: body,
+    });
+
+    return await resReceipt.json();
   }
 }

@@ -13,7 +13,8 @@ type ToState =
   | { value: Loan; case: 'toLoan' }
   | { case: undefined; value?: undefined };
 
-export * from './PROJECTS';
+export * from './projects';
 export * from './IntentBuilder';
-export * from './Helpers';
+export * from './utils';
+export * from './walletUtils';
 export { Intent, Asset, Loan, Stake, PartialMessage, State, FromState, ToState };
