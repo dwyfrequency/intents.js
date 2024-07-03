@@ -1,5 +1,3 @@
-Sure, here is the updated documentation with the corrected example code:
-
 # Intents.js SDK
 
 ## Getting Started
