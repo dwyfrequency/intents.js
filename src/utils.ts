@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { NODE_URL } from './Constants';
+import { NODE_URL } from './constants';
 
 export async function faucet(address: string): Promise<void> {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
@@ -26,24 +26,32 @@ export async function checkBalance(address: string, tokenAddress?: string): Prom
 
   try {
     if (tokenAddress) {
-      // ERC20 balance check
-      const abi = [
-        {
-          constant: true,
-          inputs: [{ name: '_owner', type: 'address' }],
-          name: 'balanceOf',
-          outputs: [{ name: 'balance', type: 'uint256' }],
-          type: 'function',
-        },
-      ];
+      if (tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
+        // Handle ETH balance
+        const balance = await provider.getBalance(address);
+        const formattedBalance = ethers.utils.formatEther(balance);
+        console.log(`Ethereum Balance: ${formattedBalance}`);
+        return formattedBalance;
+      } else {
+        // ERC-20 token balance
+        const abi = [
+          {
+            constant: true,
+            inputs: [{ name: '_owner', type: 'address' }],
+            name: 'balanceOf',
+            outputs: [{ name: 'balance', type: 'uint256' }],
+            type: 'function',
+          },
+        ];
 
-      const contract = new ethers.Contract(tokenAddress, abi, provider);
-      const balance = await contract.balanceOf(address);
-      const formattedBalance = ethers.utils.formatUnits(balance, 18);
-      console.log(`ERC20 Balance: ${formattedBalance}`);
-      return formattedBalance;
+        const contract = new ethers.Contract(tokenAddress, abi, provider);
+        const balance = await contract.balanceOf(address);
+        const formattedBalance = ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals for simplicity
+        console.log(`ERC20 Balance: ${formattedBalance}`);
+        return formattedBalance;
+      }
     } else {
-      // Ethereum balance check
+      // Default to ETH balance if no token address is provided
       const balance = await provider.getBalance(address);
       const formattedBalance = ethers.utils.formatEther(balance);
       console.log(`Ethereum Balance: ${formattedBalance}`);
@@ -53,14 +61,4 @@ export async function checkBalance(address: string, tokenAddress?: string): Prom
     console.error('Error checking balance:', error);
     return '0';
   }
-}
-
-export function toBigInt(value: number): { value: Uint8Array } {
-  const inputString = value.toString();
-
-  const buffer = new Uint8Array(inputString.length);
-  for (let i = 0; i < inputString.length; i++) {
-    buffer[i] = parseInt(inputString.charAt(i), 10);
-  }
-  return { value: buffer };
 }

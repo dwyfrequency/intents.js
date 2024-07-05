@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
-import { CHAIN_ID, ENTRY_POINT } from './Constants';
+import { CHAIN_ID, ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
-import { FromState, getSender, State, ToState } from './index';
-import { Asset, Intent, Loan, Stake } from './';
+import { Intent, getSender } from './index';
 import { getInitCode, getNonce } from './walletUtils';
+import fetch from 'isomorphic-fetch';
 
 export class IntentBuilder {
   private constructor(
@@ -15,13 +15,8 @@ export class IntentBuilder {
     return new IntentBuilder(await Client.init(bundlerUrl), bundlerUrl);
   }
 
-  async execute(from: State, to: State, signer: ethers.Signer): Promise<void> {
+  async execute(intents: Intent, signer: ethers.Signer): Promise<void> {
     try {
-      const intents = new Intent({
-        from: this.setFrom(from),
-        to: this.setTo(to),
-      });
-
       const sender = await getSender(signer, this._bundlerUrl);
 
       const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
@@ -55,32 +50,6 @@ export class IntentBuilder {
     }
   }
 
-  private setFrom(state: State): FromState {
-    switch (true) {
-      case state instanceof Asset:
-        return { case: 'fromAsset', value: state };
-      case state instanceof Loan:
-        return { case: 'fromLoan', value: state };
-      case state instanceof Stake:
-        return { case: 'fromStake', value: state };
-      default:
-        return { case: undefined };
-    }
-  }
-
-  private setTo(state: State): ToState {
-    switch (true) {
-      case state instanceof Asset:
-        return { case: 'toAsset', value: state };
-      case state instanceof Stake:
-        return { case: 'toStake', value: state };
-      case state instanceof Loan:
-        return { case: 'toLoan', value: state };
-      default:
-        return { case: undefined };
-    }
-  }
-
   private async getSignature(signer: ethers.Signer, builder: UserOperationBuilder) {
     const packedData = ethers.utils.defaultAbiCoder.encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
@@ -109,14 +78,7 @@ export class IntentBuilder {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchWithNodeFetch(url: string, options: any) {
-    const isNode = typeof window === 'undefined';
-    if (isNode) {
-      const fetchModule = await import('node-fetch');
-      const fetch = fetchModule.default;
-      return fetch(url, options);
-    } else {
-      return window.fetch(url, options);
-    }
+    return fetch(url, options);
   }
 
   private async getReceipt(solvedHash: string) {
