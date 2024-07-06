@@ -1,28 +1,36 @@
-import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt } from './src';
+import { IntentBuilder, PROJECTS, CHAINS, Intent, Currency, Stake } from './src';
 import { ethers } from 'ethers';
 
-const BUNDLER_URL = 'https://testapi.balloondogs.team:4338' //'https://api.balloondogs.network';
+const BUNDLER_URL = 'https://testapi.balloondogs.team:4338'; //'https://api.balloondogs.network';
 
-const signer = new ethers.Wallet('private key');
+const signer = new ethers.Wallet('your-private-key');
 
 const eth = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-const amount = 0.1;
+const amount = ethers.utils.parseUnits('0.1', 'ether').toString();
 
-const from = new Asset({
+const from: Currency = {
+  type: 'TOKEN',
   address: eth,
-  amount: toBigInt(Number(amount)),
-  chainId: toBigInt(CHAINS.Ethereum),
-});
+  amount: amount,
+  chainId: CHAINS.Ethereum,
+};
 
-const to = new Stake({
+const to: Stake = {
+  type: 'STAKE',
   address: PROJECTS.Lido,
-  chainId: toBigInt(CHAINS.Ethereum),
-});
+  chainId: CHAINS.Ethereum,
+};
+
+const intent: Intent = {
+  sender: await signer.getAddress(),
+  from: from,
+  to: to,
+};
 
 async function executeIntent() {
   const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
 
-  await intentBuilder.execute(from, to, signer);
+  await intentBuilder.execute(intent, signer);
 }
 
 executeIntent()

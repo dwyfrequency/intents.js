@@ -3,14 +3,14 @@ export * from './IntentBuilder';
 export * from './utils';
 export * from './walletUtils';
 
-interface Currency {
+export interface Currency {
   type: 'TOKEN';
   address: string;
   amount: string;
   chainId: string;
 }
 
-interface Loan {
+export interface Loan {
   type: 'LOAN';
   asset?: string; //ERC20 address
   amount?: string;
@@ -18,13 +18,13 @@ interface Loan {
   chainId: string;
 }
 
-interface Stake {
+export interface Stake {
   type: 'STAKE';
   address?: string;
   chainId?: string;
 }
 
-interface ExtraData {
+export interface ExtraData {
   expirationDate?: Date;
   partiallyFillable?: boolean;
   kind: 'buy' | 'sell' | 'stake';
