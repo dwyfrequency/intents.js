@@ -79,7 +79,8 @@ const intent: Intent = {
   to: to,
 };
 
-await intentBuilder.execute(intent, signer)
+await intentBuilder
+  .execute(intent, signer)
   .then(() => console.log('Intent executed successfully.'))
   .catch(error => console.error('Error executing intent:', error));
 ```
@@ -88,7 +89,7 @@ await intentBuilder.execute(intent, signer)
 
 The SDK provides utility functions to faucet ETH to an account and check the balance of ETH or ERC-20 tokens.
 
-#### Faucet ETH to an Account**
+#### Faucet ETH to an Account\*\*
 
 ```tsx
 import { faucet } from 'intents.js';
@@ -97,7 +98,6 @@ const recipientAddress = '0xYourRecipientAddress';
 await faucet(recipientAddress)
   .then(() => console.log('Faucet successful.'))
   .catch(error => console.error('Error using faucet:', error));
-
 ```
 
 #### Check Balance of ETH or ERC-20 Token
@@ -117,7 +117,8 @@ console.log(`Balance: ${balance}`);
 After setting up your intents, the next step is to execute these intents using the `IntentBuilder`. This process involves calling the `execute` method on your `intentBuilder` instance, passing in the necessary parameters such as the intents and your signing key. The execution is handled asynchronously.
 
 ```tsx
-await intentBuilder.execute(intent, signer)
+await intentBuilder
+  .execute(intent, signer)
   .then(() => console.log('Intent executed successfully.'))
   .catch(error => console.error('Error executing intent:', error));
 ```
@@ -177,7 +178,8 @@ await faucet(sender)
 const balance = await checkBalance(sender, '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
 console.log(`ETH Balance: ${balance}`);
 
-await intentBuilder.execute(intent, signer)
+await intentBuilder
+  .execute(intent, signer)
   .then(() => console.log('Intent executed successfully.'))
   .catch(error => console.error('Error executing intent:', error));
 ```
