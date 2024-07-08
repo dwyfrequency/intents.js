@@ -5,7 +5,7 @@ export async function faucet(address: string): Promise<void> {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 
   const method = 'tenderly_addBalance';
-  const params = [[address], '0x6f05b59d3b20000'];
+  const params = [[address], '0xDE0B6B3A7640000'];
   const jsonRpcRequest = {
     jsonrpc: '2.0',
     method: method,
