@@ -5,7 +5,7 @@ on:
     # 21 PM UTC
     - cron:  '0 21 * * *'
   push:
-    branches: [main,creating-workflow,testnet]
+    branches: [main,testnet]
 
 jobs:
   test:
@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: blndgs/intents.js
-          ref: main
+          ref: testnet
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
