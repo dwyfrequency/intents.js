@@ -4,9 +4,9 @@ import { Presets } from 'userop';
 
 export async function getInitCode(nonce: string, signer: ethers.Signer) {
   let ownerAddress = await signer.getAddress();
-  console.log('ownerAddress ' + ownerAddress);
+  // console.log('ownerAddress ' + ownerAddress);
   ownerAddress = ownerAddress.substring(2); // Remove 0x value
-  console.log('nonce ' + nonce);
+  // console.log('nonce ' + nonce);
   return nonce !== '0'
     ? '0x'
     : `${FACTORY}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
@@ -45,7 +45,7 @@ export async function getNonce(sender: string): Promise<string> {
 
   try {
     const nonce = await contract.getNonce(sender, '0');
-    console.log('Nonce:', nonce.toString());
+    // console.log('Nonce:', nonce.toString());
     return nonce.toString();
   } catch (error) {
     console.error('Error getting nonce:', error);
