@@ -48,7 +48,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "BUNDLER_URL=https://testapi.balloondogs.team:4338 jest --watchAll=false",
+    "test": "BUNDLER_URL=https://testapi.balloondogs.team:4338 jest --bail --watchAll=false",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
