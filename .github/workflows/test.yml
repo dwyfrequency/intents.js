@@ -3,9 +3,9 @@ on:
   workflow_call:
   schedule:
     # 21 PM UTC
-    - cron:  '0 21 * * *'
+    - cron: '0 21 * * *'
   push:
-    branches: [main,testnet]
+    branches: [main, testnet]
 
 jobs:
   test:

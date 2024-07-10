@@ -44,7 +44,7 @@ export class IntentBuilder {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const solvedHash = (res as any).userOpHash.solved_hash;
 
-      // console.log(await this.getReceipt(solvedHash));
+      console.log(await this.getReceipt(solvedHash));
     } catch (error) {
       console.error('Error executing intent:', error);
     }

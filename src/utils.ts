@@ -15,7 +15,7 @@ export async function faucet(address: string): Promise<void> {
 
   try {
     const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
-    // console.log('Response:', response);
+    console.log('Response:', response);
   } catch (error) {
     console.error('Error:', error);
   }
