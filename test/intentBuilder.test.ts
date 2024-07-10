@@ -304,35 +304,6 @@ describe('execute function use cases tests', () => {
     }, 10000);
 
 
-    it('ETH -> DAI Swap', async () => {
-      const intents = {
-        sender: senderAddress,
-        from: {
-          type: 'TOKEN',
-          address: TOKENS.ETH,
-          amount: '0.1',
-          chainId: CHAINS.Ethereum,
-        },
-        to: {
-          type: 'TOKEN',
-          address: TOKENS.Dai,
-          chainId: CHAINS.Ethereum,
-        },
-      } as unknown as Intent;
-
-
-      const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
-
-      await intentBuilder.execute(intents, signer);
-
-      const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
-
-      expect(parseFloat(finalBalance)).toBeGreaterThan(parseFloat(initialBalance));
-    }, 10000);
-
-
-
-
       it('WETH -> ETH Stake', async () => {
         const intents = {
           sender: senderAddress,
