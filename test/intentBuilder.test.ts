@@ -3,7 +3,6 @@ import { IntentBuilder, CHAINS, checkBalance, faucet, getSender, Intent, PROJECT
 import { ethers } from 'ethers';
 
 import { TOKENS } from './constants';
-import { assert } from 'console';
 
 function generateRandomAccount(): ethers.Wallet {
   const randomBytes = ethers.utils.randomBytes(32);
@@ -24,10 +23,10 @@ describe('execute function use cases tests', () => {
     senderAddress = await getSender(signer, BUNDLER_URL);
   });
 
-    it('should have an initial ETH balance of 0', async () => {
-      const balance = await checkBalance(senderAddress);
-      expect(parseFloat(balance)).toBe(0);
-    }, 10000);
+  it('should have an initial ETH balance of 0', async () => {
+    const balance = await checkBalance(senderAddress);
+    expect(parseFloat(balance)).toBe(0);
+  }, 10000);
 
   it('should faucet the account with 1 ETH and check the balance', async () => {
     // Faucet the account with 1 ETH
@@ -38,164 +37,90 @@ describe('execute function use cases tests', () => {
     expect(parseFloat(balanceAfter)).toBe(1);
   }, 1000);
 
+   it('ETH -> DAI Swap', async () => {
+      const intents = {
+        sender: senderAddress,
+        from: {
+          type: 'TOKEN',
+          address: TOKENS.ETH,
+          amount: '0.1',
+          chainId: CHAINS.Ethereum,
+        },
+        to: {
+          type: 'TOKEN',
+          address: TOKENS.Dai,
+          chainId: CHAINS.Ethereum,
+        },
+      } as unknown as Intent;
 
-  it('ETH -> DAI Swap', async () => {
-    const intents = {
-      sender: senderAddress,
-      from: {
-        type: 'TOKEN',
-        address: TOKENS.ETH,
-        amount: '0.1',
-        chainId: CHAINS.Ethereum,
-      },
-      to: {
-        type: 'TOKEN',
-        address: TOKENS.Dai,
-        chainId: CHAINS.Ethereum,
-      },
-    } as unknown as Intent;
 
+      const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
-    const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
+      await intentBuilder.execute(intents, signer);
 
-    await intentBuilder.execute(intents, signer);
+      const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
-    const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
-
-    expect(parseFloat(finalBalance)).toBeGreaterThan(parseFloat(initialBalance));
-  }, 10000);
-
-  it('DAI -> ETH Stake', async () => {
-    const intents = {
-      sender: senderAddress,
-      from: {
-        type: 'TOKEN',
-        address: TOKENS.Dai,
-        amount: '100',
-        chainId: CHAINS.Ethereum,
-      },
-      to: {
-        type: 'STAKE',
-        address: PROJECTS.Lido,
-        chainId: CHAINS.Ethereum,
-      },
-    } as unknown as Intent;
-
-    const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
-
-    await intentBuilder.execute(intents, signer);
-
-    const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
-
-    expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
-  }, 10000);
-
-  it('ETH -> ETH Stake', async () => {
-    const intents = {
-      sender: senderAddress,
-      from: {
-        type: 'TOKEN',
-        address: TOKENS.ETH,
-        amount: '0.1',
-        chainId: CHAINS.Ethereum,
-      },
-      to: {
-        type: 'STAKE',
-        address: PROJECTS.Lido,
-        chainId: CHAINS.Ethereum,
-      },
-    } as unknown as Intent;
-
-    const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
-
-    await intentBuilder.execute(intents, signer);
-
-    const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
-
-    expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
-  }, 10000);
-
-    it('ETH -> ETH Loan', async () => {
-    const intents = {
-      sender: senderAddress,
-      from: {
-        type: 'TOKEN',
-        address: TOKENS.ETH,
-        amount: '0.5',
-        chainId: CHAINS.Ethereum,
-      },
-      to: {
-        type: 'LOAN',
-        asset: TOKENS.ETH,
-        address: PROJECTS.Aave,
-        chainId: CHAINS.Ethereum,
-      },
-    } as unknown as Intent;
-
-    const initialBalance = await checkBalance(senderAddress, TOKENS.ETH);
-    await intentBuilder.execute(intents, signer);
-
-    const finalBalance = await checkBalance(senderAddress, TOKENS.ETH);
-    expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
-  }, 10000);
-
-  // Not Working TODO
-  //   it('Loaned AWeth -> Weth', async () => {
-  //   const intents = {
-  //     sender: senderAddress,
-  //     from: {
-  //       type: 'LOAN',
-  //       address: PROJECTS.Aave,
-  //       asset: TOKENS.ETH,
-  //       amount: '0.3',
-  //       chainId: CHAINS.Ethereum,
-  //     },
-  //     to: {
-  //       type: 'TOKEN',
-  //       address: TOKENS.ETH,
-  //       chainId: CHAINS.Ethereum,
-  //     },
-  //   } as unknown as Intent;
-
-  //   const initialBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //   console.log('initialBalance ' + initialBalance)
-
-  //   await intentBuilder.execute(intents, signer);
-
-  //   const finalBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //   console.log('finalBalance ' + finalBalance)
-
-  //   expect(parseFloat(initialBalance)).toBeLessThan(parseFloat(finalBalance));
-  // }, 1000000);
+      expect(parseFloat(finalBalance)).toBeGreaterThan(parseFloat(initialBalance));
+    }, 10000);
 
 
 
 
-  it('DAI -> ETH Swap', async () => {
-    const intents = {
-      sender: senderAddress,
-      from: {
-        type: 'TOKEN',
-        address: TOKENS.Dai,
-        amount: '10',
-        chainId: CHAINS.Ethereum,
-      },
-      to: {
-        type: 'TOKEN',
-        address: TOKENS.ETH,
-        chainId: CHAINS.Ethereum,
-      },
-    } as unknown as Intent;
+    it('Dai Staking', async () => {
+      const intents = {
+        sender: senderAddress,
+        from: {
+          type: 'TOKEN',
+          address: TOKENS.Dai,
+          amount: '5',
+          chainId: CHAINS.Ethereum,
+        },
+        to: {
+          type: 'STAKE',
+          address: PROJECTS.Lido,
+          chainId: CHAINS.Ethereum,
+        },
+      } as unknown as Intent;
 
-    const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
+      const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
-    await intentBuilder.execute(intents, signer);
+      await intentBuilder.execute(intents, signer);
 
-    const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
-    expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
-  }, 10000);
+      const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
-    it('ETH -> WETH Swap', async () => {
+      expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
+    }, 100000);
+
+
+    it('DAI -> USDC Swap', async () => {
+      const intents = {
+        sender: senderAddress,
+        from: {
+          type: 'TOKEN',
+          address: TOKENS.Dai,
+          amount: '10',
+          chainId: CHAINS.Ethereum,
+        },
+        to: {
+          type: 'TOKEN',
+          address: TOKENS.Usdc,
+          chainId: CHAINS.Ethereum,
+        },
+      } as unknown as Intent;
+
+      const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
+
+
+      await intentBuilder.execute(intents, signer);
+
+      const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
+
+      expect(parseFloat(initialBalance )).toBeGreaterThan(parseFloat(finalBalance));
+    }, 100000);
+
+
+
+  it('ETH -> WETH Swap', async () => {
     const intents = {
       sender: senderAddress,
       from: {
@@ -221,91 +146,71 @@ describe('execute function use cases tests', () => {
     expect(parseFloat(initialBalance)).toBeGreaterThan(parseFloat(finalBalance));
   }, 10000);
 
-  it('WETH -> ETH Swap', async () => {
-    const intents = {
-      sender: senderAddress,
-      from: {
-        type: 'TOKEN',
-        address: TOKENS.Weth,
-        amount: '0.1',
-        chainId: CHAINS.Ethereum,
-      },
-      to: {
-        type: 'TOKEN',
-        address: TOKENS.ETH,
-        chainId: CHAINS.Ethereum,
-      },
-    } as unknown as Intent;
-
-    const initialBalance = await checkBalance(senderAddress, TOKENS.Weth);
-    await intentBuilder.execute(intents, signer);
-
-    const finalBalance = await checkBalance(senderAddress, TOKENS.Weth);
-    expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
-  }, 10000);
 
 
-  it('ETH -> DAI Swap', async () => {
+
+  it('ETH -> Weth Loan', async () => {
     const intents = {
       sender: senderAddress,
       from: {
         type: 'TOKEN',
         address: TOKENS.ETH,
-        amount: '0.1',
+        amount: '0.2',
         chainId: CHAINS.Ethereum,
       },
       to: {
-        type: 'TOKEN',
-        address: TOKENS.Dai,
+        type: 'LOAN',
+        asset: TOKENS.Weth,
+        address: PROJECTS.Aave,
         chainId: CHAINS.Ethereum,
       },
     } as unknown as Intent;
 
-
-    const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
+    const initialBalance = await checkBalance(senderAddress, TOKENS.Aweth);
 
     await intentBuilder.execute(intents, signer);
 
-    const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
+    const finalBalance = await checkBalance(senderAddress, TOKENS.Aweth);
 
     expect(parseFloat(finalBalance)).toBeGreaterThan(parseFloat(initialBalance));
-  }, 10000);
-
-  //Not working
-  // it('DAI -> USDC Swap', async () => {
-  //   const intents = {
-  //     sender: senderAddress,
-  //     from: {
-  //       type: 'TOKEN',
-  //       address: TOKENS.Dai,
-  //       amount: '10',
-  //       chainId: CHAINS.Ethereum,
-  //     },
-  //     to: {
-  //       type: 'TOKEN',
-  //       address: TOKENS.Usdc,
-  //       chainId: CHAINS.Ethereum,
-  //     },
-  //   } as unknown as Intent;
-
-  //   const initialBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-
-  //   await intentBuilder.execute(intents, signer);
-
-  //   const finalBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-
-  //   expect(parseFloat(initialBalance)).toBeLessThan(parseFloat(finalBalance));
-  // }, 10000);
+  }, 1000000);
 
 
+  it('Loaned AWeth -> Weth', async () => {
+    const intents = {
+      sender: senderAddress,
+      from: {
+        type: 'LOAN',
+        address: PROJECTS.Aave,
+        asset: TOKENS.ETH,
+        amount: '0.1',
+        chainId: CHAINS.Ethereum,
+      },
+      to: {
+        type: 'TOKEN',
+        address: TOKENS.ETH,
+        chainId: CHAINS.Ethereum,
+      },
+    } as unknown as Intent;
 
-    it('WETH -> ETH Stake', async () => {
+    const initialBalance = await checkBalance(senderAddress, TOKENS.ETH);
+
+    await intentBuilder.execute(intents, signer);
+
+    const finalBalance = await checkBalance(senderAddress, TOKENS.ETH);
+
+    expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
+  }, 100000);
+
+ 
+
+    it('DAI -> ETH Stake', async () => {
       const intents = {
         sender: senderAddress,
         from: {
           type: 'TOKEN',
-          address: TOKENS.Weth,
-          amount: '0.1',
+          address: TOKENS.Dai,
+          amount: '100',
           chainId: CHAINS.Ethereum,
         },
         to: {
@@ -315,17 +220,14 @@ describe('execute function use cases tests', () => {
         },
       } as unknown as Intent;
 
-      const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
       const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
 
       await intentBuilder.execute(intents, signer);
 
-      const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
       const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
       expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
-    }, 100000);
+    }, 10000);
 
     it('ETH -> ETH Stake', async () => {
       const intents = {
@@ -343,19 +245,17 @@ describe('execute function use cases tests', () => {
         },
       } as unknown as Intent;
 
-      const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
       const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
 
       await intentBuilder.execute(intents, signer);
 
-      const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
       const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
 
-      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
       expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
-    }, 1000000);
+    }, 10000);
 
-    it('ERC20 -> ERC20 Loan', async () => {
+
+    it('DAI -> ETH Swap', async () => {
       const intents = {
         sender: senderAddress,
         from: {
@@ -365,210 +265,294 @@ describe('execute function use cases tests', () => {
           chainId: CHAINS.Ethereum,
         },
         to: {
-          type: 'LOAN',
-          asset: TOKENS.Dai,
-          address: PROJECTS.Aave,
+          type: 'TOKEN',
+          address: TOKENS.ETH,
           chainId: CHAINS.Ethereum,
         },
       } as unknown as Intent;
 
-      const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-      const initialADaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+      const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
       await intentBuilder.execute(intents, signer);
 
-      const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-      const finalADaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
-
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
-    }, 1000000);
-
-    // it('ETH -> Weth Loan', async () => {
-    //   const intents = {
-    //     sender: senderAddress,
-    //     from: {
-    //       type: 'TOKEN',
-    //       address: TOKENS.ETH,
-    //       amount: '0.1',
-    //       chainId: CHAINS.Ethereum,
-    //     },
-    //     to: {
-    //       type: 'LOAN',
-    //       asset: TOKENS.Weth,
-    //       address: PROJECTS.Aave,
-    //       chainId: CHAINS.Ethereum,
-    //     },
-    //   } as unknown as Intent;
-
-    //   const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-    //   const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
-
-    //   await intentBuilder.execute(intents, signer);
-
-    //   const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-    //   const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
-
-    //   expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-    //   expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
-    // }, 1000000);
+      const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
+      expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
+    }, 10000);
 
 
-    it('Loaned ADai -> DAI', async () => {
+    it('WETH -> ETH Swap', async () => {
       const intents = {
         sender: senderAddress,
         from: {
-          type: 'LOAN',
-          address: PROJECTS.Aave,
-          asset: TOKENS.Dai,
-          amount: '0.8',
+          type: 'TOKEN',
+          address: TOKENS.Weth,
+          amount: '0.1',
           chainId: CHAINS.Ethereum,
         },
         to: {
           type: 'TOKEN',
-          address: TOKENS.Dai,
+          address: TOKENS.ETH,
           chainId: CHAINS.Ethereum,
         },
       } as unknown as Intent;
 
-      const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
-
+      const initialBalance = await checkBalance(senderAddress, TOKENS.Weth);
       await intentBuilder.execute(intents, signer);
 
-      const finalDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+      const finalBalance = await checkBalance(senderAddress, TOKENS.Weth);
+      expect(parseFloat(finalBalance)).toBeLessThan(parseFloat(initialBalance));
+    }, 10000);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-    }, 10000000);
 
-
-    it('Failed Loaned ETH -> ERC20', async () => {
+    it('ETH -> DAI Swap', async () => {
       const intents = {
         sender: senderAddress,
         from: {
-          type: 'LOAN',
+          type: 'TOKEN',
           address: TOKENS.ETH,
           amount: '0.1',
           chainId: CHAINS.Ethereum,
         },
         to: {
           type: 'TOKEN',
-          address: TOKENS.Usdc,
+          address: TOKENS.Dai,
           chainId: CHAINS.Ethereum,
         },
       } as unknown as Intent;
 
-      const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-      const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
 
-      try {
+      const initialBalance = await checkBalance(senderAddress, TOKENS.Dai);
+
+      await intentBuilder.execute(intents, signer);
+
+      const finalBalance = await checkBalance(senderAddress, TOKENS.Dai);
+
+      expect(parseFloat(finalBalance)).toBeGreaterThan(parseFloat(initialBalance));
+    }, 10000);
+
+
+
+
+      it('WETH -> ETH Stake', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'TOKEN',
+            address: TOKENS.Weth,
+            amount: '0.1',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'STAKE',
+            address: PROJECTS.Lido,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
+
+        const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
+        const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+
         await intentBuilder.execute(intents, signer);
 
-        // If the intent execution does not throw an error, force the test to fail
-        throw new Error('Expected intent execution to fail, but it succeeded.');
+        const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
+        const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
 
-      } catch (error) {
-        // Check the balances to ensure they have not changed
+        expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+        expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
+      }, 100000);
+
+      it('ETH -> ETH Stake', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'TOKEN',
+            address: TOKENS.ETH,
+            amount: '0.1',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'STAKE',
+            address: PROJECTS.Lido,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
+
+        const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+        const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+
+        await intentBuilder.execute(intents, signer);
+
         const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-        const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+        const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
 
-        expect(parseFloat(finalEthBalance)).toBe(parseFloat(initialEthBalance));
-        expect(parseFloat(finalUsdcBalance)).toBe(parseFloat(initialUsdcBalance));
+        expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+        expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
+      }, 1000000);
 
-        // Check that the error is defined
-        expect(error).toBeDefined();
-      }
-    }, 1000000);
+      it('ERC20 -> ERC20 Loan', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'TOKEN',
+            address: TOKENS.Dai,
+            amount: '10',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'LOAN',
+            asset: TOKENS.Dai,
+            address: PROJECTS.Aave,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
 
+        const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+        const initialADaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
 
-    it('Failed Non-Loaned ERC20 -> ERC20', async () => {
-      const intents = {
-        sender: senderAddress,
-        from: {
-          type: 'LOAN',
-          address: TOKENS.Awbtc,
-          amount: '0.1',
-          chainId: CHAINS.Ethereum,
-        },
-        to: {
-          type: 'TOKEN',
-          address: TOKENS.Usdc,
-          chainId: CHAINS.Ethereum,
-        },
-      } as unknown as Intent;
-
-      const initialAwbtcBalance = await checkBalance(senderAddress, TOKENS.Awbtc);
-      const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-
-      try {
         await intentBuilder.execute(intents, signer);
 
-        // If the intent execution does not throw an error, force the test to fail
-        throw new Error('Expected intent execution to fail, but it succeeded.');
+        const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+        const finalADaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
 
-      } catch (error) {
-        // Check the balances to ensure they have not changed
-        const finalAwbtcBalance = await checkBalance(senderAddress, TOKENS.Awbtc);
-        const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-
-        expect(parseFloat(finalAwbtcBalance)).toBe(parseFloat(initialAwbtcBalance));
-        expect(parseFloat(finalUsdcBalance)).toBe(parseFloat(initialUsdcBalance));
-
-        // Check that the error is defined
-        expect(error).toBeDefined();
-      }
-    }, 1000000);
+        expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+        expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
+      }, 1000000);
 
 
-    it('Failed Loan -> Stake', async () => {
-      const intents = {
-        sender: senderAddress,
-        from: {
-          type: 'LOAN',
-          address: TOKENS.ADai,
-          amount: '10',
-          chainId: CHAINS.Ethereum,
-        },
-        to: {
-          type: 'STAKE',
-          address: PROJECTS.Lido,
-          chainId: CHAINS.Ethereum,
-        },
-      } as unknown as Intent;
 
-      try {
+
+      it('Loaned ADai -> DAI', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'LOAN',
+            address: PROJECTS.Aave,
+            asset: TOKENS.Dai,
+            amount: '0.8',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'TOKEN',
+            address: TOKENS.Dai,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
+
+        const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+
         await intentBuilder.execute(intents, signer);
 
-        // If the intent execution does not throw an error, force the test to fail
-        throw new Error('Expected intent execution to fail, but it succeeded.');
+        const finalDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
 
-      } catch (error) {
-        // Check that the error is defined
-        expect(error).toBeDefined();
-      }
-    }, 1000000);
+        expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
+      }, 10000000);
 
-    // it('USDC Staking', async () => {
-    //   const intents = {
-    //     sender: senderAddress,
-    //     from: {
-    //       type: 'TOKEN',
-    //       address: TOKENS.Usdc,
-    //       amount: '3',
-    //       chainId: CHAINS.Ethereum,
-    //     },
-    //     to: {
-    //       type: 'STAKE',
-    //       address: PROJECTS.Lido,
-    //       chainId: CHAINS.Ethereum,
-    //     },
-    //   } as unknown as Intent;
 
-    //   const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+      it('Failed Loaned ETH -> ERC20', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'LOAN',
+            address: TOKENS.ETH,
+            amount: '0.1',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'TOKEN',
+            address: TOKENS.Usdc,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
 
-    //   await intentBuilder.execute(intents, signer);
+        const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+        const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
 
-    //   const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+        try {
+          await intentBuilder.execute(intents, signer);
 
-    //   expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance));
-    // }, 1000000);
+          // If the intent execution does not throw an error, force the test to fail
+          throw new Error('Expected intent execution to fail, but it succeeded.');
+
+        } catch (error) {
+          // Check the balances to ensure they have not changed
+          const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+          const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+
+          expect(parseFloat(finalEthBalance)).toBe(parseFloat(initialEthBalance));
+          expect(parseFloat(finalUsdcBalance)).toBe(parseFloat(initialUsdcBalance));
+
+          // Check that the error is defined
+          expect(error).toBeDefined();
+        }
+      }, 1000000);
+
+
+      it('Failed Non-Loaned ERC20 -> ERC20', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'LOAN',
+            address: TOKENS.Awbtc,
+            amount: '0.1',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'TOKEN',
+            address: TOKENS.Usdc,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
+
+        const initialAwbtcBalance = await checkBalance(senderAddress, TOKENS.Awbtc);
+        const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+
+        try {
+          await intentBuilder.execute(intents, signer);
+
+          // If the intent execution does not throw an error, force the test to fail
+          throw new Error('Expected intent execution to fail, but it succeeded.');
+
+        } catch (error) {
+          // Check the balances to ensure they have not changed
+          const finalAwbtcBalance = await checkBalance(senderAddress, TOKENS.Awbtc);
+          const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+
+          expect(parseFloat(finalAwbtcBalance)).toBe(parseFloat(initialAwbtcBalance));
+          expect(parseFloat(finalUsdcBalance)).toBe(parseFloat(initialUsdcBalance));
+
+          // Check that the error is defined
+          expect(error).toBeDefined();
+        }
+      }, 1000000);
+
+
+      it('Failed Loan -> Stake', async () => {
+        const intents = {
+          sender: senderAddress,
+          from: {
+            type: 'LOAN',
+            address: TOKENS.ADai,
+            amount: '10',
+            chainId: CHAINS.Ethereum,
+          },
+          to: {
+            type: 'STAKE',
+            address: PROJECTS.Lido,
+            chainId: CHAINS.Ethereum,
+          },
+        } as unknown as Intent;
+
+        try {
+          await intentBuilder.execute(intents, signer);
+
+          // If the intent execution does not throw an error, force the test to fail
+          throw new Error('Expected intent execution to fail, but it succeeded.');
+
+        } catch (error) {
+          // Check that the error is defined
+          expect(error).toBeDefined();
+        }
+      }, 1000000);
+
+
 });
