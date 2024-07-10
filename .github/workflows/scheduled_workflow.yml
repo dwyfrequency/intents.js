@@ -1,6 +1,7 @@
 name: Scheduled workflow
 on:
   workflow_call:
+  workflow_dispatch:
   schedule:
     # 21 PM UTC
     - cron:  '0 21 * * *'
