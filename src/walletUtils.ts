@@ -1,12 +1,12 @@
 import { BytesLike, ethers } from 'ethers';
-import { ENTRY_POINT, FACTORY, NODE_URL } from './Constants';
+import { ENTRY_POINT, FACTORY, NODE_URL } from './constants';
 import { Presets } from 'userop';
 
 export async function getInitCode(nonce: string, signer: ethers.Signer) {
   let ownerAddress = await signer.getAddress();
-  console.log('ownerAddress ' + ownerAddress);
+  // console.log('ownerAddress ' + ownerAddress);
   ownerAddress = ownerAddress.substring(2); // Remove 0x value
-  console.log('nonce ' + nonce);
+  // console.log('nonce ' + nonce);
   return nonce !== '0'
     ? '0x'
     : `${FACTORY}5fbfb9cf000000000000000000000000${ownerAddress}0000000000000000000000000000000000000000000000000000000000000000`;
@@ -45,7 +45,7 @@ export async function getNonce(sender: string): Promise<string> {
 
   try {
     const nonce = await contract.getNonce(sender, '0');
-    console.log('Nonce:', nonce.toString());
+    // console.log('Nonce:', nonce.toString());
     return nonce.toString();
   } catch (error) {
     console.error('Error getting nonce:', error);
@@ -59,4 +59,14 @@ export async function getSender(signer: ethers.Signer, bundlerUrl: string, salt:
     salt: salt,
   });
   return simpleAccount.getSender();
+}
+
+export function toBigInt(value: number): { value: Uint8Array } {
+  const inputString = value.toString();
+
+  const buffer = new Uint8Array(inputString.length);
+  for (let i = 0; i < inputString.length; i++) {
+    buffer[i] = parseInt(inputString.charAt(i), 10);
+  }
+  return { value: buffer };
 }
