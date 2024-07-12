@@ -1,4 +1,4 @@
-import { IntentBuilder, CHAINS, checkBalance, faucet, toBigInt, getSender, Asset } from '../src';
+import { IntentBuilder, PROJECTS, CHAINS, checkBalance, faucet, toBigInt, getSender, Asset } from '../src';
 
 import { ethers } from 'ethers';
 import { TOKENS } from './constants';
@@ -20,44 +20,50 @@ describe('execute function use cases tests', () => {
     intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
     signer = generateRandomAccount();
     senderAddress = await getSender(signer, BUNDLER_URL);
+    console.log('sender', senderAddress);
   });
 
   it('should have an initial ETH balance of 0', async () => {
     const balance = await checkBalance(senderAddress);
+    console.log('balance', balance);
     expect(parseFloat(balance)).toBe(0);
-  }, 10000);
+  }, 100000);
 
   it('should faucet the account with 1 ETH and check the balance', async () => {
     // Faucet the account with 1 ETH
     await faucet(senderAddress);
-  // Check the balance after faucet
-  const balanceAfter = await checkBalance(senderAddress);
-  expect(parseFloat(balanceAfter)).toBe(1);
-}, 1000);
 
-  // it('ETH -> DAI Swap', async () => {
-  //   const from = new Asset({
-  //       address: TOKENS.ETH,
-  //       amount: toBigInt(1000), // wei amount
-  //       chainId: toBigInt(CHAINS.Ethereum),
-  //     }),
-  //     to = new Asset({
-  //       address: TOKENS.Dai,
-  //       chainId: toBigInt(CHAINS.Ethereum),
-  //     });
+    // Check the balance after faucet
+    const balanceAfter = await checkBalance(senderAddress);
+    console.log('balanceAfter', balanceAfter);
+    expect(parseFloat(balanceAfter)).toBe(1); // 1ETH fueled
+  }, 100000);
 
-  //   const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //   const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  it('ETH -> DAI Swap', async () => {
+    const from = new Asset({
+        address: TOKENS.ETH,
+        amount: toBigInt(1000000000000000),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
+      to = new Asset({
+        address: TOKENS.Dai,
+        chainId: toBigInt(CHAINS.Ethereum),
+        amount: toBigInt(1000000000000000),
+      });
 
-  //   await intentBuilder.execute(from, to, signer);
+    const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+    const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
-  //   const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //   const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+    await intentBuilder.execute(from, to, signer);
 
-  //   expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-  //   expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
-  // }, 100000);
+    const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+    const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
 
+    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
+  }, 100000);
+
+  // TODO:: below test need to be converted to protobuf
   // it('ETH -> WETH Swap', async () => {
   //   const from = new Asset({
   //       address: TOKENS.ETH,

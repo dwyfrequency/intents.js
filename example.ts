@@ -1,7 +1,7 @@
 import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt } from './src';
 import { ethers } from 'ethers';
 
-const BUNDLER_URL = 'https://testapi.balloondogs.team:4338' //'https://api.balloondogs.network';
+const BUNDLER_URL = 'https://bundler.dev.balloondogs.network';
 
 const signer = new ethers.Wallet('private key');
 
