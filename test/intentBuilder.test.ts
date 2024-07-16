@@ -1,4 +1,4 @@
-import { IntentBuilder, PROJECTS, CHAINS, checkBalance, faucet, toBigInt, getSender, Asset } from '../src';
+import { IntentBuilder, PROJECTS, CHAINS, getBalance, faucet, toBigInt, getSender, Asset } from '../src';
 
 import { ethers } from 'ethers';
 import { TOKENS } from './constants';
@@ -24,7 +24,7 @@ describe('execute function use cases tests', () => {
   });
 
   it('should have an initial ETH balance of 0', async () => {
-    const balance = await checkBalance(senderAddress);
+    const balance = await getBalance(senderAddress);
     console.log('balance', balance);
     expect(parseFloat(balance)).toBe(0);
   }, 100000);
@@ -34,7 +34,7 @@ describe('execute function use cases tests', () => {
     await faucet(senderAddress);
 
     // Check the balance after faucet
-    const balanceAfter = await checkBalance(senderAddress);
+    const balanceAfter = await getBalance(senderAddress);
     console.log('balanceAfter', balanceAfter);
     expect(parseFloat(balanceAfter)).toBe(1); // 1ETH fueled
   }, 100000);
@@ -51,13 +51,13 @@ describe('execute function use cases tests', () => {
         amount: toBigInt(1000000000000000),
       });
 
-    const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-    const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+    const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+    const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
     await intentBuilder.execute(from, to, signer);
 
-    const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-    const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+    const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+    const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -75,13 +75,13 @@ describe('execute function use cases tests', () => {
   //       chainId: toBigInt(CHAINS.Ethereum),
   //     });
 
-  //   const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //   const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
+  //   const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //   const initialDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
 
   //   await intentBuilder.execute(from, to, signer);
 
-  //   const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //   const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
+  //   const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //   const finalDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
 
   //   expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //   expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -98,13 +98,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -121,12 +121,12 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
   //   }, 100000);
@@ -142,11 +142,11 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //   }, 100000);
@@ -161,13 +161,13 @@ describe('execute function use cases tests', () => {
   //         address: PROJECTS.Lido,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -184,13 +184,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
-  //     const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
+  //     const initialStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Weth);
-  //     const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
+  //     const finalStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -207,13 +207,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const initialStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const initialStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const finalStEthBalance = await checkBalance(senderAddress, TOKENS.Steth);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const finalStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
 
   //     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //     expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -230,10 +230,10 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
   //     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //   }, 100000);
 
@@ -250,13 +250,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const initialADaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialADaiBalance = await getBalance(senderAddress, TOKENS.ADai);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const finalADaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalADaiBalance = await getBalance(senderAddress, TOKENS.ADai);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
@@ -273,13 +273,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Aweth);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Aweth);
 
   //     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -295,13 +295,13 @@ describe('execute function use cases tests', () => {
   //         address: PROJECTS.Aave,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.ADai);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.ADai);
 
   //     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -317,13 +317,13 @@ describe('execute function use cases tests', () => {
   //         address: TOKENS.ETH,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.ADai);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.ADai);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -339,13 +339,13 @@ describe('execute function use cases tests', () => {
   //         address: TOKENS.ETH,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Aweth);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Aweth);
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Aweth);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -361,13 +361,13 @@ describe('execute function use cases tests', () => {
   //         address: TOKENS.Usdc,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
-  //     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.ADai);
+  //     const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.ADai);
-  //     const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.ADai);
+  //     const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
@@ -384,14 +384,14 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //     try {
   //       await intentBuilder.execute(from, to, signer);
 
-  //       const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
-  //       const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //       const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //       const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //       expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
@@ -411,14 +411,14 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialNonAaveTokenBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-  //     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //     const initialNonAaveTokenBalance = await getBalance(senderAddress, TOKENS.Usdc);
+  //     const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //     try {
   //       await intentBuilder.execute(from, to, signer);
 
-  //       const finalNonAaveTokenBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-  //       const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //       const finalNonAaveTokenBalance = await getBalance(senderAddress, TOKENS.Usdc);
+  //       const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //       expect(parseFloat(finalNonAaveTokenBalance)).toBeLessThan(parseFloat(initialNonAaveTokenBalance));
   //       expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
@@ -456,11 +456,11 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
   //     const expectedDai = parseFloat(initialDaiBalance) * (1 + slippageTolerance);
   //     expect(parseFloat(finalDaiBalance)).toBeLessThanOrEqual(expectedDai);
@@ -527,13 +527,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -583,13 +583,13 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialWbtcBalance = await checkBalance(senderAddress, TOKENS.Wbtc);
-  //     const initialEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const initialWbtcBalance = await getBalance(senderAddress, TOKENS.Wbtc);
+  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalWbtcBalance = await checkBalance(senderAddress, TOKENS.Wbtc);
-  //     const finalEthBalance = await checkBalance(senderAddress, TOKENS.ETH);
+  //     const finalWbtcBalance = await getBalance(senderAddress, TOKENS.Wbtc);
+  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
 
   //     expect(parseFloat(finalWbtcBalance)).toBeLessThan(parseFloat(initialWbtcBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -605,13 +605,13 @@ describe('execute function use cases tests', () => {
   //         address: TOKENS.Dai,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-  //     const initialDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  //     const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
+  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
-  //     const finalDaiBalance = await checkBalance(senderAddress, TOKENS.Dai);
+  //     const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
+  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
 
   //     expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance));
   //     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -628,11 +628,11 @@ describe('execute function use cases tests', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
 
-  //     const initialUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //     const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //     await intentBuilder.execute(from, to, signer);
 
-  //     const finalUsdcBalance = await checkBalance(senderAddress, TOKENS.Usdc);
+  //     const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
 
   //     expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance));
   //   }, 100000);
