@@ -17,43 +17,39 @@ export class IntentBuilder {
   }
 
   async execute(from: State, to: State, signer: ethers.Signer): Promise<void> {
-    try {
-      const intents = new Intent({
-        from: this.setFrom(from),
-        to: this.setTo(to),
-      });
+    const intents = new Intent({
+      from: this.setFrom(from),
+      to: this.setTo(to),
+    });
 
-      const sender = await getSender(signer, this._bundlerUrl);
+    const sender = await getSender(signer, this._bundlerUrl);
 
-      const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-      const nonce = await getNonce(sender);
-      const initCode = await getInitCode(nonce, signer);
+    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
+    const nonce = await getNonce(sender);
+    const initCode = await getInitCode(nonce, signer);
 
-      const builder = new UserOperationBuilder()
-        .useDefaults({ sender })
-        .setCallData(intent)
-        .setPreVerificationGas('0x493E0')
-        .setMaxFeePerGas('0x493E0')
-        .setMaxPriorityFeePerGas('0')
-        .setVerificationGasLimit('0x493E0')
-        .setCallGasLimit('0xC3500')
-        .setNonce(nonce)
-        .setInitCode(initCode);
+    const builder = new UserOperationBuilder()
+      .useDefaults({ sender })
+      .setCallData(intent)
+      .setPreVerificationGas('0x493E0')
+      .setMaxFeePerGas('0x493E0')
+      .setMaxPriorityFeePerGas('0')
+      .setVerificationGasLimit('0x493E0')
+      .setCallGasLimit('0xC3500')
+      .setNonce(nonce)
+      .setInitCode(initCode);
 
-      const signature = await this.getSignature(signer, builder);
-      builder.setSignature(signature);
+    const signature = await this.getSignature(signer, builder);
+    builder.setSignature(signature);
 
-      const res = await this._client.sendUserOperation(builder, {
-        onBuild: op => console.log('Signed UserOperation:', op),
-      });
+    const res = await this._client.sendUserOperation(builder, {
+      onBuild: op => console.log('Signed UserOperation:', op),
+    });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const solvedHash = (res as any).userOpHash.solved_hash;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const solvedHash = (res as any).userOpHash.solved_hash;
 
-      console.log(await this.getReceipt(solvedHash));
-    } catch (error) {
-      console.error('Error executing intent:', error);
-    }
+    console.log(await this.getReceipt(solvedHash));
   }
 
   private setFrom(state: State): FromState {
