@@ -3,6 +3,7 @@
   "dependencies": {
     "blndgs-model": "^0.4.0",
     "ethers": "5.7.0",
+    "isomorphic-fetch": "^3.0.0",
     "node-fetch": "^3.3.2",
     "typescript": "^5.4.3",
     "userop": "^0.3.8"
@@ -11,6 +12,7 @@
   "devDependencies": {
     "@eslint/js": "^9.4.0",
     "@sinonjs/referee-sinon": "^12.0.0",
+    "@types/isomorphic-fetch": "^0.0.39",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.16",
     "chai": "^5.1.0",
@@ -42,7 +44,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "BUNDLER_URL=https://testapi.balloondogs.team:4338 jest",
+    "test": "BUNDLER_URL=https://bundler.dev.balloondogs.network jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

@@ -45,7 +45,7 @@ Here’s how you can structure the creation of an intent:
 Example of creating a staking intent:
 
 ```tsx
-import { IntentBuilder, Projects, Intent, Asset, Stake } from 'intents.js';
+import { IntentBuilder, PROJECTS, CHAINS, toBigInt, Asset, Stake } from 'intents.js';
 import { ethers } from 'ethers';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -54,35 +54,21 @@ const signer = provider.getSigner();
 const intentBuilder = new IntentBuilder();
 
 const sender = '0x';
-const Token 'NATIVE';
-const amount = 0.1;
 
-const fromCaseValue = {
-  case: 'fromAsset',
-  value: new Asset({
-    address: Token,
-    amount: intentBuilder.createBigInt(Number(amount)),
-    chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
-  }),
-};
+   const from = new Asset({
+        address: TOKENS.ETH,
+        amount: toBigInt(1000000000000000),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
+    to = new Asset({
+        address: TOKENS.Dai,
+        chainId: toBigInt(CHAINS.Ethereum),
+        amount: toBigInt(1000000000000000),
+      });
 
-const toCaseValue = {
-  case: 'toStake',
-  value: new Stake({
-    address: Projects.Lido,
-    chainId: intentBuilder.createBigInt(Projects.CHAINS.Ethereum),
-  }),
-};
 
 intentBuilder
-  .execute(
-    new Intent({
-      sender: sender,
-      from: fromCaseValue,
-      to: toCaseValue,
-    }),
-    signer,
-  )
+  .execute(from, to, signer);
   .then(() => console.log('Intent executed successfully.'))
   .catch(error => console.error('Error executing intent:', error));
 ```
@@ -102,7 +88,7 @@ intentBuilder
 
 The `intents.js` SDK simplifies interactions with staking operations through the `Projects` class. This utility class provides quick access to the addresses of well-known staking providers, making it easier to reference them when building staking-related intents.
 
-#### Available Staking Providers:
+#### Available Staking Providers
 
 - `Lido`
 - `RocketPool`

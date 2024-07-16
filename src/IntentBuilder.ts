@@ -1,9 +1,10 @@
 import { ethers } from 'ethers';
-import { CHAIN_ID, ENTRY_POINT } from './Constants';
+import { CHAIN_ID, ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
 import { FromState, getSender, State, ToState } from './index';
 import { Asset, Intent, Loan, Stake } from './';
 import { getInitCode, getNonce } from './walletUtils';
+import fetch from 'isomorphic-fetch';
 
 export class IntentBuilder {
   private constructor(
@@ -109,14 +110,7 @@ export class IntentBuilder {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchWithNodeFetch(url: string, options: any) {
-    const isNode = typeof window === 'undefined';
-    if (isNode) {
-      const fetchModule = await import('node-fetch');
-      const fetch = fetchModule.default;
-      return fetch(url, options);
-    } else {
-      return window.fetch(url, options);
-    }
+    return fetch(url, options);
   }
 
   private async getReceipt(solvedHash: string) {
