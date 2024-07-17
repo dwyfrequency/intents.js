@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
 import { NODE_URL } from './constants';
 
-export async function faucet(address: string): Promise<void> {
+export async function faucet(address: string, supply = 0.5): Promise<void> {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 
   const method = 'tenderly_addBalance';
-  const params = [[address], '0xDE0B6B3A7640000'];
+  const params = [[address], '0x' + supply.toString(16)];
   const jsonRpcRequest = {
     jsonrpc: '2.0',
     method: method,
