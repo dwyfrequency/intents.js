@@ -1,7 +1,9 @@
 import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt } from './src';
 import { ethers } from 'ethers';
+import { Account } from './src/Account';
 
 const BUNDLER_URL = 'https://bundler.dev.balloondogs.network';
+const NODE_URL = 'https://virtual.mainnet.rpc.tenderly.co/13d45a24-2474-431e-8f19-31f251f6cd2a';
 
 const signer = new ethers.Wallet('private key');
 
@@ -20,9 +22,10 @@ const to = new Stake({
 });
 
 async function executeIntent() {
-  const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
+  const account = await Account.createInstance(signer, BUNDLER_URL, NODE_URL),
+    intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
 
-  await intentBuilder.execute(from, to, signer);
+  await intentBuilder.execute(from, to, account);
 }
 
 executeIntent()

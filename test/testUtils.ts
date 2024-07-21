@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import { getSender, IntentBuilder } from '../src';
+import { IntentBuilder } from '../src';
+import { Account } from '../src/Account';
 
 export function generateRandomAccount(): ethers.Wallet {
   const randomBytes = ethers.utils.randomBytes(32);
@@ -9,11 +10,11 @@ export function generateRandomAccount(): ethers.Wallet {
 
 export async function initTest() {
   if (!process.env.BUNDLER_URL) throw new Error('BUNDLER_URL is missing');
+  if (!process.env.NODE_URL) throw new Error('NODE_URL is missing');
 
   const signer = generateRandomAccount();
   return {
     intentBuilder: await IntentBuilder.createInstance(process.env.BUNDLER_URL),
-    senderAddress: await getSender(signer, process.env.BUNDLER_URL),
-    signer,
+    account: await Account.createInstance(signer, process.env.BUNDLER_URL, process.env.NODE_URL),
   };
 }

@@ -1,10 +1,10 @@
 import { ethers } from 'ethers';
 import { CHAIN_ID, ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
-import { FromState, getSender, State, ToState } from './index';
+import { FromState, State, ToState } from './index';
 import { Asset, Intent, Loan, Stake } from './';
-import { getInitCode, getNonce } from './walletUtils';
 import fetch from 'isomorphic-fetch';
+import { Account } from './Account';
 
 export class IntentBuilder {
   private constructor(
@@ -16,17 +16,17 @@ export class IntentBuilder {
     return new IntentBuilder(await Client.init(bundlerUrl), bundlerUrl);
   }
 
-  async execute(from: State, to: State, signer: ethers.Signer): Promise<void> {
+  async execute(from: State, to: State, account: Account): Promise<void> {
     const intents = new Intent({
       from: this.setFrom(from),
       to: this.setTo(to),
     });
 
-    const sender = await getSender(signer, this._bundlerUrl);
+    const sender = account.sender;
 
     const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-    const nonce = await getNonce(sender);
-    const initCode = await getInitCode(nonce, signer);
+    const nonce = await account.getNonce(sender);
+    const initCode = await account.getInitCode(nonce);
 
     const builder = new UserOperationBuilder()
       .useDefaults({ sender })
@@ -39,7 +39,7 @@ export class IntentBuilder {
       .setNonce(nonce)
       .setInitCode(initCode);
 
-    const signature = await this.getSignature(signer, builder);
+    const signature = await this.sign(account, builder);
     builder.setSignature(signature);
 
     const res = await this._client.sendUserOperation(builder, {
@@ -78,7 +78,7 @@ export class IntentBuilder {
     }
   }
 
-  private async getSignature(signer: ethers.Signer, builder: UserOperationBuilder) {
+  private async sign(account: Account, builder: UserOperationBuilder) {
     const packedData = ethers.utils.defaultAbiCoder.encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
       [
@@ -101,12 +101,7 @@ export class IntentBuilder {
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
-    return await signer.signMessage(ethers.utils.arrayify(userOpHash));
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async fetchWithNodeFetch(url: string, options: any) {
-    return fetch(url, options);
+    return await account.signer.signMessage(ethers.utils.arrayify(userOpHash));
   }
 
   private async getReceipt(solvedHash: string) {
@@ -122,7 +117,7 @@ export class IntentBuilder {
       params: [solvedHash],
     });
 
-    const resReceipt = await this.fetchWithNodeFetch(this._bundlerUrl, {
+    const resReceipt = await fetch(this._bundlerUrl, {
       method: 'POST',
       headers: headers,
       body: body,

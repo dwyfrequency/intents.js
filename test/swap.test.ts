@@ -1,20 +1,20 @@
-import { IntentBuilder, CHAINS, getBalance, faucet, toBigInt, getSender, Asset, PROJECTS } from '../src';
+import { IntentBuilder, CHAINS, toBigInt, Asset } from '../src';
 
-import { ethers } from 'ethers';
 import { TIMEOUT, TOKENS } from './constants';
-import { generateRandomAccount, initTest } from './testUtils';
+import { initTest } from './testUtils';
+import { Account } from '../src/Account';
 
 describe('basics', () => {
-  let senderAddress: string;
+  let senderAddress: string, account: Account;
 
   beforeAll(async () => {
-    ({ senderAddress } = await initTest());
+    ({ account } = await initTest());
   });
 
   it(
     'Empty wallet check',
     async () => {
-      const balance = await getBalance(senderAddress);
+      const balance = await account.getBalance(senderAddress);
       expect(parseFloat(balance)).toBe(0);
     },
     TIMEOUT,
@@ -24,10 +24,10 @@ describe('basics', () => {
     'Faucet validation',
     async () => {
       // Faucet the account with 1 ETH
-      await faucet(senderAddress, 1);
+      await account.faucet(1);
 
       // Check the balance after faucet
-      const balanceAfter = await getBalance(senderAddress);
+      const balanceAfter = await account.getBalance(senderAddress);
       expect(parseFloat(balanceAfter)).toBe(1); // 1ETH fueled
     },
     TIMEOUT,
@@ -35,13 +35,11 @@ describe('basics', () => {
 });
 
 describe('swap', () => {
-  let intentBuilder: IntentBuilder;
-  let senderAddress: string;
-  let signer: ethers.Wallet;
+  let intentBuilder: IntentBuilder, account: Account;
 
   beforeAll(async () => {
-    ({ signer, senderAddress, intentBuilder } = await initTest());
-    await faucet(senderAddress, 1);
+    ({ account, intentBuilder } = await initTest());
+    await account.faucet(1);
   });
 
   it(
@@ -58,13 +56,13 @@ describe('swap', () => {
           chainId: toBigInt(CHAINS.Ethereum),
         });
 
-      const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-      const initialDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
+      const initialEthBalance = await account.getBalance(TOKENS.ETH);
+      const initialDaiBalance = await account.getBalance(TOKENS.Weth);
 
-      await intentBuilder.execute(from, to, signer);
+      await intentBuilder.execute(from, to, account);
 
-      const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-      const finalDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
+      const finalEthBalance = await account.getBalance(TOKENS.ETH);
+      const finalDaiBalance = await account.getBalance(TOKENS.Weth);
 
       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
       expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -86,12 +84,12 @@ describe('swap', () => {
           chainId: toBigInt(CHAINS.Ethereum),
         });
 
-      const initialDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
-      const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-      await intentBuilder.execute(from, to, signer);
+      const initialDaiBalance = await account.getBalance(TOKENS.Weth);
+      const initialEthBalance = await account.getBalance(TOKENS.ETH);
+      await intentBuilder.execute(from, to, account);
 
-      const finalDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
-      const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+      const finalDaiBalance = await account.getBalance(TOKENS.Weth);
+      const finalEthBalance = await account.getBalance(TOKENS.ETH);
       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
       expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
     },
@@ -112,13 +110,13 @@ describe('swap', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
   //
-  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialEthBalance = await account.getBalance( TOKENS.ETH);
+  //     const initialDaiBalance = await account.getBalance( TOKENS.Dai);
   //
-  //     await intentBuilder.execute(from, to, signer);
+  //     await intentBuilder.execute(from, to, account);
   //
-  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalEthBalance = await account.getBalance( TOKENS.ETH);
+  //     const finalDaiBalance = await account.getBalance( TOKENS.Dai);
   //
   //     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -141,13 +139,13 @@ describe('swap', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
   //
-  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialEthBalance = await account.getBalance( TOKENS.ETH);
+  //     const initialDaiBalance = await account.getBalance( TOKENS.Dai);
   //
-  //     await intentBuilder.execute(from, to, signer);
+  //     await intentBuilder.execute(from, to, account);
   //
-  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalEthBalance = await account.getBalance( TOKENS.ETH);
+  //     const finalDaiBalance = await account.getBalance( TOKENS.Dai);
   //
   //     expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
   //     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -169,13 +167,13 @@ describe('swap', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
   //
-  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
-  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const initialDaiBalance = await account.getBalance( TOKENS.Dai);
+  //     const initialEthBalance = await account.getBalance( TOKENS.ETH);
   //
-  //     await intentBuilder.execute(from, to, signer);
+  //     await intentBuilder.execute(from, to, account);
   //
-  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
-  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const finalDaiBalance = await account.getBalance( TOKENS.Dai);
+  //     const finalEthBalance = await account.getBalance( TOKENS.ETH);
   //
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -197,11 +195,11 @@ describe('swap', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
   //
-  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialDaiBalance = await account.getBalance( TOKENS.Dai);
   //
-  //     await intentBuilder.execute(from, to, signer);
+  //     await intentBuilder.execute(from, to, account);
   //
-  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalDaiBalance = await account.getBalance( TOKENS.Dai);
   //
   //     expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
   //   },
@@ -221,13 +219,13 @@ describe('swap', () => {
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
   //
-  //     const initialWbtcBalance = await getBalance(senderAddress, TOKENS.Wbtc);
-  //     const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const initialWbtcBalance = await account.getBalance( TOKENS.Wbtc);
+  //     const initialEthBalance = await account.getBalance( TOKENS.ETH);
   //
-  //     await intentBuilder.execute(from, to, signer);
+  //     await intentBuilder.execute(from, to, account);
   //
-  //     const finalWbtcBalance = await getBalance(senderAddress, TOKENS.Wbtc);
-  //     const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+  //     const finalWbtcBalance = await account.getBalance( TOKENS.Wbtc);
+  //     const finalEthBalance = await account.getBalance( TOKENS.ETH);
   //
   //     expect(parseFloat(finalWbtcBalance)).toBeLessThan(parseFloat(initialWbtcBalance));
   //     expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -247,13 +245,13 @@ describe('swap', () => {
   //         address: TOKENS.Dai,
   //         chainId: toBigInt(CHAINS.Ethereum),
   //       });
-  //     const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
-  //     const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const initialUsdcBalance = await account.getBalance( TOKENS.Usdc);
+  //     const initialDaiBalance = await account.getBalance( TOKENS.Dai);
   //
-  //     await intentBuilder.execute(from, to, signer);
+  //     await intentBuilder.execute(from, to, account);
   //
-  //     const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
-  //     const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
+  //     const finalUsdcBalance = await account.getBalance( TOKENS.Usdc);
+  //     const finalDaiBalance = await account.getBalance( TOKENS.Dai);
   //
   //     expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance));
   //     expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
@@ -274,7 +272,7 @@ describe('swap', () => {
 //   it(
 //     'Empty wallet check',
 //     async () => {
-//       const balance = await getBalance(senderAddress);
+//       const balance = await account.getBalance(senderAddress);
 //       console.log('balance', balance);
 //       expect(parseFloat(balance)).toBe(0);
 //     },
@@ -288,7 +286,7 @@ describe('swap', () => {
 //       await faucet(senderAddress);
 //
 //       // Check the balance after faucet
-//       const balanceAfter = await getBalance(senderAddress);
+//       const balanceAfter = await account.getBalance(senderAddress);
 //       console.log('balanceAfter', balanceAfter);
 //       expect(parseFloat(balanceAfter)).toBe(1); // 1ETH fueled
 //     },
@@ -309,13 +307,13 @@ describe('swap', () => {
 //           chainId: toBigInt(CHAINS.Ethereum),
 //         });
 //
-//       const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
-//       const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+//       const initialDaiBalance = await account.getBalance( TOKENS.Dai);
+//       const initialEthBalance = await account.getBalance( TOKENS.ETH);
 //
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //
-//       const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
-//       const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
+//       const finalDaiBalance = await account.getBalance( TOKENS.Dai);
+//       const finalEthBalance = await account.getBalance( TOKENS.ETH);
 //
 //       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
 //       expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
@@ -348,7 +346,7 @@ describe('swap', () => {
 //       });
 //
 //     try {
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //     } catch (error) {
 //       expect(error).toBeDefined();
 //     }
@@ -367,7 +365,7 @@ describe('swap', () => {
 //       });
 //     // Assuming this might fail due to lack of balance or other reasons
 //     try {
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //     } catch (error) {
 //       expect(error).toBeDefined();
 //     }

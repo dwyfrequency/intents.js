@@ -16,5 +16,4 @@ type ToState =
 export * from './projects';
 export * from './IntentBuilder';
 export * from './utils';
-export * from './walletUtils';
 export { Intent, Asset, Loan, Stake, PartialMessage, State, FromState, ToState };
