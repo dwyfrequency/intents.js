@@ -43,7 +43,7 @@ describe('swap', () => {
   });
 
   it(
-    'ETH -> WETH Swap',
+    'ETH->WETH',
     async () => {
       const from = new Asset({
           address: TOKENS.ETH,
@@ -71,7 +71,7 @@ describe('swap', () => {
   );
 
   it(
-    'WETH -> ETH Swap',
+    'WETH->ETH',
     async () => {
       const from = new Asset({
           address: TOKENS.Weth,
