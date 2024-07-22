@@ -44,10 +44,11 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "BUNDLER_URL=https://bundler.dev.balloondogs.network jest",
+    "test": "BUNDLER_URL=https://bundler.dev.balloondogs.network  NODE_URL=https://virtual.mainnet.rpc.tenderly.co/13d45a24-2474-431e-8f19-31f251f6cd2a CHAIN_ID=888 jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
   "types": "./dist/index.d.ts",
   "version": "0.8.26"
 }
+

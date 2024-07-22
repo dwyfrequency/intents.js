@@ -27,13 +27,13 @@
 //           amount: toBigInt(100),
 //           chainId: toBigInt(CHAINS.Ethereum),
 //         });
-//       const initialDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
-//       const initialStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
+//       const initialDaiBalance = await account.getBalance( TOKENS.Dai);
+//       const initialStEthBalance = await account.getBalance( TOKENS.Steth);
 //
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //
-//       const finalDaiBalance = await getBalance(senderAddress, TOKENS.Dai);
-//       const finalStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
+//       const finalDaiBalance = await account.getBalance( TOKENS.Dai);
+//       const finalStEthBalance = await account.getBalance( TOKENS.Steth);
 //
 //       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
 //       expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -55,13 +55,13 @@
 //           chainId: toBigInt(CHAINS.Ethereum),
 //         });
 //
-//       const initialDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
-//       const initialStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
+//       const initialDaiBalance = await account.getBalance( TOKENS.Weth);
+//       const initialStEthBalance = await account.getBalance( TOKENS.Steth);
 //
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //
-//       const finalDaiBalance = await getBalance(senderAddress, TOKENS.Weth);
-//       const finalStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
+//       const finalDaiBalance = await account.getBalance( TOKENS.Weth);
+//       const finalStEthBalance = await account.getBalance( TOKENS.Steth);
 //
 //       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
 //       expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -83,13 +83,13 @@
 //           chainId: toBigInt(CHAINS.Ethereum),
 //         });
 //
-//       const initialEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-//       const initialStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
+//       const initialEthBalance = await account.getBalance( TOKENS.ETH);
+//       const initialStEthBalance = await account.getBalance( TOKENS.Steth);
 //
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //
-//       const finalEthBalance = await getBalance(senderAddress, TOKENS.ETH);
-//       const finalStEthBalance = await getBalance(senderAddress, TOKENS.Steth);
+//       const finalEthBalance = await account.getBalance( TOKENS.ETH);
+//       const finalStEthBalance = await account.getBalance( TOKENS.Steth);
 //
 //       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
 //       expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
@@ -110,11 +110,11 @@
 //           chainId: toBigInt(CHAINS.Ethereum),
 //         });
 //
-//       const initialUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
+//       const initialUsdcBalance = await account.getBalance( TOKENS.Usdc);
 //
-//       await intentBuilder.execute(from, to, signer);
+//       await intentBuilder.execute(from, to, account);
 //
-//       const finalUsdcBalance = await getBalance(senderAddress, TOKENS.Usdc);
+//       const finalUsdcBalance = await account.getBalance( TOKENS.Usdc);
 //
 //       expect(parseFloat(finalUsdcBalance)).toBeLessThan(parseFloat(initialUsdcBalance));
 //     },

@@ -1,45 +1,27 @@
-import { ethers } from 'ethers';
-import { NODE_URL } from './constants';
+import { BigInt as ProtoBigInt } from 'blndgs-model/dist/asset_pb';
 
-export async function faucet(address: string, supply = 0.5): Promise<void> {
-  const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
-
-  const method = 'tenderly_addBalance';
-  const params = [[address], '0x' + (supply * 10 ** 18).toString(16)];
-  const jsonRpcRequest = {
-    jsonrpc: '2.0',
-    method: method,
-    params: params,
-    id: 1,
-  };
-
-  try {
-    const response = await provider.send(jsonRpcRequest.method, jsonRpcRequest.params);
-    console.log('Response:', response);
-  } catch (error) {
-    console.error('Error:', error);
+/**
+ * Converts a number or bigint into a ProtoBigInt, suitable for serialization and transport in network requests.
+ *
+ * @param value The numerical value to convert. Must be a positive non-zero integer.
+ * @returns A ProtoBigInt instance representing the provided value.
+ * @throws Error if the provided value is zero or negative.
+ */
+export function toBigInt(value: number | bigint): ProtoBigInt {
+  if (value <= 0) {
+    throw new Error('Amount cannot be zero or negative');
   }
-}
-
-export async function getBalance(address: string, tokenAddress?: string): Promise<string> {
-  const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
-
-  if (!tokenAddress || tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
-    // Handle ETH balance
-    const balance = await provider.getBalance(address);
-    return ethers.utils.formatEther(balance);
+  // Convert number/bigint to a hexadecimal string
+  const hexString = value.toString(16);
+  // Ensure the hex string length is even
+  const paddedHexString = hexString.length % 2 === 0 ? hexString : '0' + hexString;
+  // Convert hex string to Uint8Array
+  const byteArray = new Uint8Array(paddedHexString.length / 2);
+  for (let i = 0; i < byteArray.length; i++) {
+    byteArray[i] = parseInt(paddedHexString.substring(2 * i, 2 * i + 2), 16);
   }
-  const abi = [
-    {
-      constant: true,
-      inputs: [{ name: '_owner', type: 'address' }],
-      name: 'balanceOf',
-      outputs: [{ name: 'balance', type: 'uint256' }],
-      type: 'function',
-    },
-  ];
-
-  const contract = new ethers.Contract(tokenAddress, abi, provider);
-  const balance = await contract.balanceOf(address);
-  return ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals for simplicity
+  // Create the ProtoBigInt message
+  const protoBigInt = new ProtoBigInt();
+  protoBigInt.value = byteArray;
+  return protoBigInt;
 }

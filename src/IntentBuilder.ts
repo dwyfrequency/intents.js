@@ -1,32 +1,50 @@
 import { ethers } from 'ethers';
 import { CHAIN_ID, ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
-import { FromState, getSender, State, ToState } from './index';
+import { FromState, State, ToState } from './index';
 import { Asset, Intent, Loan, Stake } from './';
-import { getInitCode, getNonce } from './walletUtils';
 import fetch from 'isomorphic-fetch';
+import { Account } from './Account';
 
+/**
+ * Facilitates the building and execution of Intent transactions.
+ */
 export class IntentBuilder {
+  /**
+   * Private constructor to enforce the use of the factory method for object creation.
+   */
   private constructor(
     private _client: Client,
     private _bundlerUrl: string,
   ) {}
 
+  /**
+   * Factory method to create an instance of IntentBuilder.
+   * @param bundlerUrl The URL for the transaction bundler service.
+   * @returns A new instance of IntentBuilder.
+   */
   static async createInstance(bundlerUrl: string) {
     return new IntentBuilder(await Client.init(bundlerUrl), bundlerUrl);
   }
 
-  async execute(from: State, to: State, signer: ethers.Signer): Promise<void> {
+  /**
+   * Executes a blockchain transaction transforming one state to another.
+   * @param from The initial state of the transaction.
+   * @param to The final state after the transaction.
+   * @param account The user account performing the transaction.
+   * @returns A promise that resolves when the transaction has been executed.
+   */
+  async execute(from: State, to: State, account: Account): Promise<void> {
     const intents = new Intent({
       from: this.setFrom(from),
       to: this.setTo(to),
     });
 
-    const sender = await getSender(signer, this._bundlerUrl);
+    const sender = account.sender;
 
     const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-    const nonce = await getNonce(sender);
-    const initCode = await getInitCode(nonce, signer);
+    const nonce = await account.getNonce(sender);
+    const initCode = await account.getInitCode(nonce);
 
     const builder = new UserOperationBuilder()
       .useDefaults({ sender })
@@ -39,7 +57,7 @@ export class IntentBuilder {
       .setNonce(nonce)
       .setInitCode(initCode);
 
-    const signature = await this.getSignature(signer, builder);
+    const signature = await this.sign(account, builder);
     builder.setSignature(signature);
 
     const res = await this._client.sendUserOperation(builder, {
@@ -52,6 +70,11 @@ export class IntentBuilder {
     console.log(await this.getReceipt(solvedHash));
   }
 
+  /**
+   * Helper method to determine the source state for a transaction.
+   * @param state The state to be evaluated.
+   * @returns The determined source state.
+   */
   private setFrom(state: State): FromState {
     switch (true) {
       case state instanceof Asset:
@@ -65,6 +88,11 @@ export class IntentBuilder {
     }
   }
 
+  /**
+   * Helper method to determine the target state for a transaction.
+   * @param state The state to be evaluated.
+   * @returns The determined target state.
+   */
   private setTo(state: State): ToState {
     switch (true) {
       case state instanceof Asset:
@@ -78,7 +106,13 @@ export class IntentBuilder {
     }
   }
 
-  private async getSignature(signer: ethers.Signer, builder: UserOperationBuilder) {
+  /**
+   * Signs a transaction using the user's account.
+   * @param account The user's account used for signing.
+   * @param builder The UserOperationBuilder with the transaction details.
+   * @returns A promise containing the signature.
+   */
+  private async sign(account: Account, builder: UserOperationBuilder) {
     const packedData = ethers.utils.defaultAbiCoder.encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
       [
@@ -101,14 +135,14 @@ export class IntentBuilder {
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
-    return await signer.signMessage(ethers.utils.arrayify(userOpHash));
+    return await account.signer.signMessage(ethers.utils.arrayify(userOpHash));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async fetchWithNodeFetch(url: string, options: any) {
-    return fetch(url, options);
-  }
-
+  /**
+   * Fetches the receipt for a blockchain transaction using its hash.
+   * @param solvedHash The hash of the transaction.
+   * @returns A promise that resolves to the transaction receipt.
+   */
   private async getReceipt(solvedHash: string) {
     const headers = {
       accept: 'application/json',
@@ -122,7 +156,7 @@ export class IntentBuilder {
       params: [solvedHash],
     });
 
-    const resReceipt = await this.fetchWithNodeFetch(this._bundlerUrl, {
+    const resReceipt = await fetch(this._bundlerUrl, {
       method: 'POST',
       headers: headers,
       body: body,
