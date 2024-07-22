@@ -1,3 +1,8 @@
+/**
+ * Holds the contract addresses for key projects in the decentralized finance (DeFi).
+ * Each key is a project name and each value is the corresponding smart contract address.
+ * These addresses are typically used to interact with specific DeFi protocols via smart contracts.
+ */
 export const PROJECTS = {
   Lido: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
   RocketPool: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
@@ -8,6 +13,9 @@ export const PROJECTS = {
   SushiSwap: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
 };
 
+/**
+ * Maps the names of blockchain networks to their corresponding numeric chain IDs.
+ */
 export const CHAINS = {
   Ethereum: 1,
 };

@@ -1,5 +1,12 @@
 import { BigInt as ProtoBigInt } from 'blndgs-model/dist/asset_pb';
 
+/**
+ * Converts a number or bigint into a ProtoBigInt, suitable for serialization and transport in network requests.
+ *
+ * @param value The numerical value to convert. Must be a positive non-zero integer.
+ * @returns A ProtoBigInt instance representing the provided value.
+ * @throws Error if the provided value is zero or negative.
+ */
 export function toBigInt(value: number | bigint): ProtoBigInt {
   if (value <= 0) {
     throw new Error('Amount cannot be zero or negative');

@@ -1,7 +1,14 @@
 import { Intent, Asset, Loan, Stake } from 'blndgs-model/dist/asset_pb';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+/**
+ * Defines possible states for entities as Asset, Loan, or Stake.
+ */
 type State = Asset | Loan | Stake;
+
+/**
+ * Union type representing possible source states for transactions.
+ */
 type FromState =
   | { value: Asset; case: 'fromAsset' }
   | { value: Stake; case: 'fromStake' }
