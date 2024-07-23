@@ -1,4 +1,4 @@
-import { BigInt as ProtoBigInt } from 'blndgs-model/dist/asset_pb';
+import { BigInt as ProtoBigInt } from 'blndgs-model';
 
 /**
  * Converts a number or bigint into a ProtoBigInt, suitable for serialization and transport in network requests.
