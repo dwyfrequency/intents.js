@@ -1,4 +1,4 @@
-import { Intent, Asset, Loan, Stake } from 'blndgs-model';
+import { Intent, Asset, Loan, Stake } from 'blndgs-model/dist/asset_pb';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
 /**
