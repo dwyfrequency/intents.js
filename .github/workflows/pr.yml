@@ -22,8 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          repository: blndgs/intents.js
-          ref: testnet
+          fetch-depth: 0
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
