@@ -5,9 +5,13 @@ on:
     push:
       branches: [main, testnet, live, stage]
     workflow_dispatch:
-
+# TODO:: env as per the branch
+# main is connected to dev env
+# testnet is using testnet version
+# use it as you prefer
+# for branch based seperation you can follow the steps as bundler https://github.com/blndgs/bundler/blob/e2c8d1c3ae38d7fce37cdc22a25d000d5a14d0dc/.github/workflows/ecs_deploy.yaml#L37
 env:
-  BUNDLER_URL: ${{ vars.BUNDLER_URL }}
+  BUNDLER_URL: ${{ vars.MAIN_BUNDLER_URL }}
 jobs:
   # TODO:: lint (define lint process)
   test:
