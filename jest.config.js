@@ -4,4 +4,6 @@ module.exports = {
   moduleNameMapper: {
     'node-fetch': 'node-fetch/lib/index.js', // Ensures compatibility
   },
+  collectCoverage: true,
+  coverageReporters: ['text', 'cobertura'],
 };

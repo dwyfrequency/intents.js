@@ -24,3 +24,7 @@ jobs:
         run: npm i -f
       - name: Run code
         run: npx jest --verbose
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

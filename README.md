@@ -1,5 +1,8 @@
 # Intents.js SDK
 
+![NPM Version](https://img.shields.io/npm/v/blndgs-model)
+![codecov](https://codecov.io/gh/blndgs/intents.js/graph/badge.svg?token=TAVORU8E7D)
+
 ## Getting Started
 
 See intents.js documentation at [docs.balloondogs.network](https://docs.balloondogs.network/solution/sdk)
