@@ -1,13 +1,15 @@
-name: Scheduled workflow
+name: Pull Request CI
 on:
-  workflow_call:
-  workflow_dispatch:
-  schedule:
-    # 21 PM UTC
-    - cron:  '0 21 * * *'
+    pull_request:
+      types: [opened, reopened, synchronize]
+    push:
+      branches: [main, testnet, live, stage]
+    workflow_dispatch:
+
 env:
   BUNDLER_URL: ${{ vars.BUNDLER_URL }}
 jobs:
+  # TODO:: lint (define lint process)
   test:
     runs-on: ubuntu-latest
     steps:
@@ -24,3 +26,7 @@ jobs:
         run: npm i -f
       - name: Run code
         run: npx jest --verbose
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
