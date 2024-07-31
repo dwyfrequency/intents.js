@@ -12,7 +12,7 @@ describe('Stake', () => {
   });
 
   it(
-    'ETH -> stETH',
+    'LidoETH',
     async () => {
       const from = new Asset({
           address: TOKENS.ETH,
