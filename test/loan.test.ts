@@ -1,51 +1,51 @@
 import { Asset, Loan, CHAINS, IntentBuilder, PROJECTS, toBigInt, Account } from '../src';
-import { TIMEOUT, TOKENS } from './constants';
-import { initTest } from './testUtils';
+import { TIMEOUT, Token, TOKENS } from './constants';
+import { amountToBigInt, initTest } from './testUtils';
 
 describe('Loan', () => {
   let intentBuilder: IntentBuilder, account: Account;
 
-  const loanWETH = async function (project: string, asset: string) {
+  const loanWETH = async function (project: string, token: Token) {
     const assetETH = new Asset({
-        address: TOKENS.ETH,
-        amount: toBigInt(0.1 * 10 ** 18),
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH),
         chainId: toBigInt(CHAINS.Ethereum),
       }),
       assetWETH = new Asset({
-        address: asset,
-        amount: toBigInt(0.1 * 10 ** 18),
+        address: token.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH),
         chainId: toBigInt(CHAINS.Ethereum),
       }),
       loanAaveWETH = new Loan({
         address: project,
-        asset: asset,
+        asset: token.address,
         chainId: toBigInt(CHAINS.Ethereum),
       });
 
-    const initialEthBalance = await account.getBalance(TOKENS.ETH);
+    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
     await intentBuilder.execute(assetETH, assetWETH, account);
     await intentBuilder.execute(assetWETH, loanAaveWETH, account);
 
-    const finalEthBalance = await account.getBalance(TOKENS.ETH);
+    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
     expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
-  const ethToLoanWEth = async function (project: string, tokenAddress: string) {
+  const ethToLoanWEth = async function (project: string, token: Token) {
     const assetETH = new Asset({
-        address: TOKENS.ETH,
-        amount: toBigInt(0.1 * 10 ** 18),
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH),
         chainId: toBigInt(CHAINS.Ethereum),
       }),
       loanAaveWETH = new Loan({
         address: project,
-        asset: tokenAddress,
+        asset: token.address,
         chainId: toBigInt(CHAINS.Ethereum),
       });
 
-    const initialEthBalance = await account.getBalance(TOKENS.ETH);
+    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
     await intentBuilder.execute(assetETH, loanAaveWETH, account);
 
-    const finalEthBalance = await account.getBalance(TOKENS.ETH);
+    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
     expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
@@ -58,20 +58,20 @@ describe('Loan', () => {
     'AaveETH',
     async () => {
       const assetETH = new Asset({
-          address: TOKENS.ETH,
-          amount: toBigInt(0.1 * 10 ** 18),
+          address: TOKENS.ETH.address,
+          amount: amountToBigInt(0.1, TOKENS.ETH),
           chainId: toBigInt(CHAINS.Ethereum),
         }),
         loanAaveETH = new Loan({
           address: PROJECTS.Aave,
-          asset: TOKENS.ETH,
+          asset: TOKENS.ETH.address,
           chainId: toBigInt(CHAINS.Ethereum),
         });
 
-      const initialEthBalance = await account.getBalance(TOKENS.ETH);
+      const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
       await intentBuilder.execute(assetETH, loanAaveETH, account);
 
-      const finalEthBalance = await account.getBalance(TOKENS.ETH);
+      const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
       expect(finalEthBalance).toBeLessThan(initialEthBalance);
     },
     TIMEOUT,

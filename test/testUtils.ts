@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
-import { IntentBuilder } from '../src';
-import { Account } from '../src/Account';
+import { IntentBuilder, toBigInt, Account } from '../src';
 import { CovalentClient } from '@covalenthq/client-sdk';
+import { Token } from './constants';
 
 export function generateRandomAccount(): ethers.Wallet {
   const randomBytes = ethers.utils.randomBytes(32);
@@ -33,4 +33,8 @@ export async function getPrice(sourceAddress: string, targetAddress: string, sou
   const [sourcePrice, targetPrice] = await Promise.all([getUsdPrice(sourceAddress), getUsdPrice(targetAddress)]);
 
   return (sourceAmount * sourcePrice) / targetPrice;
+}
+
+export function amountToBigInt(amount: number, token: Token) {
+  return toBigInt(amount * 10 ** token.decimal);
 }
