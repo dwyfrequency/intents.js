@@ -32,8 +32,8 @@ describe('Stake', () => {
       const finalDaiBalance = await account.getBalance(TOKENS.ETH);
       const finalStEthBalance = await account.getBalance(TOKENS.Steth);
 
-      expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-      expect(parseFloat(finalStEthBalance)).toBeGreaterThan(parseFloat(initialStEthBalance));
+      expect(finalDaiBalance).toBeLessThan(initialDaiBalance);
+      expect(finalStEthBalance).toBeGreaterThan(initialStEthBalance);
     },
     TIMEOUT,
   );

@@ -1,7 +1,7 @@
 import { IntentBuilder, CHAINS, toBigInt, Asset, Account } from '../src';
 
 import { TIMEOUT, TOKENS } from './constants';
-import { getPrice, getUsdPrice, initTest } from './testUtils';
+import { getPrice, initTest } from './testUtils';
 
 describe('basics', () => {
   let senderAddress: string, account: Account;
