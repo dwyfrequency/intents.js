@@ -162,7 +162,7 @@ export class Account {
     ];
 
     const contract = new ethers.Contract(tokenAddress, abi, this._provider);
-    const [balance, decimals] = await Promise.all([await contract.balanceOf(this.sender), await contract.decimals()]);
+    const [balance, decimals] = await Promise.all([contract.balanceOf(this.sender), contract.decimals()]);
     return balance / 10 ** decimals; // Assuming 18 decimals for simplicity
   }
 }
