@@ -9,6 +9,8 @@ export const TOKENS = {
   Aweth: '0x4d5f47fa6a74757f35c14fd3a6ef8e3c9bc514e8',
   Wbtc: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
   Awbtc: '0x5ee5bf7ae06d1be5997a1a72006fe6c607ec6de8',
+  WstETH: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0',
+  RETH: '0xae78736cd615f374d3085123a210448e74fc6393',
 };
 
 export const TIMEOUT = 30 * 1000;
