@@ -1,0 +1,54 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches: [main, testnet, live, stage]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install Node
+        run: npm i -f
+
+      - name: Determine Environment Prefix
+        id: env_prefix
+        run: |
+          BRANCH=${{ github.base_ref }}  # This is set for pull requests
+          [ -z "$BRANCH" ] && BRANCH=${{ github.ref_name }}  # Fallback to current branch if not a pull request
+          PREFIX=$(echo $BRANCH | awk -F'-' '{print toupper($1)}')  # Extract prefix and convert to upper case
+          echo "PREFIX=$PREFIX" >> $GITHUB_ENV
+          echo "PREFIX=$PREFIX"
+
+      - name: Set Environment Variables
+        run: |
+          echo "BUNDLER_URL=${{ vars[format('{0}_BUNDLER_URL', env.PREFIX)] }}" >> $GITHUB_ENV
+          echo "CHAIN_ID=${{ vars[format('{0}_CHAIN_ID', env.PREFIX)] }}" >> $GITHUB_ENV
+          echo "NODE_URL=${{ vars[format('{0}_NODE_URL', env.PREFIX)] }}" >> $GITHUB_ENV
+
+      - name: Run Prettier
+        run: npx prettier --write .
+
+      - name: Run Linter
+        run: npx eslint .
+
+      - name: Run code
+        run: npx jest --verbose
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

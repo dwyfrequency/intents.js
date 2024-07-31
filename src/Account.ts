@@ -130,12 +130,13 @@ export class Account {
    * @param tokenAddress The address of the ERC-20 token contract, or undefined for ETH.
    * @returns The balance as a string formatted to a human-readable format.
    */
-  async getBalance(tokenAddress?: string): Promise<string> {
+  async getBalance(tokenAddress?: string): Promise<number> {
     if (!tokenAddress || tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
       // Handle ETH balance
       const balance = await this._provider.getBalance(this.sender);
-      return ethers.utils.formatEther(balance);
+      return parseFloat(ethers.utils.formatEther(balance));
     }
+
     const abi = [
       {
         constant: true,
@@ -144,10 +145,24 @@ export class Account {
         outputs: [{ name: 'balance', type: 'uint256' }],
         type: 'function',
       },
+      {
+        constant: true,
+        inputs: [],
+        name: 'decimals',
+        outputs: [
+          {
+            name: '',
+            type: 'uint8',
+          },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
     ];
 
     const contract = new ethers.Contract(tokenAddress, abi, this._provider);
-    const balance = await contract.balanceOf(this.sender);
-    return ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals for simplicity
+    const [balance, decimals] = await Promise.all([contract.balanceOf(this.sender), contract.decimals()]);
+    return balance / 10 ** decimals;
   }
 }

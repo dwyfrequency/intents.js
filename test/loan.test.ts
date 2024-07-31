@@ -1,205 +1,96 @@
-// import { Asset, CHAINS, IntentBuilder, PROJECTS, toBigInt } from '../src';
-// import { TIMEOUT, TOKENS } from './constants';
-// import { initTest } from './testUtils';
-// import { Loan } from 'blndgs-model/dist/asset_pb';
-// import { Account } from '../src/Account';
-//
-// describe('Loan', () => {
-//   let intentBuilder: IntentBuilder, account: Account;
-//
-//   beforeAll(async () => {
-//     ({ account, intentBuilder } = await initTest());
-//     await account.faucet(1);
-//   });
-//
-//   it(
-//     'ETH->ETH(Loan)',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.ETH,
-//           amount: toBigInt(0.1),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Asset({
-//           address: PROJECTS.Aave,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//
-//       const initialEthBalance = await account.getBalance(TOKENS.ETH);
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalEthBalance = await account.getBalance(TOKENS.ETH);
-//       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-//     },
-//     TIMEOUT,
-//   );
-//
-//   it(
-//     'DAI -> DAI(Loan)',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.Dai,
-//           amount: toBigInt(0.1),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Loan({
-//           address: PROJECTS.Aave,
-//           amount: toBigInt(0.1),
-//           asset: TOKENS.Dai,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//
-//       const initialDaiBalance = await account.getBalance(TOKENS.Dai);
-//       const initialADaiBalance = await account.getBalance(TOKENS.ADai);
-//
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalDaiBalance = await account.getBalance(TOKENS.Dai);
-//       const finalADaiBalance = await account.getBalance(TOKENS.ADai);
-//
-//       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-//       expect(parseFloat(finalADaiBalance)).toBeGreaterThan(parseFloat(initialADaiBalance));
-//     },
-//     TIMEOUT,
-//   );
-//
-//   it(
-//     'Loaned Dai -> ETH',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.ADai,
-//           amount: toBigInt(10),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Asset({
-//           address: TOKENS.ETH,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//       const initialDaiBalance = await account.getBalance(TOKENS.ADai);
-//       const initialEthBalance = await account.getBalance(TOKENS.ETH);
-//
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalDaiBalance = await account.getBalance(TOKENS.ADai);
-//       const finalEthBalance = await account.getBalance(TOKENS.ETH);
-//
-//       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-//       expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
-//     },
-//     TIMEOUT,
-//   );
-//
-//   it(
-//     'Loaned Weth -> ETH',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.Aweth,
-//           amount: toBigInt(10),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Asset({
-//           address: TOKENS.ETH,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//       const initialDaiBalance = await account.getBalance(TOKENS.Aweth);
-//       const initialEthBalance = await account.getBalance(TOKENS.ETH);
-//
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalDaiBalance = await account.getBalance(TOKENS.Aweth);
-//       const finalEthBalance = await account.getBalance(TOKENS.ETH);
-//
-//       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-//       expect(parseFloat(finalEthBalance)).toBeGreaterThan(parseFloat(initialEthBalance));
-//     },
-//     TIMEOUT,
-//   );
-//
-//   it(
-//     'Loaned Dai -> Usdc',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.ADai,
-//           amount: toBigInt(5),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Asset({
-//           address: TOKENS.Usdc,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//       const initialDaiBalance = await account.getBalance(TOKENS.ADai);
-//       const initialUsdcBalance = await account.getBalance(TOKENS.Usdc);
-//
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalDaiBalance = await account.getBalance(TOKENS.ADai);
-//       const finalUsdcBalance = await account.getBalance(TOKENS.Usdc);
-//
-//       expect(parseFloat(finalDaiBalance)).toBeLessThan(parseFloat(initialDaiBalance));
-//       expect(parseFloat(finalUsdcBalance)).toBeGreaterThan(parseFloat(initialUsdcBalance));
-//     },
-//     TIMEOUT,
-//   );
-//
-//   it(
-//     'ETH -> Weth Loan',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.ETH,
-//           amount: toBigInt(0.1),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Loan({
-//           address: PROJECTS.Aave,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//
-//       const initialEthBalance = await account.getBalance(TOKENS.ETH);
-//       const initialDaiBalance = await account.getBalance(TOKENS.Aweth);
-//
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalEthBalance = await account.getBalance(TOKENS.ETH);
-//       const finalDaiBalance = await account.getBalance(TOKENS.Aweth);
-//
-//       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-//       expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
-//     },
-//     TIMEOUT,
-//   );
-//
-//   it(
-//     'ETH -> Dai Loan',
-//     async () => {
-//       const from = new Asset({
-//           address: TOKENS.ETH,
-//           amount: toBigInt(0.1),
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         }),
-//         to = new Asset({
-//           address: PROJECTS.Aave,
-//           chainId: toBigInt(CHAINS.Ethereum),
-//         });
-//       const initialEthBalance = await account.getBalance(TOKENS.ETH);
-//       const initialDaiBalance = await account.getBalance(TOKENS.ADai);
-//
-//       await intentBuilder.execute(from, to, account);
-//
-//       const finalEthBalance = await account.getBalance(TOKENS.ETH);
-//       const finalDaiBalance = await account.getBalance(TOKENS.ADai);
-//
-//       expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
-//       expect(parseFloat(finalDaiBalance)).toBeGreaterThan(parseFloat(initialDaiBalance));
-//     },
-//     TIMEOUT,
-//   );
-// });
-//
-// describe('Failed Loan', () => {
-//   let intentBuilder: IntentBuilder, account: Account;
-//
-//   beforeAll(async () => {
-//     ({ account, intentBuilder } = await initTest());
-//     await account.faucet(1);
-//   });
-// });
+import { Asset, Loan, CHAINS, IntentBuilder, PROJECTS, toBigInt, Account } from '../src';
+import { TIMEOUT, Token, TOKENS } from './constants';
+import { amountToBigInt, initTest } from './testUtils';
+
+describe('Loan', () => {
+  let intentBuilder: IntentBuilder, account: Account;
+
+  const loanWETH = async function (project: string, token: Token) {
+    const assetETH = new Asset({
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
+      assetWETH = new Asset({
+        address: token.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
+      loanAaveWETH = new Loan({
+        address: project,
+        asset: token.address,
+        chainId: toBigInt(CHAINS.Ethereum),
+      });
+
+    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
+    await intentBuilder.execute(assetETH, assetWETH, account);
+    await intentBuilder.execute(assetWETH, loanAaveWETH, account);
+
+    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
+    expect(finalEthBalance).toBeLessThan(initialEthBalance);
+  };
+
+  const ethToLoanWEth = async function (project: string, token: Token) {
+    const assetETH = new Asset({
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
+      loanAaveWETH = new Loan({
+        address: project,
+        asset: token.address,
+        chainId: toBigInt(CHAINS.Ethereum),
+      });
+
+    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
+    await intentBuilder.execute(assetETH, loanAaveWETH, account);
+
+    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
+    expect(finalEthBalance).toBeLessThan(initialEthBalance);
+  };
+
+  beforeAll(async () => {
+    ({ account, intentBuilder } = await initTest());
+    await account.faucet(1);
+  });
+
+  it(
+    'AaveETH',
+    async () => {
+      const assetETH = new Asset({
+          address: TOKENS.ETH.address,
+          amount: amountToBigInt(0.1, TOKENS.ETH),
+          chainId: toBigInt(CHAINS.Ethereum),
+        }),
+        loanAaveETH = new Loan({
+          address: PROJECTS.Aave,
+          asset: TOKENS.ETH.address,
+          chainId: toBigInt(CHAINS.Ethereum),
+        });
+
+      const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
+      await intentBuilder.execute(assetETH, loanAaveETH, account);
+
+      const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
+      expect(finalEthBalance).toBeLessThan(initialEthBalance);
+    },
+    TIMEOUT,
+  );
+  // AAVE
+  it('AaveWETH', async () => loanWETH(PROJECTS.Aave, TOKENS.Weth), TIMEOUT);
+  // it('AaveWstETH', async () => loanWETH(PROJECTS.Aave, TOKENS.WstETH), TIMEOUT);
+  // it('AaveRETH', async () => loanWETH(PROJECTS.Aave, TOKENS.RETH), TIMEOUT);
+
+  it('ETH->AaveWETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.Weth), TIMEOUT);
+  // it('ETH->AaveWstETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.WstETH), TIMEOUT);
+  // it('ETH->AaveRETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.RETH), TIMEOUT);
+
+  // Compound
+  // it('CompoundWETH', async () => loanWETH(PROJECTS.Compound, TOKENS.Weth), TIMEOUT);
+  // it('CompoundWstETH', async () => loanWETH(PROJECTS.Compound, TOKENS.WstETH), TIMEOUT);
+  // it('CompoundRETH', async () => loanWETH(PROJECTS.Compound, TOKENS.RETH), TIMEOUT);
+
+  // it('ETH->CompoundWETH', async () => ethToLoanWEth(PROJECTS.Compound, TOKENS.Weth), TIMEOUT);
+  // it('ETH->CompoundWstETH', async () => ethToLoanWEth(PROJECTS.Compound, TOKENS.WstETH), TIMEOUT);
+  // it('ETH->CompoundRETH', async () => ethToLoanWEth(PROJECTS.Compound, TOKENS.RETH), TIMEOUT);
+});

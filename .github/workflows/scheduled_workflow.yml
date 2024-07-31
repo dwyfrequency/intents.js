@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     # 21 PM UTC
-    - cron:  '0 21 * * *'
+    - cron: '0 21 * * *'
 env:
-  BUNDLER_URL: ${{ vars.BUNDLER_URL }}
+  BUNDLER_URL: ${{ vars.TESTNET_BUNDLER_URL }}
 jobs:
   test:
     runs-on: ubuntu-latest
