@@ -11,6 +11,7 @@ export const TOKENS = {
   Awbtc: '0x5ee5bf7ae06d1be5997a1a72006fe6c607ec6de8',
   WstETH: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0',
   RETH: '0xae78736cd615f374d3085123a210448e74fc6393',
+  UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 };
 
 export const TIMEOUT = 30 * 1000;

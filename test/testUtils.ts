@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { IntentBuilder } from '../src';
 import { Account } from '../src/Account';
+import { CovalentClient } from '@covalenthq/client-sdk';
 
 export function generateRandomAccount(): ethers.Wallet {
   const randomBytes = ethers.utils.randomBytes(32);
@@ -17,4 +18,19 @@ export async function initTest() {
     intentBuilder: await IntentBuilder.createInstance(process.env.BUNDLER_URL),
     account: await Account.createInstance(signer, process.env.BUNDLER_URL, process.env.NODE_URL),
   };
+}
+
+const Covalent_Key = 'cqt_rQ7BKxMqyXDGBJrMJddFFp3kYDbP';
+const client = new CovalentClient(Covalent_Key);
+
+export async function getUsdPrice(tokenAddress: string) {
+  //docs here - https://www.covalenthq.com/docs/api/pricing/get-historical-token-prices/
+  const pricesItem = await client.PricingService.getTokenPrices('eth-mainnet', 'USD', tokenAddress);
+  return pricesItem.data[0].prices[0].price;
+}
+
+export async function getPrice(sourceAddress: string, targetAddress: string, sourceAmount: number) {
+  const [sourcePrice, targetPrice] = await Promise.all([getUsdPrice(sourceAddress), getUsdPrice(targetAddress)]);
+
+  return (sourceAmount * sourcePrice) / targetPrice;
 }

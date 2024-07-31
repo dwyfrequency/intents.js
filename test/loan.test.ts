@@ -27,7 +27,7 @@ describe('Loan', () => {
     await intentBuilder.execute(assetWETH, loanAaveWETH, account);
 
     const finalEthBalance = await account.getBalance(TOKENS.ETH);
-    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
   const ethToLoanWEth = async function (project: string, tokenAddress: string) {
@@ -46,7 +46,7 @@ describe('Loan', () => {
     await intentBuilder.execute(assetETH, loanAaveWETH, account);
 
     const finalEthBalance = await account.getBalance(TOKENS.ETH);
-    expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+    expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
   beforeAll(async () => {
@@ -72,7 +72,7 @@ describe('Loan', () => {
       await intentBuilder.execute(assetETH, loanAaveETH, account);
 
       const finalEthBalance = await account.getBalance(TOKENS.ETH);
-      expect(parseFloat(finalEthBalance)).toBeLessThan(parseFloat(initialEthBalance));
+      expect(finalEthBalance).toBeLessThan(initialEthBalance);
     },
     TIMEOUT,
   );
@@ -85,12 +85,12 @@ describe('Loan', () => {
   // it('ETH->AaveWstETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.WstETH), TIMEOUT);
   // it('ETH->AaveRETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.RETH), TIMEOUT);
 
-  // LIDO
-  // it('LidoWETH', async () => loanWETH(PROJECTS.Lido, TOKENS.Weth), TIMEOUT);
-  // it('LidoWstETH', async () => loanWETH(PROJECTS.Lido, TOKENS.WstETH), TIMEOUT);
-  // it('LidoRETH', async () => loanWETH(PROJECTS.Lido, TOKENS.RETH), TIMEOUT);
+  // Compound
+  // it('CompoundWETH', async () => loanWETH(PROJECTS.Compound, TOKENS.Weth), TIMEOUT);
+  // it('CompoundWstETH', async () => loanWETH(PROJECTS.Compound, TOKENS.WstETH), TIMEOUT);
+  // it('CompoundRETH', async () => loanWETH(PROJECTS.Compound, TOKENS.RETH), TIMEOUT);
 
-  // it('ETH->LidoWETH', async () => ethToLoanWEth(PROJECTS.Lido, TOKENS.Weth), TIMEOUT);
-  // it('ETH->LidoWstETH', async () => ethToLoanWEth(PROJECTS.Lido, TOKENS.WstETH), TIMEOUT);
-  // it('ETH->LidoRETH', async () => ethToLoanWEth(PROJECTS.Lido, TOKENS.RETH), TIMEOUT);
+  // it('ETH->CompoundWETH', async () => ethToLoanWEth(PROJECTS.Compound, TOKENS.Weth), TIMEOUT);
+  // it('ETH->CompoundWstETH', async () => ethToLoanWEth(PROJECTS.Compound, TOKENS.WstETH), TIMEOUT);
+  // it('ETH->CompoundRETH', async () => ethToLoanWEth(PROJECTS.Compound, TOKENS.RETH), TIMEOUT);
 });
