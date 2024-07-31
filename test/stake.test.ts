@@ -1,8 +1,7 @@
-import { IntentBuilder, CHAINS, PROJECTS, toBigInt, Asset, Stake } from '../src';
+import { IntentBuilder, CHAINS, PROJECTS, toBigInt, Asset, Stake, Account } from '../src';
 
 import { TIMEOUT, TOKENS } from './constants';
 import { initTest } from './testUtils';
-import { Account } from '../src/Account';
 
 describe('Stake', () => {
   let intentBuilder: IntentBuilder, account: Account;
