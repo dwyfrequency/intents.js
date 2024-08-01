@@ -1,6 +1,5 @@
-import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt } from './src';
+import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt, Account } from './src';
 import { ethers } from 'ethers';
-import { Account } from './src/Account';
 
 const BUNDLER_URL = 'https://bundler.dev.balloondogs.network';
 const NODE_URL = 'https://virtual.mainnet.rpc.tenderly.co/13d45a24-2474-431e-8f19-31f251f6cd2a';
@@ -12,11 +11,12 @@ const amount = 0.1;
 
 const from = new Asset({
   address: eth,
-  amount: toBigInt(Number(amount)),
+  amount: toBigInt(amount * 10 ** 18),
   chainId: toBigInt(CHAINS.Ethereum),
 });
 
 const to = new Stake({
+  amount: toBigInt(amount * 10 ** 18),
   address: PROJECTS.Lido,
   chainId: toBigInt(CHAINS.Ethereum),
 });
