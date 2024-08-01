@@ -60,9 +60,10 @@ export class IntentBuilder {
     const signature = await this.sign(account, builder);
     builder.setSignature(signature);
 
-    const res = await this._client.sendUserOperation(builder, {
-      onBuild: op => console.log('Signed UserOperation:', op),
-    });
+    const res = await this._client.sendUserOperation(
+      builder,
+      // , { onBuild: op => console.log('Signed UserOperation:', op), }
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const solvedHash = (res as any).userOpHash.solved_hash;
