@@ -26,7 +26,7 @@
     "knuth-shuffle": "^1.0.8",
     "mocha": "^10.4.0",
     "prettier": "^3.3.0",
-    "sinon": "^17.0.1",
+    "sinon": "^18.0.0",
     "ts-jest": "^29.1.4",
     "typescript-eslint": "^8.0.0",
     "@covalenthq/client-sdk": "^0.8.8"
