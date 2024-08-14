@@ -14,6 +14,7 @@ export const TOKENS = {
   WstETH: { address: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0', decimal: 18 } as Token,
   RETH: { address: '0xae78736cd615f374d3085123a210448e74fc6393', decimal: 18 } as Token,
   UNI: { address: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', decimal: 18 } as Token,
+  LINK: { address: '0x514910771af9ca656af840dff83e8264ecf986ca', decimal: 18 } as Token,
 };
 
 export const TIMEOUT = 30 * 1000;

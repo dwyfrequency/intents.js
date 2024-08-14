@@ -68,9 +68,14 @@ describe('swap', () => {
   it('ETH->WETH', async () => swap(TOKENS.ETH, TOKENS.Weth, 0.1), TIMEOUT);
   it('WETH->ETH', async () => swap(TOKENS.Weth, TOKENS.ETH, await account.getBalance(TOKENS.Weth.address)), TIMEOUT);
   it('ETH->DAI', async () => swap(TOKENS.ETH, TOKENS.Dai, 0.1), TIMEOUT);
-  // it('DAI->ETH', async () => swap(TOKENS.Dai, TOKENS.ETH, await account.getBalance(TOKENS.Dai.address)), TIMEOUT);
+  it('DAI->ETH', async () => swap(TOKENS.Dai, TOKENS.ETH, await account.getBalance(TOKENS.Dai.address)), TIMEOUT);
+  it('ETH->LINK', async () => swap(TOKENS.ETH, TOKENS.LINK, 0.1), TIMEOUT);
+  it('LINK->ETH', async () => swap(TOKENS.LINK, TOKENS.ETH, await account.getBalance(TOKENS.LINK.address)), TIMEOUT);
   it('ETH->USDC', async () => swap(TOKENS.ETH, TOKENS.Usdc, 0.1), TIMEOUT);
   it('USDC->ETH', async () => swap(TOKENS.Usdc, TOKENS.ETH, await account.getBalance(TOKENS.Usdc.address)), TIMEOUT);
   it('ETH->UNI', async () => swap(TOKENS.ETH, TOKENS.UNI, 0.1), TIMEOUT);
-  // it('UNI->ETH', async () => swap(TOKENS.UNI, TOKENS.ETH, await account.getBalance(TOKENS.UNI.address)), TIMEOUT);
+  it('UNI->ETH', async () => swap(TOKENS.UNI, TOKENS.ETH, await account.getBalance(TOKENS.UNI.address)), TIMEOUT);
+  it('ETH->DAI', async () => swap(TOKENS.ETH, TOKENS.Dai, 0.1), TIMEOUT);
+  it('DAI->LINK', async () => swap(TOKENS.Dai, TOKENS.LINK, await account.getBalance(TOKENS.Dai.address)), TIMEOUT);
+  it('LINK->ETH', async () => swap(TOKENS.Dai, TOKENS.ETH, await account.getBalance(TOKENS.LINK.address)), TIMEOUT);
 });
