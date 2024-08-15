@@ -50,5 +50,5 @@
     "format": "prettier --write ."
   },
   "types": "./dist/index.d.ts",
-  "version": "0.8.30"
+  "version": "0.8.31"
 }

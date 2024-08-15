@@ -3,6 +3,9 @@ import { IntentBuilder, toBigInt, Account } from '../src';
 import { CovalentClient } from '@covalenthq/client-sdk';
 import { Token } from './constants';
 
+const Covalent_Key = 'cqt_rQ7BKxMqyXDGBJrMJddFFp3kYDbP';
+const client = new CovalentClient(Covalent_Key);
+
 export function generateRandomAccount(): ethers.Wallet {
   const randomBytes = ethers.utils.randomBytes(32);
   const privateKey = ethers.utils.hexlify(randomBytes);
@@ -20,9 +23,6 @@ export async function initTest() {
   };
 }
 
-const Covalent_Key = 'cqt_rQ7BKxMqyXDGBJrMJddFFp3kYDbP';
-const client = new CovalentClient(Covalent_Key);
-
 export async function getUsdPrice(tokenAddress: string) {
   //docs here - https://www.covalenthq.com/docs/api/pricing/get-historical-token-prices/
   const pricesItem = await client.PricingService.getTokenPrices('eth-mainnet', 'USD', tokenAddress);
@@ -36,5 +36,5 @@ export async function getPrice(sourceAddress: string, targetAddress: string, sou
 }
 
 export function amountToBigInt(amount: number, token: Token) {
-  return toBigInt(amount * 10 ** token.decimal);
+  return toBigInt(Math.floor(amount * 10 ** token.decimal));
 }
