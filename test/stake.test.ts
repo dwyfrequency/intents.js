@@ -25,12 +25,12 @@ describe('Stake', () => {
           chainId: toBigInt(CHAINS.Ethereum),
         });
       const initialDaiBalance = await account.getBalance(TOKENS.ETH.address);
-      const initialStEthBalance = await account.getBalance(TOKENS.Steth.address);
+      const initialStEthBalance = await account.getBalance(TOKENS.STETH.address);
 
       await intentBuilder.execute(from, to, account);
 
       const finalDaiBalance = await account.getBalance(TOKENS.ETH.address);
-      const finalStEthBalance = await account.getBalance(TOKENS.Steth.address);
+      const finalStEthBalance = await account.getBalance(TOKENS.STETH.address);
 
       expect(finalDaiBalance).toBeLessThan(initialDaiBalance);
       expect(finalStEthBalance).toBeGreaterThan(initialStEthBalance);

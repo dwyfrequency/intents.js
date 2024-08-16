@@ -77,11 +77,11 @@ describe('Loan', () => {
     TIMEOUT,
   );
   // AAVE
-  it('AaveWETH', async () => loanWETH(PROJECTS.Aave, TOKENS.Weth), TIMEOUT);
+  it('AaveWETH', async () => loanWETH(PROJECTS.Aave, TOKENS.WETH), TIMEOUT);
   // it('AaveWstETH', async () => loanWETH(PROJECTS.Aave, TOKENS.WstETH), TIMEOUT);
   // it('AaveRETH', async () => loanWETH(PROJECTS.Aave, TOKENS.RETH), TIMEOUT);
 
-  it('ETH->AaveWETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.Weth), TIMEOUT);
+  it('ETH->AaveWETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.WETH), TIMEOUT);
   // it('ETH->AaveWstETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.WstETH), TIMEOUT);
   // it('ETH->AaveRETH', async () => ethToLoanWEth(PROJECTS.Aave, TOKENS.RETH), TIMEOUT);
 
