@@ -55,5 +55,5 @@ export async function getPrice(sourceAddress: string, targetAddress: string, sou
 }
 
 export function amountToBigInt(amount: number, token: Token) {
-  return toBigInt(Math.floor(amount * 10 ** token.decimal));
+  return toBigInt(Math.round(amount * 10 ** token.decimal));
 }
