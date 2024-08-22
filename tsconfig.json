@@ -2,7 +2,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "roots": ["./src","./test"],
     "module": "CommonJS",
     // Module system
     "target": "ES5",
