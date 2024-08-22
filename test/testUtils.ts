@@ -35,25 +35,43 @@ export async function initTest() {
   };
 }
 
-export async function getUsdPrice(tokenAddress: string): Promise<number> {
-  // https://forum.moralis.io/t/current-price-of-eth/11905
+export async function getUsdPrice(tokenAddress: string, decimals: number): Promise<ethers.BigNumber> {
   tokenAddress =
     tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-      ? '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' //weth
+      ? '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' // WETH address for APIs
       : tokenAddress;
   const response = await Moralis.EvmApi.token.getTokenPrice({
     address: tokenAddress,
     chain: EvmChain.ETHEREUM,
   });
-  const usdPrice = response.result.usdPrice;
+
+  const usdPriceStr = response.result.usdPrice.toFixed(decimals); // Convert to string with 18 decimal places
+  const usdPrice = ethers.utils.parseUnits(usdPriceStr, decimals);
+
   return usdPrice;
 }
 
-export async function getPrice(sourceAddress: string, targetAddress: string, sourceAmount: number) {
-  const [sourcePrice, targetPrice] = await Promise.all([getUsdPrice(sourceAddress), getUsdPrice(targetAddress)]);
-  return (sourceAmount * sourcePrice) / targetPrice;
+export async function getPrice(
+  source: Token,
+  target: Token,
+  sourceAmount: ethers.BigNumber,
+): Promise<ethers.BigNumber> {
+  const [sourcePrice, targetPrice] = await Promise.all([
+    getUsdPrice(source.address, source.decimal),
+    getUsdPrice(target.address, target.decimal),
+  ]);
+
+  return sourceAmount.mul(sourcePrice).div(targetPrice);
 }
 
-export function amountToBigInt(amount: number, token: Token) {
-  return toBigInt(Math.round(amount * 10 ** token.decimal));
+// export function amountToBigInt(amount: number | string, token: Token) {
+//   // Convert amount to a BigNumber right from the input to avoid precision loss
+//   const amountBigNumber = ethers.utils.parseUnits(amount.toString(), token.decimal);
+//   return toBigInt(amountBigNumber);
+// }
+
+// Updated to handle BigNumber inputs directly
+export function amountToBigInt(amount: ethers.BigNumber) {
+  // Assuming 'amount' is already a BigNumber formatted to the token's decimals
+  return toBigInt(amount);
 }

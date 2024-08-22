@@ -1,4 +1,5 @@
 import { BigInt as ProtoBigInt } from 'blndgs-model';
+import { ethers } from 'ethers';
 /**
  * Converts a number or bigint into a ProtoBigInt, suitable for serialization and transport in network requests.
  *
@@ -6,20 +7,14 @@ import { BigInt as ProtoBigInt } from 'blndgs-model';
  * @returns A ProtoBigInt instance representing the provided value.
  * @throws Error if the provided value is zero or negative.
  */
-export function toBigInt(value: number | bigint): ProtoBigInt {
-  if (value <= 0) {
-    throw new Error('Amount cannot be zero or negative');
-  }
-  // Convert number/bigint to a hexadecimal string
-  const hexString = value.toString(16);
-  // Ensure the hex string length is even
-  const paddedHexString = hexString.length % 2 === 0 ? hexString : '0' + hexString;
-  // Convert hex string to Uint8Array
-  const byteArray = new Uint8Array(paddedHexString.length / 2);
-  for (let i = 0; i < byteArray.length; i++) {
-    byteArray[i] = parseInt(paddedHexString.substring(2 * i, 2 * i + 2), 16);
-  }
-  // Create the ProtoBigInt message
+export function toBigInt(value: ethers.BigNumber | number): ProtoBigInt {
+  // Convert all inputs to BigNumber to simplify handling inside the function
+  const bigNumberValue = ethers.BigNumber.isBigNumber(value) ? value : ethers.BigNumber.from(value);
+
+  let hexString = bigNumberValue.toHexString().substring(2); // remove the '0x' prefix
+  hexString = hexString.length % 2 !== 0 ? '0' + hexString : hexString; // pad if necessary
+
+  const byteArray = ethers.utils.arrayify('0x' + hexString); // create a Uint8Array
   const protoBigInt = new ProtoBigInt();
   protoBigInt.value = byteArray;
   return protoBigInt;
