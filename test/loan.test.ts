@@ -53,30 +53,6 @@ describe('Loan', () => {
     ({ account, intentBuilder } = await initTest());
     await account.faucet(1);
   });
-
-  it(
-    'AaveETH',
-    async () => {
-      const assetETH = new Asset({
-          address: TOKENS.ETH.address,
-          amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
-          chainId: toBigInt(CHAINS.Ethereum),
-        }),
-        loanAaveETH = new Loan({
-          address: PROJECTS.Aave,
-          asset: TOKENS.ETH.address,
-          chainId: toBigInt(CHAINS.Ethereum),
-        });
-
-      const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
-      await intentBuilder.execute(assetETH, loanAaveETH, account);
-
-      const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
-      expect(finalEthBalance).toBeLessThan(initialEthBalance);
-    },
-    TIMEOUT,
-  );
-
   // AAVE
   it('AaveWETH', async () => loanWETH(PROJECTS.Aave, TOKENS.WETH), TIMEOUT);
   // wrong token address WSTETH

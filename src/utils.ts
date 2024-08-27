@@ -8,6 +8,9 @@ import { ethers } from 'ethers';
  * @throws Error if the provided value is zero or negative.
  */
 export function toBigInt(value: ethers.BigNumber | number): ProtoBigInt {
+  if (typeof value !== 'number' && !ethers.BigNumber.isBigNumber(value)) {
+    throw new Error('Value must be a number or ethers.BigNumber');
+  }
   // Convert all inputs to BigNumber to simplify handling inside the function
   const bigNumberValue = ethers.BigNumber.isBigNumber(value) ? value : ethers.BigNumber.from(value);
 
@@ -101,5 +104,8 @@ export function floatToToken(amount: number, decimals: number): ethers.BigNumber
  * @throws {Error} If the input amount is negative or if the conversion fails.
  */
 export function amountToBigInt(amount: number, decimal: number) {
+  if (amount <= 0) {
+    throw new Error('Amount must be a positive number');
+  }
   return toBigInt(floatToToken(amount, decimal));
 }
