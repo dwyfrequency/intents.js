@@ -31,9 +31,9 @@ export function toBigInt(value: ethers.BigNumber | number): ProtoBigInt {
  * @param {number} amount - The amount in Ether as a floating-point number.
  * @returns {ethers.BigNumber} - The corresponding amount in Wei as a `BigNumber`.
  */
-export function floatToWei(amount: number): ethers.BigNumber {
+export function floatToWei(amount: number, decimal: number): ethers.BigNumber {
   // Convert float to string with high precision
-  const amountStr = amount.toFixed(18);
+  const amountStr = amount.toFixed(decimal);
   return ethers.utils.parseEther(amountStr);
 }
 

@@ -24,12 +24,12 @@ describe('Utility Functions', () => {
 
   describe('floatToWei', () => {
     it('should convert float to Wei', () => {
-      const result = floatToWei(1.5);
+      const result = floatToWei(1.5, 18);
       expect(result.toString()).toBe('1500000000000000000');
     });
 
     it('should handle very small numbers', () => {
-      const result = floatToWei(0.000000000000000001);
+      const result = floatToWei(0.000000000000000001, 18);
       expect(result.toString()).toBe('1');
     });
   });

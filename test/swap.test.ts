@@ -85,6 +85,13 @@ describe('swap', () => {
     const balance = await account.getBalance(sourceToken.address);
     const bufferedAmount = Math.min(balance * BALANCE_BUFFER, amount);
 
+    if (bufferedAmount <= 0 || bufferedAmount < MINIMUM_SWAP_AMOUNT) {
+      console.log(
+        `Skipping ${sourceToken.address} -> ${targetToken.address} due to amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT})`,
+      );
+      return;
+    }
+
     if (bufferedAmount < MINIMUM_SWAP_AMOUNT) {
       console.log(
         `Skipping ${sourceToken.address} -> ${targetToken.address} due to amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT})`,
