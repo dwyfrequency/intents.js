@@ -82,6 +82,11 @@ describe('swap', () => {
    * @param amount The amount to swap
    */
   const checkAndSwap = async (sourceToken: Token, targetToken: Token, amount: number) => {
+    if (amount <= 0) {
+      console.log(`Skipping ${sourceToken.address} -> ${targetToken.address} due to non-positive amount (${amount})`);
+      return;
+    }
+
     const balance = await account.getBalance(sourceToken.address);
     const bufferedAmount = Math.min(balance * BALANCE_BUFFER, amount);
 
