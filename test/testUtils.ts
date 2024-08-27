@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { IntentBuilder, Account } from '../src';
+import { CHAIN_CONFIGS } from '../src/constants';
 import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/common-evm-utils';
 import { Token } from './constants';
@@ -22,16 +23,19 @@ export function generateRandomAccount(): ethers.Wallet {
   return new ethers.Wallet(privateKey);
 }
 
-export async function initTest() {
-  if (!process.env.BUNDLER_URL) throw new Error('BUNDLER_URL is missing');
-  if (!process.env.NODE_URL) throw new Error('NODE_URL is missing');
+export async function initTest(chainName: keyof typeof CHAIN_CONFIGS = 'Ethereum') {
   if (!process.env.MORALIS_API_KEY) throw new Error('MORALIS_API_KEY is missing');
+
+  const chainConfig = CHAIN_CONFIGS[chainName];
+  if (!chainConfig) throw new Error(`Chain configuration for ${chainName} is missing`);
 
   const signer = generateRandomAccount();
   await initializeMoralis();
+
   return {
-    intentBuilder: await IntentBuilder.createInstance(process.env.BUNDLER_URL),
-    account: await Account.createInstance(signer, process.env.BUNDLER_URL, process.env.NODE_URL),
+    intentBuilder: await IntentBuilder.createInstance(chainConfig),
+    account: await Account.createInstance(signer, chainConfig),
+    chainConfig,
   };
 }
 

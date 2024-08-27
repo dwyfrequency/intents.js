@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
-import { CHAIN_ID, ENTRY_POINT } from './constants';
+import { ChainConfig } from './types';
+import { ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
 import { FromState, State, ToState } from './index';
-import { Asset, Intent, Loan, Stake } from './';
+import { Asset, Intent, Loan, Stake } from '.';
 import fetch from 'isomorphic-fetch';
 import { Account } from './Account';
 
@@ -20,11 +21,13 @@ export class IntentBuilder {
 
   /**
    * Factory method to create an instance of IntentBuilder.
-   * @param bundlerUrl The URL for the transaction bundler service.
+   * @param chainConfig The configuration of the chain.
    * @returns A new instance of IntentBuilder.
    */
-  static async createInstance(bundlerUrl: string) {
-    return new IntentBuilder(await Client.init(bundlerUrl), bundlerUrl);
+  static async createInstance(chainConfig: ChainConfig): Promise<IntentBuilder> {
+    const client = await Client.init(chainConfig.bundlerUrl);
+    const instance = new IntentBuilder(client, chainConfig.bundlerUrl);
+    return instance;
   }
 
   /**
@@ -35,6 +38,11 @@ export class IntentBuilder {
    * @returns A promise that resolves when the transaction has been executed.
    */
   async execute(from: State, to: State, account: Account): Promise<void> {
+    // Ensure the chain IDs match
+    // TODO:: because chain id from model is ProtoBigInt
+    // if (from.chainId !== to.chainId || from.chainId !== toBigInt(account.chainConfig.chainId)) {
+    //   throw new Error('Chain IDs do not match');
+    // }
     const intents = new Intent({
       from: this.setFrom(from),
       to: this.setTo(to),
@@ -132,7 +140,7 @@ export class IntentBuilder {
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), ENTRY_POINT, CHAIN_ID],
+      [ethers.utils.keccak256(packedData), ENTRY_POINT, account.chainConfig.chainId],
     );
 
     const userOpHash = ethers.utils.keccak256(enc);

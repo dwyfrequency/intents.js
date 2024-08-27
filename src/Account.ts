@@ -3,6 +3,7 @@ import { ENTRY_POINT, FACTORY } from './constants';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Presets } from 'userop';
 import { tokenToFloat, weiToFloat } from './utils';
+import { ChainConfig } from './types';
 
 export class Account {
   /**
@@ -10,11 +11,13 @@ export class Account {
    * @param signer The Signer object used for transaction signing.
    * @param sender The Ethereum address of the sender.
    * @param _provider The JSON RPC Provider for network interactions.
+   * @param chainConfig The configuration of the eth clients.
    */
   private constructor(
     public signer: Signer,
     public sender: string,
     private _provider: JsonRpcProvider,
+    public chainConfig: ChainConfig,
   ) {}
 
   /**
@@ -24,9 +27,9 @@ export class Account {
    * @param nodeUrl URL of the Ethereum node for network communication.
    * @returns An instance of the Account class.
    */
-  static async createInstance(signer: ethers.Signer, bundlerUrl: string, nodeUrl: string) {
-    const sender = await Account.getSender(signer, bundlerUrl);
-    return new Account(signer, sender, new ethers.providers.JsonRpcProvider(nodeUrl));
+  static async createInstance(signer: ethers.Signer, chainConfig: ChainConfig) {
+    const sender = await Account.getSender(signer, chainConfig.bundlerUrl);
+    return new Account(signer, sender, new ethers.providers.JsonRpcProvider(chainConfig.rpcUrl), chainConfig);
   }
 
   /**
