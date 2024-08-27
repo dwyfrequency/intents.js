@@ -2,6 +2,7 @@ import { BytesLike, ethers, Signer } from 'ethers';
 import { ENTRY_POINT, FACTORY } from './constants';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Presets } from 'userop';
+import { tokenToFloat, weiToFloat } from './utils';
 
 export class Account {
   /**
@@ -128,13 +129,13 @@ export class Account {
   /**
    * Retrieves the balance of the account, either in ETH or a specified ERC-20 token.
    * @param tokenAddress The address of the ERC-20 token contract, or undefined for ETH.
-   * @returns The balance as a string formatted to a human-readable format.
+   * @returns The balance as a number formatted to a human-readable format.
    */
-  async getBalance(tokenAddress?: string): Promise<string> {
+  async getBalance(tokenAddress?: string): Promise<number> {
     if (!tokenAddress || tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
       // Handle ETH balance
       const balance = await this._provider.getBalance(this.sender);
-      return ethers.utils.formatEther(balance); // Return as string
+      return weiToFloat(balance);
     }
 
     const abi = [
@@ -158,6 +159,6 @@ export class Account {
 
     const contract = new ethers.Contract(tokenAddress, abi, this._provider);
     const [balance, decimals] = await Promise.all([contract.balanceOf(this.sender), contract.decimals()]);
-    return ethers.utils.formatUnits(balance, decimals); // Return as string
+    return tokenToFloat(balance, decimals);
   }
 }

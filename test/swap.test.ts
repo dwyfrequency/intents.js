@@ -1,4 +1,4 @@
-import { IntentBuilder, CHAINS, toBigInt, Asset, Account } from '../src';
+import { IntentBuilder, CHAINS, toBigInt, Asset, Account, floatToToken, weiToFloat } from '../src';
 import { TIMEOUT, Token, TOKENS } from './constants';
 import { amountToBigInt, getPrice, initTest } from './testUtils';
 import { ethers } from 'ethers';
@@ -15,7 +15,7 @@ describe('basics', () => {
     'Empty wallet check',
     async () => {
       const balance = await account.getBalance(senderAddress);
-      expect(balance).toBe('0.0');
+      expect(balance).toBe(0);
     },
     TIMEOUT,
   );
@@ -27,7 +27,7 @@ describe('basics', () => {
 
       // Check the balance after faucet
       const balanceAfter = await account.getBalance(senderAddress);
-      expect(balanceAfter).toBe('1.0'); // 1ETH fueled
+      expect(balanceAfter).toBe(1); // 1ETH fueled
     },
     TIMEOUT,
   );
@@ -36,23 +36,22 @@ describe('basics', () => {
 describe('swap', () => {
   let intentBuilder: IntentBuilder, account: Account;
 
-  const swap = async function (sourceToken: Token, targetToken: Token, amountStr: string, slippagePercentage = 0) {
-    const amount = ethers.utils.parseUnits(amountStr, sourceToken.decimal);
-
+  const swap = async function (sourceToken: Token, targetToken: Token, amount: number, slippagePercentage = 0) {
     const from = new Asset({
       address: sourceToken.address,
-      amount: amountToBigInt(amount),
+      amount: amountToBigInt(floatToToken(amount, sourceToken.decimal)),
       chainId: toBigInt(CHAINS.Ethereum),
     });
 
     // Retrieve the expected amount based on market prices
-    const expectedAmount = await getPrice(sourceToken, targetToken, amount);
+    const expectedAmount = await getPrice(sourceToken, targetToken, floatToToken(amount, sourceToken.decimal));
     const slippageFactor = ethers.BigNumber.from(100 - slippagePercentage);
     const minOutAmount = expectedAmount.mul(slippageFactor).div(100);
+
     console.log('sourceToken', sourceToken);
     console.log('targetToken', targetToken);
-    console.log('expectedAmount', expectedAmount.toString());
-    console.log('minOutAmount', minOutAmount.toString());
+    console.log('expectedAmount', weiToFloat(expectedAmount));
+    console.log('minOutAmount', weiToFloat(minOutAmount));
     console.log('sender', account.sender);
     console.log('source balance', await account.getBalance(sourceToken.address));
     console.log('targetToken balance', await account.getBalance(targetToken.address));
@@ -74,7 +73,7 @@ describe('swap', () => {
   it(
     'ETH->WETH',
     async () => {
-      await swap(TOKENS.ETH, TOKENS.WETH, '0.1');
+      await swap(TOKENS.ETH, TOKENS.WETH, 0.1);
     },
     TIMEOUT,
   );
@@ -90,7 +89,7 @@ describe('swap', () => {
   it(
     'ETH->DAI',
     async () => {
-      await swap(TOKENS.ETH, TOKENS.DAI, '0.1');
+      await swap(TOKENS.ETH, TOKENS.DAI, 0.1);
     },
     TIMEOUT,
   );
@@ -106,7 +105,7 @@ describe('swap', () => {
   it(
     'ETH->LINK',
     async () => {
-      await swap(TOKENS.ETH, TOKENS.LINK, '0.1');
+      await swap(TOKENS.ETH, TOKENS.LINK, 0.1);
     },
     TIMEOUT,
   );
@@ -122,7 +121,7 @@ describe('swap', () => {
   it(
     'ETH->USDC',
     async () => {
-      await swap(TOKENS.ETH, TOKENS.USDC, '0.1');
+      await swap(TOKENS.ETH, TOKENS.USDC, 0.1);
     },
     TIMEOUT,
   );
@@ -138,7 +137,7 @@ describe('swap', () => {
   it(
     'ETH->UNI',
     async () => {
-      await swap(TOKENS.ETH, TOKENS.UNI, '0.1');
+      await swap(TOKENS.ETH, TOKENS.UNI, 0.1);
     },
     TIMEOUT,
   );
@@ -154,7 +153,7 @@ describe('swap', () => {
   it(
     'ETH->USDT',
     async () => {
-      await swap(TOKENS.ETH, TOKENS.USDT, '0.1');
+      await swap(TOKENS.ETH, TOKENS.USDT, 0.1);
     },
     TIMEOUT,
   );

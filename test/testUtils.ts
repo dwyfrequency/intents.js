@@ -64,12 +64,6 @@ export async function getPrice(
   return sourceAmount.mul(sourcePrice).div(targetPrice);
 }
 
-// export function amountToBigInt(amount: number | string, token: Token) {
-//   // Convert amount to a BigNumber right from the input to avoid precision loss
-//   const amountBigNumber = ethers.utils.parseUnits(amount.toString(), token.decimal);
-//   return toBigInt(amountBigNumber);
-// }
-
 // Updated to handle BigNumber inputs directly
 export function amountToBigInt(amount: ethers.BigNumber) {
   // Assuming 'amount' is already a BigNumber formatted to the token's decimals
