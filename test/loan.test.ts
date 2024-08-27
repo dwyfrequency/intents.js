@@ -7,8 +7,8 @@ describe('Loan', () => {
 
   const loanWETH = async function (project: string, token: Token) {
     const assetETH = new Asset({
-        address: token.address,
-        amount: amountToBigInt(0.1, token.decimal),
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
         chainId: toBigInt(CHAINS.Ethereum),
       }),
       assetWETH = new Asset({
@@ -32,8 +32,8 @@ describe('Loan', () => {
 
   const ethToLoanWEth = async function (project: string, token: Token) {
     const assetETH = new Asset({
-        address: token.address,
-        amount: amountToBigInt(0.1, token.decimal),
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
         chainId: toBigInt(CHAINS.Ethereum),
       }),
       loanAaveWETH = new Loan({
@@ -42,10 +42,10 @@ describe('Loan', () => {
         chainId: toBigInt(CHAINS.Ethereum),
       });
 
-    const initialEthBalance = await account.getBalance(token.address);
+    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
     await intentBuilder.execute(assetETH, loanAaveWETH, account);
 
-    const finalEthBalance = await account.getBalance(token.address);
+    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
     expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
