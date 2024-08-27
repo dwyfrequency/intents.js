@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { IntentBuilder, toBigInt, Account } from '../src';
+import { IntentBuilder, Account } from '../src';
 import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/common-evm-utils';
 import { Token } from './constants';
@@ -62,10 +62,4 @@ export async function getPrice(
   ]);
 
   return sourceAmount.mul(sourcePrice).div(targetPrice);
-}
-
-// Updated to handle BigNumber inputs directly
-export function amountToBigInt(amount: ethers.BigNumber) {
-  // Assuming 'amount' is already a BigNumber formatted to the token's decimals
-  return toBigInt(amount);
 }

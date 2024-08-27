@@ -78,3 +78,28 @@ export function floatToToken(amount: number, decimals: number): ethers.BigNumber
   const amountStr = amount.toFixed(decimals);
   return ethers.utils.parseUnits(amountStr, decimals);
 }
+
+/**
+ * Converts a floating-point number to a ProtoBigInt representation.
+ *
+ * This function takes a numeric amount and the number of decimal places for a token,
+ * converts it to the smallest unit of the token (considering the decimal places),
+ * and then converts that to a ProtoBigInt format suitable for blockchain transactions.
+ *
+ * @param {number} amount - The amount to convert, as a floating-point number.
+ * @param {number} decimal - The number of decimal places for the token (e.g., 18 for ETH).
+ * @returns {ProtoBigInt} The amount converted to a ProtoBigInt format.
+ *
+ * @example
+ * // Convert 0.1 ETH to ProtoBigInt
+ * const bigIntAmount = amountToBigInt(0.1, 18);
+ *
+ * @example
+ * // Convert 100 USDC to ProtoBigInt (USDC has 6 decimal places)
+ * const bigIntAmount = amountToBigInt(100, 6);
+ *
+ * @throws {Error} If the input amount is negative or if the conversion fails.
+ */
+export function amountToBigInt(amount: number, decimal: number) {
+  return toBigInt(floatToToken(amount, decimal));
+}

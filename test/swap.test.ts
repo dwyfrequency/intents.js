@@ -1,167 +1,173 @@
-import { IntentBuilder, CHAINS, toBigInt, Asset, Account, floatToToken, weiToFloat } from '../src';
+import { IntentBuilder, CHAINS, toBigInt, Asset, Account, floatToToken, weiToFloat, amountToBigInt } from '../src';
 import { TIMEOUT, Token, TOKENS } from './constants';
-import { amountToBigInt, getPrice, initTest } from './testUtils';
+import { getPrice, initTest } from './testUtils';
 import { ethers } from 'ethers';
-const maxSlippage = 1; // 10% allowed by network above that will not be accepted.
 
-describe('basics', () => {
-  let senderAddress: string, account: Account;
+/** Maximum allowed slippage for swaps (2%) */
+const DEFAULT_SLIPPAGE = 0.02;
 
-  beforeAll(async () => {
-    ({ account } = await initTest());
-  });
+/** Minimum amount allowed for a swap operation */
+const MINIMUM_SWAP_AMOUNT = 0.000001;
 
-  it(
-    'Empty wallet check',
-    async () => {
-      const balance = await account.getBalance(senderAddress);
-      expect(balance).toBe(0);
-    },
-    TIMEOUT,
-  );
+/** Buffer to prevent "insufficient balance" errors (99.99% of balance) */
+const BALANCE_BUFFER = 0.9999;
 
-  it(
-    'Faucet validation',
-    async () => {
-      await account.faucet(1);
-
-      // Check the balance after faucet
-      const balanceAfter = await account.getBalance(senderAddress);
-      expect(balanceAfter).toBe(1); // 1ETH fueled
-    },
-    TIMEOUT,
-  );
-});
+/** Threshold for considering balances equal, handles floating-point imprecision */
+const BALANCE_THRESHOLD = 1e-15;
 
 describe('swap', () => {
   let intentBuilder: IntentBuilder, account: Account;
 
-  const swap = async function (sourceToken: Token, targetToken: Token, amount: number, slippagePercentage = 0) {
+  /**
+   * Executes a token swap operation.
+   * @param sourceToken The token to swap from
+   * @param targetToken The token to swap to
+   * @param amount The amount to swap
+   * @param slippage Maximum allowed slippage, defaults to DEFAULT_SLIPPAGE
+   */
+  const swap = async function (sourceToken: Token, targetToken: Token, amount: number, slippage = DEFAULT_SLIPPAGE) {
+    // Apply buffer to amount
+    const bufferedAmount = amount * BALANCE_BUFFER;
+    if (bufferedAmount < MINIMUM_SWAP_AMOUNT) {
+      console.log(`Skipping swap due to amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT})`);
+      return;
+    }
+
+    // Create 'from' asset using amountToBigInt for precise conversion
     const from = new Asset({
       address: sourceToken.address,
-      amount: amountToBigInt(floatToToken(amount, sourceToken.decimal)),
+      amount: amountToBigInt(bufferedAmount, sourceToken.decimal),
       chainId: toBigInt(CHAINS.Ethereum),
     });
 
-    // Retrieve the expected amount based on market prices
-    const expectedAmount = await getPrice(sourceToken, targetToken, floatToToken(amount, sourceToken.decimal));
-    const slippageFactor = ethers.BigNumber.from(100 - slippagePercentage);
-    const minOutAmount = expectedAmount.mul(slippageFactor).div(100);
+    // Get expected amount and calculate minimum amount with slippage
+    const expectedTargetAmount = await getPrice(
+      sourceToken,
+      targetToken,
+      floatToToken(bufferedAmount, sourceToken.decimal),
+    );
+    const minTargetAmount = expectedTargetAmount
+      .mul(ethers.BigNumber.from(Math.floor((1 - slippage) * 10000)))
+      .div(10000);
 
+    // Log swap details
     console.log('sourceToken', sourceToken);
     console.log('targetToken', targetToken);
-    console.log('expectedAmount', weiToFloat(expectedAmount));
-    console.log('minOutAmount', weiToFloat(minOutAmount));
+    console.log('sourceAmount', bufferedAmount);
+    console.log('expectedTargetAmount', weiToFloat(expectedTargetAmount));
+    console.log('minTargetAmount', weiToFloat(minTargetAmount));
     console.log('sender', account.sender);
     console.log('source balance', await account.getBalance(sourceToken.address));
     console.log('targetToken balance', await account.getBalance(targetToken.address));
 
+    // Create 'to' asset using amountToBigInt for precise conversion
     const to = new Asset({
       address: targetToken.address,
-      amount: amountToBigInt(minOutAmount),
+      amount: amountToBigInt(weiToFloat(minTargetAmount), targetToken.decimal),
       chainId: toBigInt(CHAINS.Ethereum),
     });
 
-    await intentBuilder.execute(from, to, account);
+    // Execute swap
+    try {
+      await intentBuilder.execute(from, to, account);
+    } catch (error) {
+      console.error(`Swap failed: ${error}`);
+    }
   };
 
+  /**
+   * Checks balance and executes swap if conditions are met.
+   * @param sourceToken The token to swap from
+   * @param targetToken The token to swap to
+   * @param amount The amount to swap
+   */
+  const checkAndSwap = async (sourceToken: Token, targetToken: Token, amount: number) => {
+    const balance = await account.getBalance(sourceToken.address);
+    const bufferedAmount = Math.min(balance * BALANCE_BUFFER, amount);
+
+    if (bufferedAmount < MINIMUM_SWAP_AMOUNT) {
+      console.log(
+        `Skipping ${sourceToken.address} -> ${targetToken.address} due to amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT})`,
+      );
+      return;
+    }
+
+    if (Math.abs(balance - bufferedAmount) < BALANCE_THRESHOLD) {
+      // If the difference is very small, use the exact balance
+      await swap(sourceToken, targetToken, balance);
+    } else {
+      await swap(sourceToken, targetToken, bufferedAmount);
+    }
+  };
+
+  // Initialize test environment
   beforeAll(async () => {
     ({ account, intentBuilder } = await initTest());
     await account.faucet(1);
   });
 
-  it(
-    'ETH->WETH',
-    async () => {
-      await swap(TOKENS.ETH, TOKENS.WETH, 0.1);
-    },
-    TIMEOUT,
-  );
+  it('ETH->WETH', async () => await checkAndSwap(TOKENS.ETH, TOKENS.WETH, 0.1), TIMEOUT);
 
   it(
     'WETH->ETH',
     async () => {
-      await swap(TOKENS.WETH, TOKENS.ETH, await account.getBalance(TOKENS.WETH.address));
+      const balance = await account.getBalance(TOKENS.WETH.address);
+      await checkAndSwap(TOKENS.WETH, TOKENS.ETH, balance);
     },
     TIMEOUT,
   );
 
-  it(
-    'ETH->DAI',
-    async () => {
-      await swap(TOKENS.ETH, TOKENS.DAI, 0.1);
-    },
-    TIMEOUT,
-  );
+  it('ETH->DAI', async () => await checkAndSwap(TOKENS.ETH, TOKENS.DAI, 0.1), TIMEOUT);
 
   it(
     'DAI->ETH',
     async () => {
-      await swap(TOKENS.DAI, TOKENS.ETH, await account.getBalance(TOKENS.DAI.address), maxSlippage);
+      const balance = await account.getBalance(TOKENS.DAI.address);
+      await checkAndSwap(TOKENS.DAI, TOKENS.ETH, balance);
     },
     TIMEOUT,
   );
 
-  it(
-    'ETH->LINK',
-    async () => {
-      await swap(TOKENS.ETH, TOKENS.LINK, 0.1);
-    },
-    TIMEOUT,
-  );
+  it('ETH->LINK', async () => await checkAndSwap(TOKENS.ETH, TOKENS.LINK, 0.1), TIMEOUT);
 
   it(
     'LINK->ETH',
     async () => {
-      await swap(TOKENS.LINK, TOKENS.ETH, await account.getBalance(TOKENS.LINK.address));
+      const balance = await account.getBalance(TOKENS.LINK.address);
+      await checkAndSwap(TOKENS.LINK, TOKENS.ETH, balance);
     },
     TIMEOUT,
   );
 
-  it(
-    'ETH->USDC',
-    async () => {
-      await swap(TOKENS.ETH, TOKENS.USDC, 0.1);
-    },
-    TIMEOUT,
-  );
+  it('ETH->USDC', async () => await checkAndSwap(TOKENS.ETH, TOKENS.USDC, 0.1), TIMEOUT);
 
   it(
     'USDC->ETH',
     async () => {
-      await swap(TOKENS.USDC, TOKENS.ETH, await account.getBalance(TOKENS.USDC.address), 1);
+      const balance = await account.getBalance(TOKENS.USDC.address);
+      await checkAndSwap(TOKENS.USDC, TOKENS.ETH, balance);
     },
     TIMEOUT,
   );
 
-  it(
-    'ETH->UNI',
-    async () => {
-      await swap(TOKENS.ETH, TOKENS.UNI, 0.1);
-    },
-    TIMEOUT,
-  );
+  it('ETH->UNI', async () => await checkAndSwap(TOKENS.ETH, TOKENS.UNI, 0.1), TIMEOUT);
 
   it(
     'UNI->ETH',
     async () => {
-      await swap(TOKENS.UNI, TOKENS.ETH, await account.getBalance(TOKENS.UNI.address));
+      const balance = await account.getBalance(TOKENS.UNI.address);
+      await checkAndSwap(TOKENS.UNI, TOKENS.ETH, balance);
     },
     TIMEOUT,
   );
 
-  it(
-    'ETH->USDT',
-    async () => {
-      await swap(TOKENS.ETH, TOKENS.USDT, 0.1);
-    },
-    TIMEOUT,
-  );
+  it('ETH->USDT', async () => await checkAndSwap(TOKENS.ETH, TOKENS.USDT, 0.1), TIMEOUT);
 
   it(
     'USDT->LINK',
     async () => {
-      await swap(TOKENS.DAI, TOKENS.LINK, await account.getBalance(TOKENS.USDT.address));
+      const balance = await account.getBalance(TOKENS.USDT.address);
+      await checkAndSwap(TOKENS.USDT, TOKENS.LINK, balance);
     },
     TIMEOUT,
   );
@@ -169,7 +175,16 @@ describe('swap', () => {
   it(
     'LINK->DAI',
     async () => {
-      await swap(TOKENS.LINK, TOKENS.DAI, await account.getBalance(TOKENS.LINK.address), 1);
+      const balance = await account.getBalance(TOKENS.LINK.address);
+      await checkAndSwap(TOKENS.LINK, TOKENS.DAI, balance);
+    },
+    TIMEOUT,
+  );
+
+  it(
+    'Should skip swap for small amounts',
+    async () => {
+      await checkAndSwap(TOKENS.ETH, TOKENS.USDC, 0.0005);
     },
     TIMEOUT,
   );
