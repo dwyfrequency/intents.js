@@ -13,6 +13,7 @@ const MINIMUM_SWAP_AMOUNT = 0.000001;
 const BALANCE_BUFFER = 0.9999;
 
 /** Threshold for considering balances equal, handles floating-point imprecision */
+// This is used to determine when two balances are close enough to be considered equal.
 const BALANCE_THRESHOLD = 1e-15;
 
 describe('swap', () => {
@@ -82,30 +83,43 @@ describe('swap', () => {
    * @param amount The amount to swap
    */
   const checkAndSwap = async (sourceToken: Token, targetToken: Token, amount: number) => {
+    // Initial check for non-positive amount
     if (amount <= 0) {
       console.log(`Skipping ${sourceToken.address} -> ${targetToken.address} due to non-positive amount (${amount})`);
       return;
     }
 
+    // Get the balance and calculate the buffered amount
     const balance = await account.getBalance(sourceToken.address);
+
     const bufferedAmount = Math.min(balance * BALANCE_BUFFER, amount);
 
+    // Additional check after applying buffer to ensure the amount is still valid
     if (bufferedAmount <= 0 || bufferedAmount < MINIMUM_SWAP_AMOUNT) {
       console.log(
-        `Skipping ${sourceToken.address} -> ${targetToken.address} due to amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT})`,
+        `Skipping ${sourceToken.address} -> ${targetToken.address} 
+        due to buffered amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT}) or non-positive`,
       );
       return;
     }
 
-    if (bufferedAmount < MINIMUM_SWAP_AMOUNT) {
+    // Get expected amount
+    const expectedTargetAmount = await getPrice(
+      sourceToken,
+      targetToken,
+      floatToToken(bufferedAmount, sourceToken.decimal),
+    );
+
+    // Check if expected amount is zero or very close to zero
+    if (expectedTargetAmount.isZero() || weiToFloat(expectedTargetAmount) < MINIMUM_SWAP_AMOUNT) {
       console.log(
-        `Skipping ${sourceToken.address} -> ${targetToken.address} due to amount (${bufferedAmount}) being below minimum (${MINIMUM_SWAP_AMOUNT})`,
+        `Skipping ${sourceToken.address} -> ${targetToken.address} due to zero or very small expected target amount`,
       );
       return;
     }
 
+    // Check if the balance and buffered amount are very close (to handle floating-point precision issues)
     if (Math.abs(balance - bufferedAmount) < BALANCE_THRESHOLD) {
-      // If the difference is very small, use the exact balance
       await swap(sourceToken, targetToken, balance);
     } else {
       await swap(sourceToken, targetToken, bufferedAmount);
