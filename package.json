@@ -2,15 +2,17 @@
   "author": "",
   "dependencies": {
     "blndgs-model": "^0.41.1",
+    "dotenv": "^16.4.5",
     "ethers": "5.7.2",
     "isomorphic-fetch": "^3.0.0",
+    "moralis": "^2.27.2",
     "node-fetch": "^3.3.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "userop": "^0.3.8"
   },
   "description": "Abstract State Change Expression Library",
   "devDependencies": {
-    "@covalenthq/client-sdk": "^0.8.8",
     "@eslint/js": "^9.8.0",
     "@sinonjs/referee-sinon": "^12.0.0",
     "@types/isomorphic-fetch": "^0.0.39",
@@ -45,7 +47,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "BUNDLER_URL=https://bundler.dev.balloondogs.network  NODE_URL=https://virtual.mainnet.rpc.tenderly.co/13d45a24-2474-431e-8f19-31f251f6cd2a CHAIN_ID=888 jest",
+    "test": "jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

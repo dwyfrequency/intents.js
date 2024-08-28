@@ -19,8 +19,8 @@ npm install intents.js
 
 Import `intents.js` into your project to begin defining intents:
 
-```tsx
-import { IntentBuilder, Projects, Intent, Asset, Stake } from 'intents.js';
+```typescript
+import { IntentBuilder, PROJECTS, CHAINS, toBigInt, Asset, Stake } from 'intents.js';
 import { ethers } from 'ethers';
 ```
 
@@ -30,73 +30,82 @@ import { ethers } from 'ethers';
 
 Create an instance of the `IntentBuilder`:
 
-```tsx
-const intentBuilder = new IntentBuilder();
+```typescript
+const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
 ```
 
-### 2. Creating an Intent
+### 2. Creating and Executing an Intent
 
-To create an intent with the `intents.js` SDK, you must specify the nature of the transaction you want to execute. This involves defining the source (from) and destination (to) assets, including their types, addresses, and the amounts involved. An intent encapsulates all the details required to execute a transaction between two parties or within the blockchain environment.
+To create and execute an intent with the `intents.js` SDK, you need to specify the details of the transaction you want to perform. This involves defining the source (from) and destination (to) assets, including their types, addresses, and amounts.
 
-Here’s how you can structure the creation of an intent:
+Here's an example of creating and executing a swap intent:
 
-1. **Define Sender**: The blockchain address that initiates the intent. This should be the address of the user or contract initiating the transaction.
-2. **Set Transaction Modes**: Define the `fromMode` and `toMode` to specify the types of operations, such as 'currency', 'loan', or 'staking'. Each mode dictates how the SDK processes the intent.
-3. **Select Tokens and Amounts**: Choose the tokens for the source and destination. For the `fromSelectedToken` and `toSelectedToken`, use the actual token contract addresses. Specify the `inputValue` and `toAmount` to set how much of each token should be involved in the transaction.
-4. **Specify Projects (Optional)**: For operations involving specific projects or protocols, such as staking or loans, identify the project using the `Projects` class which provides standardized addresses for known entities.
-
-Example of creating a staking intent:
-
-```tsx
-import { IntentBuilder, PROJECTS, CHAINS, toBigInt, Asset, Stake } from 'intents.js';
+```typescript
+import { IntentBuilder, PROJECTS, CHAINS, toBigInt, Asset, Account, TOKENS } from 'intents.js';
 import { ethers } from 'ethers';
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
+const BUNDLER_URL = 'https://bundler.dev.balloondogs.network';
+const NODE_URL = 'https://virtual.mainnet.rpc.tenderly.co/your-access-key';
 
-const intentBuilder = new IntentBuilder();
+async function executeSwap() {
+  const signer = new ethers.Wallet('your-private-key');
+  const account = await Account.createInstance(signer, BUNDLER_URL, NODE_URL);
+  const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
 
-const sender = '0x';
+  const from = new Asset({
+    address: TOKENS.ETH.address,
+    amount: toBigInt(0.1, TOKENS.ETH.decimal),
+    chainId: toBigInt(CHAINS.Ethereum),
+  });
 
-   const from = new Asset({
-        address: TOKENS.ETH,
-        amount: toBigInt(1000000000000000),
-        chainId: toBigInt(CHAINS.Ethereum),
-      }),
-    to = new Asset({
-        address: TOKENS.Dai,
-        chainId: toBigInt(CHAINS.Ethereum),
-        amount: toBigInt(1000000000000000),
-      });
+  const to = new Asset({
+    address: TOKENS.DAI.address,
+    chainId: toBigInt(CHAINS.Ethereum),
+    amount: toBigInt(0, TOKENS.DAI.decimal), // Amount will be determined by the swap
+  });
 
+  try {
+    await intentBuilder.execute(from, to, account);
+    console.log('Swap executed successfully.');
+  } catch (error) {
+    console.error('Error executing swap:', error);
+  }
+}
 
-intentBuilder
-  .execute(from, to, signer);
-  .then(() => console.log('Intent executed successfully.'))
-  .catch(error => console.error('Error executing intent:', error));
+executeSwap();
 ```
 
-### 4. Execute the Intent
+### 3. Utility Functions
 
-After setting up your intents, the next step is to execute these intents using the `IntentBuilder`. This process involves calling the `execute` method on your `intentBuilder` instance, passing in the necessary parameters such as the intents, your signing key, and the node URL. The execution is handled asynchronously.
+The SDK provides several utility functions for handling token amounts and conversions:
 
-```tsx
-intentBuilder
-  .execute(intent, signer)
-  .then(() => console.log('Intent executed successfully.'))
-  .catch(error => console.error('Error executing intent:', error));
-```
+- `toBigInt(value: ethers.BigNumber | number): ProtoBigInt`
+- `floatToWei(amount: number): ethers.BigNumber`
+- `weiToFloat(wei: ethers.BigNumber): number`
+- `tokenToFloat(amount: ethers.BigNumber, decimals: number): number`
+- `floatToToken(amount: number, decimals: number): ethers.BigNumber`
+- `amountToBigInt(amount: number, decimal: number): ProtoBigInt`
 
-### 5. Utilizing the Projects Class for Staking Providers
+These functions help in converting between different representations of token amounts.
 
-The `intents.js` SDK simplifies interactions with staking operations through the `Projects` class. This utility class provides quick access to the addresses of well-known staking providers, making it easier to reference them when building staking-related intents.
+### 4. Supported Projects
 
-#### Available Staking Providers
+The `PROJECTS` object provides addresses for various DeFi projects:
 
-- `Lido`
-- `RocketPool`
-- `Mantle`
-- `Aave`
-- `Compound`
-- `Spark`
-- `SushiSwap`
+- Lido
+- RocketPool
+- Mantle
+- Aave
+- Compound
+- Spark
+- SushiSwap
+
+You can use these addresses when interacting with specific protocols.
+
+## Contributing
+
+Contributions to `intents.js` are welcome! Please refer to our contributing guidelines for more information.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
