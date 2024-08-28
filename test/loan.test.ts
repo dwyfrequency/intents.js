@@ -1,5 +1,5 @@
 import { Asset, Loan, CHAINS, IntentBuilder, PROJECTS, toBigInt, Account, amountToBigInt } from '../src';
-import { TIMEOUT, Token, TOKENS } from './constants';
+import { ChainID, TIMEOUT, Token, TOKENS } from './constants';
 import { initTest } from './testUtils';
 
 describe('Loan', () => {
@@ -22,11 +22,11 @@ describe('Loan', () => {
         chainId: toBigInt(CHAINS.Ethereum),
       });
 
-    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
-    await intentBuilder.execute(assetETH, assetWETH, account);
-    await intentBuilder.execute(assetWETH, loanAaveWETH, account);
+    const initialEthBalance = await account.getBalance(ChainID, TOKENS.ETH.address);
+    await intentBuilder.execute(assetETH, assetWETH, account, ChainID);
+    await intentBuilder.execute(assetWETH, loanAaveWETH, account, ChainID);
 
-    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
+    const finalEthBalance = await account.getBalance(ChainID, TOKENS.ETH.address);
     expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
@@ -42,16 +42,16 @@ describe('Loan', () => {
         chainId: toBigInt(CHAINS.Ethereum),
       });
 
-    const initialEthBalance = await account.getBalance(TOKENS.ETH.address);
-    await intentBuilder.execute(assetETH, loanAaveWETH, account);
+    const initialEthBalance = await account.getBalance(ChainID, TOKENS.ETH.address);
+    await intentBuilder.execute(assetETH, loanAaveWETH, account, ChainID);
 
-    const finalEthBalance = await account.getBalance(TOKENS.ETH.address);
+    const finalEthBalance = await account.getBalance(ChainID, TOKENS.ETH.address);
     expect(finalEthBalance).toBeLessThan(initialEthBalance);
   };
 
   beforeAll(async () => {
     ({ account, intentBuilder } = await initTest());
-    await account.faucet(1);
+    await account.faucet(ChainID, 1);
   });
   // AAVE
   it('AaveWETH', async () => loanWETH(PROJECTS.Aave, TOKENS.WETH), TIMEOUT);

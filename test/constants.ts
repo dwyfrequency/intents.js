@@ -18,3 +18,6 @@ export const TOKENS = {
 };
 
 export const TIMEOUT = 30 * 1000;
+
+// custom chain id for tenderly ethereum.
+export const ChainID = 888;

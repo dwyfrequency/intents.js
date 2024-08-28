@@ -109,3 +109,19 @@ export function amountToBigInt(amount: number, decimal: number) {
   }
   return toBigInt(floatToToken(amount, decimal));
 }
+
+// // normalizeChainId normalize the chain ID
+// // important: not in use but need it in future
+// export function normalizeChainId(chainId: ProtoBigInt | ethers.BigNumber | number): number {
+//   if (typeof chainId === 'number') {
+//     return chainId;
+//   }
+//   if (chainId instanceof ethers.BigNumber) {
+//     return chainId.toNumber();
+//   }
+//   if ('value' in chainId && chainId.value instanceof Uint8Array) {
+//     // Convert Uint8Array to number
+//     return parseInt(Buffer.from(chainId.value).toString('hex'), 16);
+//   }
+//   throw new Error('Unsupported chainId format');
+// }

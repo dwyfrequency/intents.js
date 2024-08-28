@@ -1,12 +1,3 @@
-import { BigNumber } from 'ethers';
-
-/**
- * Represents the chain ID of the blockchain network to be used.
- * Utilizes an environmental variable if available, otherwise defaults to 888.
- * This value is important for ensuring transactions and operations are broadcast to the correct Ethereum network.
- */
-export const CHAIN_ID = BigNumber.from(process.env.CHAIN_ID || 888);
-
 /**
  * The address of the entry point smart contract.
  */

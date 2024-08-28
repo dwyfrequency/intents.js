@@ -4,6 +4,7 @@ import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/common-evm-utils';
 import { Token } from './constants';
 import dotenv from 'dotenv';
+import { ChainConfigs } from '../src/types';
 
 dotenv.config();
 const moralis_key = process.env.MORALIS_API_KEY;
@@ -25,17 +26,31 @@ export function generateRandomAccount(): ethers.Wallet {
 export async function initTest() {
   if (!process.env.BUNDLER_URL) throw new Error('BUNDLER_URL is missing');
   if (!process.env.NODE_URL) throw new Error('NODE_URL is missing');
+  if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID is missing');
   if (!process.env.MORALIS_API_KEY) throw new Error('MORALIS_API_KEY is missing');
+  const chainConfigs: ChainConfigs = {
+    888: {
+      rpcUrl: process.env.NODE_URL,
+      bundlerUrl: process.env.BUNDLER_URL,
+    },
+    // 890: {
+    //   rpcUrl: process.env.BSC_NODE_URL,
+    //   bundlerUrl: process.env.BSC_BUNDLER_URL,
+    // },
+  };
 
   const signer = generateRandomAccount();
   await initializeMoralis();
+
   return {
-    intentBuilder: await IntentBuilder.createInstance(process.env.BUNDLER_URL),
-    account: await Account.createInstance(signer, process.env.BUNDLER_URL, process.env.NODE_URL),
+    intentBuilder: await IntentBuilder.createInstance(chainConfigs),
+    account: await Account.createInstance(signer, chainConfigs),
   };
 }
 
-export async function getUsdPrice(tokenAddress: string, decimals: number): Promise<ethers.BigNumber> {
+export async function getUsdPrice(chainID: number, tokenAddress: string, decimals: number): Promise<ethers.BigNumber> {
+  // TODO:: use chain ID:
+  console.log('chainID', chainID);
   tokenAddress =
     tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
       ? '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' // WETH address for APIs
@@ -45,20 +60,21 @@ export async function getUsdPrice(tokenAddress: string, decimals: number): Promi
     chain: EvmChain.ETHEREUM,
   });
 
-  const usdPriceStr = response.result.usdPrice.toFixed(decimals); // Convert to string with 18 decimal places
+  const usdPriceStr = response.result.usdPrice.toFixed(decimals);
   const usdPrice = ethers.utils.parseUnits(usdPriceStr, decimals);
 
   return usdPrice;
 }
 
 export async function getPrice(
+  chainID: number,
   source: Token,
   target: Token,
   sourceAmount: ethers.BigNumber,
 ): Promise<ethers.BigNumber> {
   const [sourcePrice, targetPrice] = await Promise.all([
-    getUsdPrice(source.address, source.decimal),
-    getUsdPrice(target.address, target.decimal),
+    getUsdPrice(chainID, source.address, source.decimal),
+    getUsdPrice(chainID, target.address, target.decimal),
   ]);
 
   return sourceAmount.mul(sourcePrice).div(targetPrice);

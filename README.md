@@ -41,38 +41,52 @@ To create and execute an intent with the `intents.js` SDK, you need to specify t
 Here's an example of creating and executing a swap intent:
 
 ```typescript
-import { IntentBuilder, PROJECTS, CHAINS, toBigInt, Asset, Account, TOKENS } from 'intents.js';
+import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt, Account, amountToBigInt } from './src';
 import { ethers } from 'ethers';
+import { ChainConfigs } from './src/types';
 
-const BUNDLER_URL = 'https://bundler.dev.balloondogs.network';
-const NODE_URL = 'https://virtual.mainnet.rpc.tenderly.co/your-access-key';
+const signer = new ethers.Wallet('private key');
 
-async function executeSwap() {
-  const signer = new ethers.Wallet('your-private-key');
-  const account = await Account.createInstance(signer, BUNDLER_URL, NODE_URL);
-  const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
+const amount = 0.1;
+const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+const ethDecimals = 18;
 
-  const from = new Asset({
-    address: TOKENS.ETH.address,
-    amount: toBigInt(0.1, TOKENS.ETH.decimal),
-    chainId: toBigInt(CHAINS.Ethereum),
-  });
+const from = new Asset({
+  address: ethAddress,
+  amount: amountToBigInt(amount, ethDecimals),
+  chainId: toBigInt(CHAINS.Ethereum),
+});
 
-  const to = new Asset({
-    address: TOKENS.DAI.address,
-    chainId: toBigInt(CHAINS.Ethereum),
-    amount: toBigInt(0, TOKENS.DAI.decimal), // Amount will be determined by the swap
-  });
+const to = new Stake({
+  amount: amountToBigInt(amount, ethDecimals),
+  address: PROJECTS.Lido,
+  chainId: toBigInt(CHAINS.Ethereum),
+});
+
+async function executeIntent() {
+  const chainConfigs: ChainConfigs = {
+    888: {
+      rpcUrl: 'https://virtual.mainnet.rpc.tenderly.co/13d45a24-2474-431e-8f19-31f251f6cd2a',
+      bundlerUrl: 'https://eth.bundler.dev.balloondogs.network',
+    },
+    890: {
+      rpcUrl: 'https://virtual.binance.rpc.tenderly.co/4e9d15b6-3c42-43b7-a254-359a7893e8e6',
+      bundlerUrl: 'https://bsc.bundler.dev.balloondogs.network',
+    },
+  };
+
+  const account = await Account.createInstance(signer, chainConfigs);
+  const intentBuilder = await IntentBuilder.createInstance(chainConfigs);
 
   try {
-    await intentBuilder.execute(from, to, account);
-    console.log('Swap executed successfully.');
+    await intentBuilder.execute(from, to, account, 888);
+    console.log('Intent executed successfully.');
   } catch (error) {
-    console.error('Error executing swap:', error);
+    console.error('Error executing intent:', error);
   }
 }
 
-executeSwap();
+executeIntent();
 ```
 
 ### 3. Utility Functions
