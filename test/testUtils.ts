@@ -4,7 +4,7 @@ import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/common-evm-utils';
 import { Token } from './constants';
 import dotenv from 'dotenv';
-import { createChainConfig } from '../src/types';
+import { ChainConfigs } from '../src/types';
 
 dotenv.config();
 const moralis_key = process.env.MORALIS_API_KEY;
@@ -28,15 +28,23 @@ export async function initTest() {
   if (!process.env.NODE_URL) throw new Error('NODE_URL is missing');
   if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID is missing');
   if (!process.env.MORALIS_API_KEY) throw new Error('MORALIS_API_KEY is missing');
-
-  const myChainConfig = createChainConfig(process.env.CHAIN_ID, process.env.NODE_URL, process.env.BUNDLER_URL);
+  const chainConfigs: ChainConfigs = {
+    888: {
+      rpcUrl: process.env.NODE_URL,
+      bundlerUrl: process.env.BUNDLER_URL,
+    },
+    // 890: {
+    //   rpcUrl: process.env.BSC_NODE_URL,
+    //   bundlerUrl: process.env.BSC_BUNDLER_URL,
+    // },
+  };
 
   const signer = generateRandomAccount();
   await initializeMoralis();
 
   return {
-    intentBuilder: await IntentBuilder.createInstance(myChainConfig),
-    account: await Account.createInstance(signer, myChainConfig),
+    intentBuilder: await IntentBuilder.createInstance(chainConfigs),
+    account: await Account.createInstance(signer, chainConfigs),
   };
 }
 

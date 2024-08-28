@@ -1,23 +1,21 @@
-import { BigNumber } from 'ethers';
-
 export interface ChainConfig {
-  chainId: BigNumber;
   rpcUrl: string;
   bundlerUrl: string;
 }
 
-export type ChainConfigs = Record<string, ChainConfig>;
+export type ChainConfigs = Record<number, ChainConfig>;
 
 /**
- * Creates a new ChainConfig object.
- * @param chainId The chain ID as a number or string.
- * @param rpcUrl The RPC URL for the chain.
- * @param bundlerUrl The bundler URL for the chain.
- * @returns A ChainConfig object.
+ * Constructs a new ChainConfig object configured with the specified RPC and bundler URLs.
+ * This function is particularly useful for initializing configuration settings that
+ * will be consumed by blockchain client interfaces.
+ *
+ * @param rpcUrl The URL to the RPC endpoint of a blockchain network, used for making remote procedure calls.
+ * @param bundlerUrl The URL to the transaction bundler service, which groups multiple transactions for efficiency.
+ * @returns A new ChainConfig object containing the provided URLs.
  */
-export function createChainConfig(chainId: number | string, rpcUrl: string, bundlerUrl: string): ChainConfig {
+export function createChainConfig(rpcUrl: string, bundlerUrl: string): ChainConfig {
   return {
-    chainId: BigNumber.from(chainId),
     rpcUrl,
     bundlerUrl,
   };

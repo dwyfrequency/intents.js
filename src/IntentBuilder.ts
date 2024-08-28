@@ -12,22 +12,29 @@ import { Account } from './Account';
  */
 export class IntentBuilder {
   /**
-   * Private constructor to enforce the use of the factory method for object creation.
+   * Private constructor to enforce the use of the factory method for creating instances.
    */
   private constructor(
-    private _client: Client,
-    private _chainConfig: ChainConfig,
+    private _clients: Map<number, Client>,
+    private _chainConfigs: Map<number, ChainConfig>,
   ) {}
 
   /**
-   * Factory method to create an instance of IntentBuilder.
-   * @param chainConfig The configuration of the chain.
+   * Factory method to create an instance of IntentBuilder using chain configurations.
+   * @param chainConfigs A record of chain IDs to their corresponding configurations.
    * @returns A new instance of IntentBuilder.
    */
-  static async createInstance(chainConfig: ChainConfig): Promise<IntentBuilder> {
-    const client = await Client.init(chainConfig.bundlerUrl);
-    const instance = new IntentBuilder(client, chainConfig);
-    return instance;
+  static async createInstance(chainConfigs: Record<number, ChainConfig>): Promise<IntentBuilder> {
+    const clients = new Map<number, Client>();
+    const configs = new Map<number, ChainConfig>();
+
+    for (const [chainId, config] of Object.entries(chainConfigs)) {
+      const numericChainId = Number(chainId);
+      clients.set(numericChainId, await Client.init(config.bundlerUrl));
+      configs.set(numericChainId, config);
+    }
+
+    return new IntentBuilder(clients, configs);
   }
 
   /**
@@ -35,14 +42,31 @@ export class IntentBuilder {
    * @param from The initial state of the transaction.
    * @param to The final state after the transaction.
    * @param account The user account performing the transaction.
+   * @param chainId the custom chain id for the transaction.
+   * (important: though chainId is not required field which will be removed in future, we need it because our test network using custom chain IDs)
    * @returns A promise that resolves when the transaction has been executed.
    */
-  async execute(from: State, to: State, account: Account): Promise<void> {
-    // Ensure the chain IDs match
-    // TODO:: because chain id from model is ProtoBigInt
-    // if (from.chainId !== to.chainId || from.chainId !== toBigInt(account.chainConfig.chainId)) {
-    //   throw new Error('Chain IDs do not match');
-    // }
+  async execute(from: State, to: State, account: Account, chainId: number): Promise<void> {
+    // TODO:: will be remove in future
+    if (chainId === undefined || chainId === 0) {
+      throw new Error('chainId is null or zero');
+    }
+    // Ensure the chain IDs match for multi chain
+    // TODO:: it will be revised for the cross chain integration
+    if (!from.chainId?.equals(to.chainId)) {
+      throw new Error('Chain IDs do not match');
+    }
+
+    const client = this._clients.get(chainId);
+    if (!client) {
+      throw new Error(`Client for chain ID ${chainId} not found`);
+    }
+
+    const chainConfig = this._chainConfigs.get(chainId);
+    if (!chainConfig) {
+      throw new Error(`Configuration for chain ID ${chainId} not found`);
+    }
+
     const intents = new Intent({
       from: this.setFrom(from),
       to: this.setTo(to),
@@ -51,7 +75,7 @@ export class IntentBuilder {
     const sender = account.sender;
 
     const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
-    const nonce = await account.getNonce(sender);
+    const nonce = await account.getNonce(chainId, sender);
     const initCode = await account.getInitCode(nonce);
 
     const builder = new UserOperationBuilder()
@@ -65,26 +89,29 @@ export class IntentBuilder {
       .setNonce(nonce)
       .setInitCode(initCode);
 
-    const signature = await this.sign(account, builder);
+    const signature = await this.sign(chainId, account, builder);
     builder.setSignature(signature);
 
-    const res = await this._client.sendUserOperation(
-      builder,
-      // , { onBuild: op => console.log('Signed UserOperation:', op), }
-    );
+    const res = await client.sendUserOperation(builder);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const solvedHash = (res as any).userOpHash.solved_hash;
 
-    return await this.getReceipt(solvedHash);
+    return await this.getReceipt(chainId, solvedHash);
   }
 
   /**
-   * Gets the chain configuration used by this IntentBuilder instance.
-   * @returns The ChainConfig object.
+   * Gets the chain configuration for a specific chain ID.
+   * @param chainId The ID of the chain.
+   * @returns The ChainConfig object for the specified chain.
+   * @throws Error if the chain configuration doesn't exist.
    */
-  getChainConfig(): ChainConfig {
-    return this._chainConfig;
+  getChainConfig(chainId: number): ChainConfig {
+    const config = this._chainConfigs.get(chainId);
+    if (!config) {
+      throw new Error(`Chain configuration for chain ID ${chainId} not found`);
+    }
+    return config;
   }
 
   /**
@@ -124,12 +151,13 @@ export class IntentBuilder {
   }
 
   /**
-   * Signs a transaction using the user's account.
-   * @param account The user's account used for signing.
-   * @param builder The UserOperationBuilder with the transaction details.
-   * @returns A promise containing the signature.
+   * Signs a transaction using the account details and transaction builder.
+   * @param chainId The chain ID where the signature is applicable.
+   * @param account The account performing the signing.
+   * @param builder The UserOperationBuilder containing transaction details.
+   * @returns The signature as a string.
    */
-  private async sign(account: Account, builder: UserOperationBuilder) {
+  private async sign(chainId: number, account: Account, builder: UserOperationBuilder) {
     const packedData = ethers.utils.defaultAbiCoder.encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
       [
@@ -148,7 +176,7 @@ export class IntentBuilder {
 
     const enc = ethers.utils.defaultAbiCoder.encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), ENTRY_POINT, account.chainConfig.chainId],
+      [ethers.utils.keccak256(packedData), ENTRY_POINT, chainId],
     );
 
     const userOpHash = ethers.utils.keccak256(enc);
@@ -156,11 +184,16 @@ export class IntentBuilder {
   }
 
   /**
-   * Fetches the receipt for a blockchain transaction using its hash.
+   * Retrieves the transaction receipt for a completed transaction using its hash.
+   * @param chainId The chain ID associated with the transaction.
    * @param solvedHash The hash of the transaction.
    * @returns A promise that resolves to the transaction receipt.
    */
-  private async getReceipt(solvedHash: string) {
+  private async getReceipt(chainId: number, solvedHash: string) {
+    const config = this._chainConfigs.get(chainId);
+    if (!config) {
+      throw new Error(`Chain configuration for chain ID ${chainId} not found`);
+    }
     const headers = {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -173,7 +206,7 @@ export class IntentBuilder {
       params: [solvedHash],
     });
 
-    const resReceipt = await fetch(this._chainConfig.bundlerUrl, {
+    const resReceipt = await fetch(config.bundlerUrl, {
       method: 'POST',
       headers: headers,
       body: body,
