@@ -43,6 +43,7 @@ describe('swap', () => {
 
     // Get expected amount and calculate minimum amount with slippage
     const expectedTargetAmount = await getPrice(
+      CHAINS.Ethereum,
       sourceToken,
       targetToken,
       floatToToken(bufferedAmount, sourceToken.decimal),
@@ -105,6 +106,7 @@ describe('swap', () => {
 
     // Get expected amount
     const expectedTargetAmount = await getPrice(
+      CHAINS.Ethereum,
       sourceToken,
       targetToken,
       floatToToken(bufferedAmount, sourceToken.decimal),

@@ -16,7 +16,7 @@ export class IntentBuilder {
    */
   private constructor(
     private _client: Client,
-    private _bundlerUrl: string,
+    private _chainConfig: ChainConfig,
   ) {}
 
   /**
@@ -26,7 +26,7 @@ export class IntentBuilder {
    */
   static async createInstance(chainConfig: ChainConfig): Promise<IntentBuilder> {
     const client = await Client.init(chainConfig.bundlerUrl);
-    const instance = new IntentBuilder(client, chainConfig.bundlerUrl);
+    const instance = new IntentBuilder(client, chainConfig);
     return instance;
   }
 
@@ -77,6 +77,14 @@ export class IntentBuilder {
     const solvedHash = (res as any).userOpHash.solved_hash;
 
     return await this.getReceipt(solvedHash);
+  }
+
+  /**
+   * Gets the chain configuration used by this IntentBuilder instance.
+   * @returns The ChainConfig object.
+   */
+  getChainConfig(): ChainConfig {
+    return this._chainConfig;
   }
 
   /**
@@ -165,7 +173,7 @@ export class IntentBuilder {
       params: [solvedHash],
     });
 
-    const resReceipt = await fetch(this._bundlerUrl, {
+    const resReceipt = await fetch(this._chainConfig.bundlerUrl, {
       method: 'POST',
       headers: headers,
       body: body,

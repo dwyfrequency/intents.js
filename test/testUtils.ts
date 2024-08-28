@@ -1,10 +1,10 @@
 import { ethers } from 'ethers';
 import { IntentBuilder, Account } from '../src';
-import { CHAIN_CONFIGS } from '../src/constants';
 import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/common-evm-utils';
 import { Token } from './constants';
 import dotenv from 'dotenv';
+import { createChainConfig } from '../src/types';
 
 dotenv.config();
 const moralis_key = process.env.MORALIS_API_KEY;
@@ -23,23 +23,26 @@ export function generateRandomAccount(): ethers.Wallet {
   return new ethers.Wallet(privateKey);
 }
 
-export async function initTest(chainName: keyof typeof CHAIN_CONFIGS = 'Ethereum') {
+export async function initTest() {
+  if (!process.env.BUNDLER_URL) throw new Error('BUNDLER_URL is missing');
+  if (!process.env.NODE_URL) throw new Error('NODE_URL is missing');
+  if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID is missing');
   if (!process.env.MORALIS_API_KEY) throw new Error('MORALIS_API_KEY is missing');
 
-  const chainConfig = CHAIN_CONFIGS[chainName];
-  if (!chainConfig) throw new Error(`Chain configuration for ${chainName} is missing`);
+  const myChainConfig = createChainConfig(process.env.CHAIN_ID, process.env.NODE_URL, process.env.BUNDLER_URL);
 
   const signer = generateRandomAccount();
   await initializeMoralis();
 
   return {
-    intentBuilder: await IntentBuilder.createInstance(chainConfig),
-    account: await Account.createInstance(signer, chainConfig),
-    chainConfig,
+    intentBuilder: await IntentBuilder.createInstance(myChainConfig),
+    account: await Account.createInstance(signer, myChainConfig),
   };
 }
 
-export async function getUsdPrice(tokenAddress: string, decimals: number): Promise<ethers.BigNumber> {
+export async function getUsdPrice(chainID: number, tokenAddress: string, decimals: number): Promise<ethers.BigNumber> {
+  // TODO:: use chain ID:
+  console.log('chainID', chainID);
   tokenAddress =
     tokenAddress.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
       ? '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' // WETH address for APIs
@@ -49,20 +52,21 @@ export async function getUsdPrice(tokenAddress: string, decimals: number): Promi
     chain: EvmChain.ETHEREUM,
   });
 
-  const usdPriceStr = response.result.usdPrice.toFixed(decimals); // Convert to string with 18 decimal places
+  const usdPriceStr = response.result.usdPrice.toFixed(decimals);
   const usdPrice = ethers.utils.parseUnits(usdPriceStr, decimals);
 
   return usdPrice;
 }
 
 export async function getPrice(
+  chainID: number,
   source: Token,
   target: Token,
   sourceAmount: ethers.BigNumber,
 ): Promise<ethers.BigNumber> {
   const [sourcePrice, targetPrice] = await Promise.all([
-    getUsdPrice(source.address, source.decimal),
-    getUsdPrice(target.address, target.decimal),
+    getUsdPrice(chainID, source.address, source.decimal),
+    getUsdPrice(chainID, target.address, target.decimal),
   ]);
 
   return sourceAmount.mul(sourcePrice).div(targetPrice);

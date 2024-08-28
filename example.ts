@@ -1,5 +1,6 @@
 import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt, Account, amountToBigInt } from './src';
 import { ethers } from 'ethers';
+import { createChainConfig } from './src/types';
 
 const BUNDLER_URL = 'https://bundler.dev.balloondogs.network';
 const NODE_URL = 'https://virtual.mainnet.rpc.tenderly.co/13d45a24-2474-431e-8f19-31f251f6cd2a';
@@ -23,8 +24,10 @@ const to = new Stake({
 });
 
 async function executeIntent() {
-  const account = await Account.createInstance(signer, BUNDLER_URL, NODE_URL),
-    intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
+  const chainConfig = createChainConfig(888, NODE_URL, BUNDLER_URL);
+
+  const account = await Account.createInstance(signer, chainConfig);
+  const intentBuilder = await IntentBuilder.createInstance(chainConfig);
 
   try {
     await intentBuilder.execute(from, to, account);

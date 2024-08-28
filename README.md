@@ -49,8 +49,9 @@ const NODE_URL = 'https://virtual.mainnet.rpc.tenderly.co/your-access-key';
 
 async function executeSwap() {
   const signer = new ethers.Wallet('your-private-key');
-  const account = await Account.createInstance(signer, BUNDLER_URL, NODE_URL);
-  const intentBuilder = await IntentBuilder.createInstance(BUNDLER_URL);
+  const chainConfig = createChainConfig(888, NODE_URL, BUNDLER_URL);
+  const account = await Account.createInstance(signer, chainConfig);
+  const intentBuilder = await IntentBuilder.createInstance(chainConfig);
 
   const from = new Asset({
     address: TOKENS.ETH.address,
