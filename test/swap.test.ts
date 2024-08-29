@@ -64,7 +64,7 @@ describe('swap', () => {
     console.log('sourceAmount', bufferedAmount);
     console.log('expectedTargetAmount', weiToFloat(expectedTargetAmount));
     console.log('minTargetAmount', weiToFloat(minTargetAmount));
-    console.log('sender', account.sender);
+    console.log('sender', account.getSender(chainId));
     console.log('source balance', await account.getBalance(chainId, sourceToken.address));
     console.log('targetToken balance', await account.getBalance(chainId, targetToken.address));
 
