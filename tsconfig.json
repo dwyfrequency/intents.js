@@ -5,7 +5,7 @@
     "rootDir": "./src",
     "module": "CommonJS",
     // Module system
-    "target": "ES5",
+    "target": "ES6",
     // Compilation target
     "declaration": true,
     "declarationDir": "./dist",

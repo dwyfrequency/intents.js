@@ -25,7 +25,7 @@ export class Account {
     await Promise.all(
       Object.entries(chainConfigs).map(async ([chainId, config]) => {
         const sender = await Account.getSender(signer, config.bundlerUrl);
-        const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+        const provider = new JsonRpcProvider(config.rpcUrl);
         account.accounts.set(Number(chainId), { sender, provider });
       }),
     );
