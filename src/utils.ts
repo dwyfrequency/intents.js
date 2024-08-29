@@ -17,7 +17,7 @@ export function toBigInt(value: ethers.BigNumber | number): ProtoBigInt {
   let hexString = bigNumberValue.toHexString().substring(2); // remove the '0x' prefix
   hexString = hexString.length % 2 !== 0 ? '0' + hexString : hexString; // pad if necessary
 
-  const byteArray = ethers.getBytes('0x' + hexString); // create a Uint8Array
+  const byteArray = ethers.utils.arrayify('0x' + hexString); // create a Uint8Array
   const protoBigInt = new ProtoBigInt();
   protoBigInt.value = byteArray;
   return protoBigInt;
@@ -34,7 +34,7 @@ export function toBigInt(value: ethers.BigNumber | number): ProtoBigInt {
 export function floatToWei(amount: number, decimal: number): ethers.BigNumber {
   // Convert float to string with high precision
   const amountStr = amount.toFixed(decimal);
-  return ethers.parseEther(amountStr);
+  return ethers.utils.parseEther(amountStr);
 }
 
 /**
@@ -48,7 +48,7 @@ export function floatToWei(amount: number, decimal: number): ethers.BigNumber {
  */
 export function weiToFloat(wei: ethers.BigNumber): number {
   // Convert wei to float, limiting to 18 decimal places
-  return parseFloat(ethers.formatEther(wei));
+  return parseFloat(ethers.utils.formatEther(wei));
 }
 
 /**
@@ -63,7 +63,7 @@ export function weiToFloat(wei: ethers.BigNumber): number {
  * @returns {number} - The corresponding amount as a floating-point number.
  */
 export function tokenToFloat(amount: ethers.BigNumber, decimals: number): number {
-  return parseFloat(ethers.formatUnits(amount, decimals));
+  return parseFloat(ethers.utils.formatUnits(amount, decimals));
 }
 
 /**
@@ -79,7 +79,7 @@ export function tokenToFloat(amount: ethers.BigNumber, decimals: number): number
  */
 export function floatToToken(amount: number, decimals: number): ethers.BigNumber {
   const amountStr = amount.toFixed(decimals);
-  return ethers.parseUnits(amountStr, decimals);
+  return ethers.utils.parseUnits(amountStr, decimals);
 }
 
 /**
