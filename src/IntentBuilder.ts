@@ -72,11 +72,11 @@ export class IntentBuilder {
       to: this.setTo(to),
     });
 
-    const sender = account.sender;
+    const sender = account.getSender(chainId);
 
     const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
     const nonce = await account.getNonce(chainId, sender);
-    const initCode = await account.getInitCode(nonce);
+    const initCode = await account.getInitCode(chainId, nonce);
 
     const builder = new UserOperationBuilder()
       .useDefaults({ sender })
