@@ -18,8 +18,8 @@ export async function initializeMoralis() {
 }
 
 export function generateRandomAccount(): ethers.Wallet {
-  const randomBytes = ethers.utils.randomBytes(32);
-  const privateKey = ethers.utils.hexlify(randomBytes);
+  const randomBytes = ethers.randomBytes(32);
+  const privateKey = ethers.hexlify(randomBytes);
   return new ethers.Wallet(privateKey);
 }
 
@@ -40,6 +40,10 @@ export async function initTest() {
   };
 
   const signer = generateRandomAccount();
+  console.log('signer', signer.getAddress());
+  console.log('signer Private key', signer.privateKey.toString());
+  console.log('signer address', signer.address);
+  console.log('signer provider', signer.provider);
   await initializeMoralis();
 
   return {
@@ -48,7 +52,7 @@ export async function initTest() {
   };
 }
 
-export async function getUsdPrice(chainID: number, tokenAddress: string, decimals: number): Promise<ethers.BigNumber> {
+export async function getUsdPrice(chainID: number, tokenAddress: string, decimals: number): Promise<bigint> {
   // TODO:: use chain ID:
   console.log('chainID', chainID);
   tokenAddress =
@@ -61,21 +65,16 @@ export async function getUsdPrice(chainID: number, tokenAddress: string, decimal
   });
 
   const usdPriceStr = response.result.usdPrice.toFixed(decimals);
-  const usdPrice = ethers.utils.parseUnits(usdPriceStr, decimals);
+  const usdPrice = ethers.parseUnits(usdPriceStr, decimals);
 
   return usdPrice;
 }
 
-export async function getPrice(
-  chainID: number,
-  source: Token,
-  target: Token,
-  sourceAmount: ethers.BigNumber,
-): Promise<ethers.BigNumber> {
+export async function getPrice(chainID: number, source: Token, target: Token, sourceAmount: bigint): Promise<bigint> {
   const [sourcePrice, targetPrice] = await Promise.all([
     getUsdPrice(chainID, source.address, source.decimal),
     getUsdPrice(chainID, target.address, target.decimal),
   ]);
 
-  return sourceAmount.mul(sourcePrice).div(targetPrice);
+  return (sourceAmount * sourcePrice) / targetPrice;
 }
