@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BytesLike, ethers } from 'ethers';
 import { ChainConfig } from './types';
 import { ENTRY_POINT } from './constants';
 import { Client, UserOperationBuilder } from 'userop';
@@ -73,8 +73,7 @@ export class IntentBuilder {
     });
 
     const sender = account.getSender(chainId);
-
-    const intent = ethers.utils.toUtf8Bytes(JSON.stringify(intents));
+    const intent = ethers.toUtf8Bytes(JSON.stringify(intents));
     const nonce = await account.getNonce(chainId, sender);
     const initCode = await account.getInitCode(chainId, nonce);
 
@@ -88,10 +87,8 @@ export class IntentBuilder {
       .setCallGasLimit('0xC3500')
       .setNonce(nonce)
       .setInitCode(initCode);
-
     const signature = await this.sign(chainId, account, builder);
     builder.setSignature(signature);
-
     const res = await client.sendUserOperation(builder);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -158,29 +155,30 @@ export class IntentBuilder {
    * @returns The signature as a string.
    */
   private async sign(chainId: number, account: Account, builder: UserOperationBuilder) {
-    const packedData = ethers.utils.defaultAbiCoder.encode(
+    const userOp = builder.getOp();
+    const packedData = ethers.AbiCoder.defaultAbiCoder().encode(
       ['address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'bytes32'],
       [
-        builder.getSender(),
-        builder.getNonce(),
-        ethers.utils.keccak256(builder.getInitCode()),
-        ethers.utils.keccak256(builder.getCallData()),
-        builder.getCallGasLimit(),
-        builder.getVerificationGasLimit(),
-        builder.getPreVerificationGas(),
-        builder.getMaxFeePerGas(),
-        builder.getMaxPriorityFeePerGas(),
-        ethers.utils.keccak256(builder.getPaymasterAndData()),
+        userOp.sender,
+        userOp.nonce.toString(),
+        ethers.keccak256(userOp.initCode as BytesLike),
+        ethers.keccak256(userOp.callData as BytesLike),
+        userOp.callGasLimit.toString(),
+        userOp.verificationGasLimit.toString(),
+        userOp.preVerificationGas.toString(),
+        userOp.maxFeePerGas.toString(),
+        userOp.maxPriorityFeePerGas.toString(),
+        ethers.keccak256(userOp.paymasterAndData as BytesLike),
       ],
     );
 
-    const enc = ethers.utils.defaultAbiCoder.encode(
+    const enc = ethers.AbiCoder.defaultAbiCoder().encode(
       ['bytes32', 'address', 'uint256'],
-      [ethers.utils.keccak256(packedData), ENTRY_POINT, chainId],
+      [ethers.keccak256(packedData), ENTRY_POINT, chainId],
     );
 
-    const userOpHash = ethers.utils.keccak256(enc);
-    return await account.signer.signMessage(ethers.utils.arrayify(userOpHash));
+    const userOpHash = ethers.keccak256(enc);
+    return await account.signer.signMessage(ethers.getBytes(userOpHash));
   }
 
   /**

@@ -1,6 +1,5 @@
-import { BytesLike, ethers, Signer } from 'ethers';
+import { ethers, JsonRpcProvider } from 'ethers';
 import { ENTRY_POINT, FACTORY } from './constants';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { Presets } from 'userop';
 import { tokenToFloat, weiToFloat } from './utils';
 import { ChainConfigs } from './types';
@@ -11,7 +10,7 @@ export class Account {
    * Private constructor to enforce the use of factory methods for instantiation.
    * @param signer The ethers Signer used for transaction signing.
    */
-  private constructor(public signer: Signer) {}
+  private constructor(public signer: ethers.Signer) {}
 
   /**
    * Creates an instance of the Account class with associated chain configurations.
@@ -39,7 +38,8 @@ export class Account {
    * @param salt Optional nonce or unique identifier to customize the sender address generation further.
    * @returns The Ethereum address as a string.
    */
-  static async getSender(signer: Signer, bundlerUrl: string, salt: BytesLike = '0'): Promise<string> {
+  static async getSender(signer: ethers.Signer, bundlerUrl: string, salt: number = 0): Promise<string> {
+    // Convert salt to a number, then to a hex string
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, bundlerUrl, {
       factory: FACTORY,
       salt: salt,

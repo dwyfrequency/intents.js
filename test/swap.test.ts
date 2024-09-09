@@ -1,7 +1,6 @@
 import { IntentBuilder, CHAINS, toBigInt, Asset, Account, floatToToken, weiToFloat, amountToBigInt } from '../src';
 import { ChainID, TIMEOUT, Token, TOKENS } from './constants';
 import { getPrice, initTest } from './testUtils';
-import { ethers } from 'ethers';
 
 /** Maximum allowed slippage for swaps (2%) */
 const DEFAULT_SLIPPAGE = 0.02;
@@ -54,9 +53,7 @@ describe('swap', () => {
       targetToken,
       floatToToken(bufferedAmount, sourceToken.decimal),
     );
-    const minTargetAmount = expectedTargetAmount
-      .mul(ethers.BigNumber.from(Math.floor((1 - slippage) * 10000)))
-      .div(10000);
+    const minTargetAmount = (expectedTargetAmount * BigInt(Math.floor((1 - slippage) * 10000))) / BigInt(10000);
 
     // Log swap details
     console.log('sourceToken', sourceToken);
@@ -119,7 +116,7 @@ describe('swap', () => {
     );
 
     // Check if expected amount is zero or very close to zero
-    if (expectedTargetAmount.isZero() || weiToFloat(expectedTargetAmount) < MINIMUM_SWAP_AMOUNT) {
+    if (expectedTargetAmount === BigInt(0) || weiToFloat(expectedTargetAmount) < MINIMUM_SWAP_AMOUNT) {
       console.log(
         `Skipping ${sourceToken.address} -> ${targetToken.address} due to zero or very small expected target amount`,
       );
