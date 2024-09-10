@@ -52,7 +52,7 @@ describe('Loan', () => {
   beforeAll(async () => {
     ({ account, intentBuilder } = await initTest());
     await account.faucet(ChainID, 1);
-  });
+  }, TIMEOUT);
   // AAVE
   it('AaveWETH', async () => loanWETH(PROJECTS.Aave, TOKENS.WETH), TIMEOUT);
   // wrong token address WSTETH
@@ -68,7 +68,7 @@ describe('Loan', () => {
   // it('SparkWstETH', async () => loanWETH(PROJECTS.Spark, TOKENS.WSTETH), TIMEOUT);
 
   it('ETH->SparkWETH', async () => ethToLoanWEth(PROJECTS.Spark, TOKENS.WETH), TIMEOUT);
-  // wrong token address WSTETH
-  // it('ETH->SparkWstETH', async () => ethToLoanWEth(PROJECTS.Spark, TOKENS.WSTETH), TIMEOUT);
-  // compound either not supported by registry yet or there is some issue.
+  // compound -> USDC -> LINK
+  it('ETH->LINK', async () => ethToLoanWEth(PROJECTS.CompoundUSDCPool, TOKENS.LINK), TIMEOUT);
+  it('ETH->WETH', async () => ethToLoanWEth(PROJECTS.CompoundETHPool, TOKENS.WETH), TIMEOUT);
 });
