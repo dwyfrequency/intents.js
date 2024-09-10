@@ -6,8 +6,5 @@ module.exports = {
   },
   collectCoverage: true,
   coverageReporters: ['text', 'cobertura'],
-  reporters: [
-    'default',
-    ['jest-ctrf-json-reporter', {}],
-  ],
+  reporters: ['default', ['jest-ctrf-json-reporter', {}]],
 };

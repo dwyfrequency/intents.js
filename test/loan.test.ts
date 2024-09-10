@@ -7,10 +7,10 @@ describe('Loan', () => {
 
   const loanWETH = async function (project: string, token: Token) {
     const assetETH = new Asset({
-      address: TOKENS.ETH.address,
-      amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
-      chainId: toBigInt(CHAINS.Ethereum),
-    }),
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
       assetWETH = new Asset({
         address: token.address,
         amount: amountToBigInt(0.1, token.decimal),
@@ -32,10 +32,10 @@ describe('Loan', () => {
 
   const ethToLoanWEth = async function (project: string, token: Token) {
     const assetETH = new Asset({
-      address: TOKENS.ETH.address,
-      amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
-      chainId: toBigInt(CHAINS.Ethereum),
-    }),
+        address: TOKENS.ETH.address,
+        amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
+        chainId: toBigInt(CHAINS.Ethereum),
+      }),
       loanAaveWETH = new Loan({
         address: project,
         asset: token.address,

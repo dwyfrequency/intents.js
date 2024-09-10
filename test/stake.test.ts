@@ -15,10 +15,10 @@ describe('Stake', () => {
     'LidoETH',
     async () => {
       const from = new Asset({
-        address: TOKENS.ETH.address,
-        amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
-        chainId: toBigInt(CHAINS.Ethereum),
-      }),
+          address: TOKENS.ETH.address,
+          amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
+          chainId: toBigInt(CHAINS.Ethereum),
+        }),
         to = new Stake({
           address: PROJECTS.Lido,
           amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
@@ -42,10 +42,10 @@ describe('Stake', () => {
     'Ankr',
     async () => {
       const from = new Asset({
-        address: TOKENS.ETH.address,
-        amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
-        chainId: toBigInt(CHAINS.Ethereum),
-      }),
+          address: TOKENS.ETH.address,
+          amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
+          chainId: toBigInt(CHAINS.Ethereum),
+        }),
         to = new Stake({
           address: PROJECTS.Ankr,
           amount: amountToBigInt(0.1, TOKENS.ETH.decimal),
