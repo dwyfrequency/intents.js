@@ -10,7 +10,10 @@ import { ethers } from 'ethers';
  */
 export function toBigInt(value: bigint | number): ProtoBigInt {
   // Convert all inputs to bigint to simplify handling inside the function
-  let hexString = (typeof value === 'bigint' ? value : BigInt(value)).toString(16);
+  if (typeof value !== 'number' && typeof value !== 'bigint') {
+    throw new Error('Unsupported type. Expected a number or bigint.');
+  }
+  let hexString = BigInt(value).toString(16);
 
   if (hexString.length % 2 !== 0) hexString = '0' + hexString; // pad if necessary
 

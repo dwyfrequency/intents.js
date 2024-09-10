@@ -24,26 +24,26 @@ export function generateRandomAccount(): ethers.Wallet {
 }
 
 export async function initTest() {
-  if (!process.env.BUNDLER_URL) throw new Error('BUNDLER_URL is missing');
-  if (!process.env.NODE_URL) throw new Error('NODE_URL is missing');
+  if (!process.env.ETH_BUNDLER_URL) throw new Error('ETH_BUNDLER_URL is missing');
+  if (!process.env.ETH_NODE_URL) throw new Error('ETH_NODE_URL is missing');
+  if (!process.env.ETH_CHAIN_ID) throw new Error('ETH_CHAIN_ID is missing');
+  if (!process.env.BSC_BUNDLER_URL) throw new Error('BSC_BUNDLER_URL is missing');
+  if (!process.env.BSC_NODE_URL) throw new Error('BSC_NODE_URL is missing');
+  if (!process.env.BSC_CHAIN_ID) throw new Error('BSC_CHAIN_ID is missing');
   if (!process.env.MORALIS_API_KEY) throw new Error('MORALIS_API_KEY is missing');
 
   const chainConfigs: ChainConfigs = {
-    888: {
-      rpcUrl: process.env.NODE_URL,
-      bundlerUrl: process.env.BUNDLER_URL,
+    [Number(process.env.ETH_CHAIN_ID)]: {
+      rpcUrl: process.env.ETH_NODE_URL,
+      bundlerUrl: process.env.ETH_BUNDLER_URL,
     },
-    // 890: {
-    //   rpcUrl: process.env.BSC_NODE_URL,
-    //   bundlerUrl: process.env.BSC_BUNDLER_URL,
-    // },
+    [Number(process.env.BSC_CHAIN_ID)]: {
+      rpcUrl: process.env.BSC_NODE_URL,
+      bundlerUrl: process.env.BSC_BUNDLER_URL,
+    },
   };
 
   const signer = generateRandomAccount();
-  console.log('signer', signer.getAddress());
-  console.log('signer Private key', signer.privateKey.toString());
-  console.log('signer address', signer.address);
-  console.log('signer provider', signer.provider);
   await initializeMoralis();
 
   return {
