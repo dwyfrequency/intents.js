@@ -17,7 +17,7 @@ export class IntentBuilder {
   private constructor(
     private _clients: Map<number, Client>,
     private _chainConfigs: Map<number, ChainConfig>,
-  ) { }
+  ) {}
 
   /**
    * Factory method to create an instance of IntentBuilder using chain configurations.
@@ -93,7 +93,7 @@ export class IntentBuilder {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const solvedHash = (res as any).userOpHash.solved_hash;
-    return solvedHash
+    return solvedHash;
   }
 
   /**

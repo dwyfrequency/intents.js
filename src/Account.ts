@@ -13,7 +13,7 @@ export class Account {
    * Private constructor to enforce the use of factory methods for instantiation.
    * @param signer The ethers Signer used for transaction signing.
    */
-  private constructor(public signer: ethers.Signer) { }
+  private constructor(public signer: ethers.Signer) {}
 
   /**
    * Creates an instance of the Account class with associated chain configurations.
@@ -26,16 +26,15 @@ export class Account {
     const account = new Account(signer);
     await Promise.all(
       Object.entries(chainConfigs).map(async ([chainId, config]) => {
-
         let factory = FACTORY;
         if (config.factory !== undefined) {
-          factory = config.factory
+          factory = config.factory;
         }
 
         const sender = await Account.getSender(signer, config.bundlerUrl, 0, factory);
         const provider = new JsonRpcProvider(config.rpcUrl);
 
-        account.factoryContractAddresses.set(Number(chainId), factory)
+        account.factoryContractAddresses.set(Number(chainId), factory);
         account.accounts.set(Number(chainId), { sender, provider });
       }),
     );
@@ -50,7 +49,12 @@ export class Account {
    * @param factory Optional factory address to interact with when generating the sender.
    * @returns The Ethereum address as a string.
    */
-  static async getSender(signer: ethers.Signer, bundlerUrl: string, salt: number = 0, factory: string = FACTORY): Promise<string> {
+  static async getSender(
+    signer: ethers.Signer,
+    bundlerUrl: string,
+    salt: number = 0,
+    factory: string = FACTORY,
+  ): Promise<string> {
     // Convert salt to a number, then to a hex string
     const simpleAccount = await Presets.Builder.SimpleAccount.init(signer, bundlerUrl, {
       factory: factory,
@@ -71,7 +75,7 @@ export class Account {
       throw new Error(`No account found for chain ID ${chainId}`);
     }
 
-    const factory = this.factoryContractAddresses.get(chainId)
+    const factory = this.factoryContractAddresses.get(chainId);
     if (!factory) {
       throw new Error(`No factory contract address found for chain ID ${chainId}`);
     }
