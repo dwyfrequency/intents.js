@@ -17,7 +17,7 @@ export class IntentBuilder {
   private constructor(
     private _clients: Map<number, Client>,
     private _chainConfigs: Map<number, ChainConfig>,
-  ) {}
+  ) { }
 
   /**
    * Factory method to create an instance of IntentBuilder using chain configurations.
@@ -46,7 +46,7 @@ export class IntentBuilder {
    * (important: though chainId is not required field which will be removed in future, we need it because our test network using custom chain IDs)
    * @returns A promise that resolves when the transaction has been executed.
    */
-  async execute(from: State, to: State, account: Account, chainId: number): Promise<void> {
+  async execute(from: State, to: State, account: Account, chainId: number): Promise<string> {
     // TODO:: will be remove in future
     if (chainId === undefined || chainId === 0) {
       throw new Error('chainId is null or zero');
@@ -93,8 +93,7 @@ export class IntentBuilder {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const solvedHash = (res as any).userOpHash.solved_hash;
-
-    return await this.getReceipt(chainId, solvedHash);
+    return solvedHash
   }
 
   /**
