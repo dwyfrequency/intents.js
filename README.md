@@ -1,6 +1,6 @@
 # Intents.js SDK
 
-![NPM Version](https://img.shields.io/npm/v/blndgs-model)
+!![NPM Version](https://img.shields.io/npm/v/intents.js)
 ![codecov](https://codecov.io/gh/blndgs/intents.js/graph/badge.svg?token=TAVORU8E7D)
 
 ## Getting Started
