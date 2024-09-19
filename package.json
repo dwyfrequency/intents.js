@@ -15,6 +15,8 @@
   "description": "Abstract State Change Expression Library",
   "devDependencies": {
     "@eslint/js": "^9.10.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^12.0.1",
     "@sinonjs/referee-sinon": "^12.0.0",
     "@types/isomorphic-fetch": "^0.0.39",
     "@types/jest": "^29.5.13",
@@ -31,6 +33,7 @@
     "knuth-shuffle": "^1.0.8",
     "mocha": "^10.7.3",
     "prettier": "^3.3.3",
+    "semantic-release": "^24.1.1",
     "sinon": "^19.0.2",
     "ts-jest": "^29.2.5",
     "typescript-eslint": "^8.5.0"
