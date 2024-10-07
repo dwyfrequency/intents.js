@@ -9,7 +9,7 @@ See intents.js documentation at [docs.balloondogs.network](https://docs.balloond
 
 ### 1. Installation
 
-To include `intents.js` in your project, ensure you have Node.js and npm installed in your environment and run the following command:
+Using npm:
 
 ```bash
 npm install intents.js
@@ -17,7 +17,7 @@ npm install intents.js
 
 ### 2. Setup
 
-Import `intents.js` into your project to begin defining intents:
+Import `intents.js` and setup `Account` and `IntentBuilder`:
 
 ```typescript
 import { Account, IntentBuilder, PROJECTS, CHAINS, toBigInt, amountToBigInt, Asset, Stake } from 'intents.js';
@@ -42,26 +42,21 @@ const account = await Account.createInstance(signer, chainConfigs);
 ```
 
 ### 3. Creating an Intent
+An Intent structure consists of two symmetric source and destination states.
 
-To create and execute an intent with the `intents.js` SDK, you need to specify the details of
-the transaction you want to perform. This involves defining the source (from) and destination (to)
-assets, including their types, addresses, and amounts. These types could be either another asset
-which indicates asset swaps, or could be stakes or loan supply to a DeFi protocol
-
-Here's an example of creating and executing a swap intent:
-
+Here’s a simple example of Staking on Lido intent:
 ```typescript
 const amount = 0.1;
 const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 const ethDecimals = 18;
 
-const from = new Asset({
+const source = new Asset({
   address: ethAddress,
   amount: amountToBigInt(amount, ethDecimals),
   chainId: toBigInt(CHAINS.Ethereum),
 });
 
-const to = new Stake({
+const destination = new Stake({
   amount: amountToBigInt(amount, ethDecimals),
   address: PROJECTS.Lido,
   chainId: toBigInt(CHAINS.Ethereum),
@@ -69,28 +64,13 @@ const to = new Stake({
 ```
 
 ### 4. Execute the intent
+Simply provide the source and destination states along with the associated account.
+
+The `execute` function will then wrap the intent as an [ERC-4337](https://eips.ethereum.org/EIPS/eip-4337) userOp and submit it to the BalloonDogs network.
+ 
 
 ```typescript
-// 1 is the chain id we are executing the transaction on, this can be configured from the
-//chainConfigs object
-try {
-  const solvedHash = await intentBuilder.execute(from, to, account, 1);
-  console.log('Intent executed successfully.');
-} catch (error) {
-  console.error('Error executing intent:', error);
-}
-```
-
-#### 4b. Sending a conventional userop and skipping Balloondogs solver
-
-```typescript
-await intentBuilder.executeStandardUserOps(account, ChainID, {
-  calldata: '0x', // optional
-  callGasLimit: CALL_GAS_LIMIT,
-  maxFeePerGas: MAX_FEE_PER_GAS,
-  maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
-  verificationGasLimit: VERIFICATION_GAS_LIMIT,
-});
+  const solvedHash = await intentBuilder.execute(source, destination, account);
 ```
 
 ### 5. Fetch onchain receipt of executed transaction
@@ -105,13 +85,12 @@ console.log(`
 View your tx onchain using any explorer: \n
 
 Hash: ${txHash}
-BNBScan: https://bscscan.com/tx/${txHash}
-`
+tx link: https://etherscan.io/tx/${txHash}`)
 ```
 
-### 6. Utility Functions
+## Utility Functions
 
-The SDK provides several utility functions for handling token amounts and conversions:
+The SDK provides several utility functions for easy manage conversions:
 
 - `toBigInt(value: bigint | number): ProtoBigInt`
 - `floatToWei(amount: number): bigint`
@@ -120,21 +99,18 @@ The SDK provides several utility functions for handling token amounts and conver
 - `floatToToken(amount: number, decimals: number): bigint`
 - `amountToBigInt(amount: number, decimal: number): ProtoBigInt`
 
-These functions help in converting between different representations of token amounts.
+## Sending a conventional userOpa
+The BalloonDogs network is fully compatible with the ERC-4337 standard and can operate as a bundler for standard useOps.
+```typescript
+await intentBuilder.executeStandardUserOps(account, ChainID, {
+  calldata: '0x', // optional
+  callGasLimit: CALL_GAS_LIMIT,
+  maxFeePerGas: MAX_FEE_PER_GAS,
+  maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
+  verificationGasLimit: VERIFICATION_GAS_LIMIT,
+});
+```
 
-### 5. Supported Projects
-
-The `PROJECTS` object provides addresses for various DeFi projects:
-
-- Lido
-- RocketPool
-- Mantle
-- Aave
-- Compound
-- Spark
-- SushiSwap
-
-You can use these addresses when interacting with specific protocols.
 
 ## Contributing
 
