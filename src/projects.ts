@@ -20,4 +20,5 @@ export const PROJECTS = {
  */
 export const CHAINS = {
   Ethereum: 1,
+  BNBChain: 56,
 };

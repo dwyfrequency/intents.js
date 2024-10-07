@@ -44,23 +44,25 @@ const account = await Account.createInstance(signer, chainConfigs);
 ### 3. Creating an Intent
 An Intent structure consists of two symmetric source and destination states.
 
-Here’s a simple example of Staking on Lido intent:
+Here’s a simple intent example of Staking on Lido (Ethereum) with funds supplied on AAVE (BNB Chain):
 ```typescript
-const amount = 0.1;
-const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-const ethDecimals = 18;
+const usdtAmount = 244.7;
+const ethAmount = 0.1;
+const usdtAddress = '0xdac17f958d2ee523a2206206994597c13d831ec7';
 
-const source = new Asset({
-  address: ethAddress,
-  amount: amountToBigInt(amount, ethDecimals),
-  chainId: toBigInt(CHAINS.Ethereum),
+const from = new Loan({
+  address: usdtAddress,
+  amount: amountToBigInt(usdtAmount, 18),
+  chainId: toBigInt(CHAINS.BNBChain),
+  asset: PROJECTS.Aave,
 });
 
-const destination = new Stake({
-  amount: amountToBigInt(amount, ethDecimals),
+const to = new Stake({
+  amount: amountToBigInt(ethAmount, 18),
   address: PROJECTS.Lido,
   chainId: toBigInt(CHAINS.Ethereum),
 });
+
 ```
 
 ### 4. Execute the intent

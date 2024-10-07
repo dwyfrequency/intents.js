@@ -1,21 +1,22 @@
-import { IntentBuilder, PROJECTS, CHAINS, Asset, Stake, toBigInt, Account, amountToBigInt } from './src';
+import { IntentBuilder, PROJECTS, CHAINS, Loan, Stake, toBigInt, Account, amountToBigInt } from './src';
 import { ethers } from 'ethers';
 import { ChainConfigs } from './src/types';
 
 const signer = new ethers.Wallet('private key');
 
-const amount = 0.1;
-const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-const ethDecimals = 18;
+const usdtAmount = 244.7;
+const ethAmount = 0.1;
+const usdtAddress = '0xdac17f958d2ee523a2206206994597c13d831ec7';
 
-const from = new Asset({
-  address: ethAddress,
-  amount: amountToBigInt(amount, ethDecimals),
-  chainId: toBigInt(CHAINS.Ethereum),
+const from = new Loan({
+  address: usdtAddress,
+  amount: amountToBigInt(usdtAmount, 18),
+  chainId: toBigInt(CHAINS.BNBChain),
+  asset: PROJECTS.Aave,
 });
 
 const to = new Stake({
-  amount: amountToBigInt(amount, ethDecimals),
+  amount: amountToBigInt(ethAmount, 18),
   address: PROJECTS.Lido,
   chainId: toBigInt(CHAINS.Ethereum),
 });
