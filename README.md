@@ -66,7 +66,7 @@ const destination = new Stake({
 ### 4. Execute the intent
 Simply provide the source and destination states along with the associated account.
 
-The `execute` function will then wrap the intent as an [ERC-4337](https://eips.ethereum.org/EIPS/eip-4337) userOp and submit it to the BalloonDogs network.
+The `execute()` function will then wrap the intent as an [ERC-4337](https://eips.ethereum.org/EIPS/eip-4337) userOp and submit it to the BalloonDogs network.
  
 
 ```typescript
@@ -81,11 +81,11 @@ const receipt = await intentBuilder.getReceipt(1, solvedHash)
 
 const txHash = receipt.result.receipt.transactionHash
 
-console.log(`
-View your tx onchain using any explorer: \n
-
-Hash: ${txHash}
-tx link: https://etherscan.io/tx/${txHash}`)
+console.log(
+  `View your tx onchain using any explorer:
+   Hash: ${txHash}
+   tx link: https://etherscan.io/tx/${txHash}`
+);
 ```
 
 ## Utility Functions
@@ -99,7 +99,7 @@ The SDK provides several utility functions for easy manage conversions:
 - `floatToToken(amount: number, decimals: number): bigint`
 - `amountToBigInt(amount: number, decimal: number): ProtoBigInt`
 
-## Sending a conventional userOpa
+## Sending a conventional userOp
 The BalloonDogs network is fully compatible with the ERC-4337 standard and can operate as a bundler for standard useOps.
 ```typescript
 await intentBuilder.executeStandardUserOps(account, ChainID, {
