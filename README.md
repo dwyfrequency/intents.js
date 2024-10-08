@@ -5,11 +5,11 @@
 
 ## Getting Started
 
-See intents.js documentation at [docs.balloondogs.network](https://docs.balloondogs.network/solution/sdk)
+You can find the full `intents.js` documentation at [docs.balloondogs.network](https://docs.balloondogs.network/solution/sdk)
 
 ### 1. Installation
 
-Using npm:
+Install `intents.js` using npm:
 
 ```bash
 npm install intents.js
@@ -17,7 +17,7 @@ npm install intents.js
 
 ### 2. Setup
 
-Import `intents.js` and setup `Account` and `IntentBuilder`:
+Begin by importing `intents.js` and setting up the `Account` and `IntentBuilder`:
 
 ```typescript
 import { Account, IntentBuilder, PROJECTS, CHAINS, toBigInt, amountToBigInt, Asset, Stake } from 'intents.js';
@@ -41,10 +41,10 @@ const signer = new ethers.Wallet('your private key');
 const account = await Account.createInstance(signer, chainConfigs);
 ```
 
-### 3. Creating an Intent
-An Intent structure consists of two symmetric source and destination states.
+### 3. Create an Intent
+An intent represents a desired outcome. The intent structure consists of two symmetric source and destination states.
 
-Here’s a simple intent example of Staking on Lido (Ethereum) with funds supplied on AAVE (BNB Chain):
+In this example, we are using funds from AAVE (BNB Chain) to stake on Lido (Ethereum):
 ```typescript
 const usdtAmount = 244.7;
 const ethAmount = 0.1;
@@ -65,7 +65,7 @@ const to = new Stake({
 
 ```
 
-### 4. Execute the intent
+### 4. Execute the Intent
 Simply provide the source and destination states along with the associated account.
 
 The `execute()` function will then wrap the intent as an [ERC-4337](https://eips.ethereum.org/EIPS/eip-4337) userOp and submit it to the BalloonDogs network.
@@ -75,8 +75,8 @@ The `execute()` function will then wrap the intent as an [ERC-4337](https://eips
   const solvedHash = await intentBuilder.execute(source, destination, account);
 ```
 
-### 5. Fetch onchain receipt of executed transaction
-
+### 5. Fetch the Onchain Transaction Receipt
+After the transaction is executed, you can fetch the receipt:
 ```typescript
 
 const receipt = await intentBuilder.getReceipt(1, solvedHash)
@@ -92,7 +92,7 @@ console.log(
 
 ## Utility Functions
 
-The SDK provides several utility functions for easy manage conversions:
+The SDK offers several utility functions for managing conversions and amounts:
 
 - `toBigInt(value: bigint | number): ProtoBigInt`
 - `floatToWei(amount: number): bigint`
