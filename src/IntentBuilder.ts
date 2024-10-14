@@ -53,7 +53,7 @@ export class IntentBuilder {
    * (important: though chainId is not required field which will be removed in future, we need it because our test network using custom chain IDs)
    * @returns A promise that resolves when the transaction has been executed.
    */
-  async execute(from: State, to: State, account: Account, chainId: number): Promise<string> {
+  async execute(from: State, to: State, account: Account, chainId: number) {
     // TODO:: will be remove in future
     if (chainId === undefined || chainId === 0) {
       throw new Error('chainId is null or zero');
@@ -87,7 +87,7 @@ export class IntentBuilder {
    * @param opts execution options. You will be able to configure the amount of gas and fee you spend
    * @returns A promise that resolves when the transaction has been executed.
    */
-  async executeStandardUserOps(account: Account, chainId: number, opts: UserOpOptions): Promise<string> {
+  async executeStandardUserOps(account: Account, chainId: number, opts: UserOpOptions) {
     return await this._innerExecute(account, chainId, {
       calldata: opts.calldata ?? '0x',
       maxFeePerGas: opts.maxFeePerGas,
@@ -109,7 +109,7 @@ export class IntentBuilder {
       verificationGasLimit: string;
       callGasLimit: string;
     },
-  ): Promise<string> {
+  ) {
     const client = this._clients.get(chainId);
     if (!client) {
       throw new Error(`Client for chain ID ${chainId} not found`);
@@ -144,7 +144,7 @@ export class IntentBuilder {
       throw new Error(`Unexpected response from Bundler`);
     }
 
-    return res.userOpHash.solved_hash;
+    return res;
   }
 
   /**
