@@ -13,6 +13,7 @@ import { FromState, State, ToState } from './index';
 import { Asset, Intent, Loan, Stake } from '.';
 import fetch from 'isomorphic-fetch';
 import { Account } from './Account';
+import { UserOperationEventEvent } from 'userop/dist/typechain/EntryPoint';
 
 /**
  * Facilitates the building and execution of Intent transactions.
@@ -53,7 +54,12 @@ export class IntentBuilder {
    * (important: though chainId is not required field which will be removed in future, we need it because our test network using custom chain IDs)
    * @returns A promise that resolves when the transaction has been executed.
    */
-  async execute(from: State, to: State, account: Account, chainId: number) {
+  async execute(
+    from: State,
+    to: State,
+    account: Account,
+    chainId: number,
+  ): Promise<{ userOpHash: string; wait: () => Promise<UserOperationEventEvent | null> }> {
     // TODO:: will be remove in future
     if (chainId === undefined || chainId === 0) {
       throw new Error('chainId is null or zero');
@@ -87,7 +93,11 @@ export class IntentBuilder {
    * @param opts execution options. You will be able to configure the amount of gas and fee you spend
    * @returns A promise that resolves when the transaction has been executed.
    */
-  async executeStandardUserOps(account: Account, chainId: number, opts: UserOpOptions) {
+  async executeStandardUserOps(
+    account: Account,
+    chainId: number,
+    opts: UserOpOptions,
+  ): Promise<{ userOpHash: string; wait: () => Promise<UserOperationEventEvent | null> }> {
     return await this._innerExecute(account, chainId, {
       calldata: opts.calldata ?? '0x',
       maxFeePerGas: opts.maxFeePerGas,
@@ -109,7 +119,7 @@ export class IntentBuilder {
       verificationGasLimit: string;
       callGasLimit: string;
     },
-  ) {
+  ): Promise<{ userOpHash: string; wait: () => Promise<UserOperationEventEvent | null> }> {
     const client = this._clients.get(chainId);
     if (!client) {
       throw new Error(`Client for chain ID ${chainId} not found`);
